@@ -1,0 +1,8 @@
+input:-webkit-autofill {
+    -webkit-text-fill-color: #000000 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+    /* esto es cuando se autocompleta el campo, entonces cuando se autocomplete qeu se quiten los bordes: */
+    border: none !important;
+    border-radius:  5px !important;
+    padding: 0.5rem !important;
+}

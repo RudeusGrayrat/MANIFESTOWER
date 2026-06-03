@@ -1,0 +1,101 @@
+.phone-input-hidden-number input {
+  pointer-events: none;
+}
+
+.p-password-input {
+  width: 210px;
+}
+
+.p-password.p-component .p-password-input:focus {
+  border-color: #f4f4f4 !important;
+  box-shadow: none !important;
+}
+
+.p-password.p-component .p-inputwrapper-focus {
+  border-color: #f4f4f4 !important;
+  box-shadow: none !important;
+}
+
+.p-password.p-component {
+  box-shadow: none !important;
+}
+
+.MuiPickersPopper-root {
+  z-index: 1050;
+  /* Ajusta este valor según el z-index de tu modal o contenedores */
+}
+
+
+
+/* stilos.css */
+
+/* Eliminar borde del input interno del AutoComplete */
+.p-autocomplete-input {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+
+/* Asegurar que el contenedor mantenga tu estilo */
+.p-autocomplete {
+  width: 100%;
+}
+
+.p-autocomplete.p-autocomplete-dd .p-autocomplete-input {
+  border-radius: 0.375rem 0 0 0.375rem !important;
+}
+
+.p-autocomplete-panel {
+  border-radius: 0.375rem !important;
+  margin-top: 4px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Estilo para el dropdown button */
+.p-autocomplete-dropdown {
+  border: none !important;
+  background: transparent !important;
+  color: #6b7280 !important;
+  border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+.p-autocomplete-dropdown:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Eliminar bordes cuando está enfocado */
+.p-autocomplete:focus-within {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 1px #6366f1 !important;
+}
+
+.p-autocomplete-input:focus {
+  box-shadow: none !important;
+}
+
+/* Para el modo "OTRO" */
+.flex.items-center.gap-2 input[type="text"] {
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+
+/* Opcional: Si quieres que el panel de sugerencias sea más alto */
+.p-autocomplete-panel .p-autocomplete-items {
+  padding: 0 !important;
+}
+
+.p-autocomplete-panel .p-autocomplete-item {
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.p-autocomplete-panel .p-autocomplete-item:last-child {
+  border-bottom: none !important;
+}
+
+.p-autocomplete-panel .p-autocomplete-item:hover {
+  background: #f3f4f6 !important;
+}
