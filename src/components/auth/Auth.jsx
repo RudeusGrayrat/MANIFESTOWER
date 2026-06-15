@@ -1,11 +1,15 @@
 import { Outlet, useLocation } from "react-router-dom";
+import LoadingOverlay from "../ui/cards/LoadingOverlay";
+import { useAuth } from "../context/AuthContext";
 
 const AuthLayout = () => {
     const location = useLocation();
+    const { loading } = useAuth();
     const isRegister = location.pathname === "/registrar";
 
     return (
         <div className="min-h-screen w-screen relative overflow-hidden bg-white">
+            {loading && <LoadingOverlay message="Iniciando sesión..." />}
 
             {/* Inyección de animación fluida sincronizada con los 500ms del deslizamiento */}
             <style>{`
@@ -27,7 +31,7 @@ const AuthLayout = () => {
                         ? "left-[663px] max-xl:left-[700px]"
                         : "left-0"
                     }`}
-                style={{ backgroundImage: "url('MANIFIESTO_LOGO7.webp')" }}
+                style={{ backgroundImage: "url('MANIFIESTO_LOGO.webp')" }}
             />
 
             {/* 2. PANEL DEL FORMULARIO / OUTLET (Se mueve de derecha a izquierda) */}

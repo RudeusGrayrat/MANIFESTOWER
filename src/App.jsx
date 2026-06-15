@@ -1,40 +1,89 @@
-import './App.css'
-import { Route, Routes, useLocation } from 'react-router'
-import { Provider } from 'react-redux'
-import { AuthProvider } from './components/context/AuthContext'
-import Login from './components/auth/Login'
-import Register from './components/auth/Register/Register'
-import AuthLayout from './components/auth/Auth'
+import React, { lazy, Suspense } from "react";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 
-const App = () => {
-  const location = useLocation();
-  const path = ["/asistencia", "/"].includes(location.pathname);
-  return (
-    <AuthProvider>
-      {/* <Suspense fallback={<Loading />}> */}
-      {/* <div>
-        {/* {!path && <SideBar />}
-            {!path && <Nav notifications={notifications} />} */} 
+// Capa Pública e Infraestructura Básica
+import MainLayout from "./components/Modulos/Home/MainLayout";
+import ProtectedRoute from "./ProtectedRoute";
+import AuthLayout from "./components/auth/Auth";
+import LoadingOverlay from "./components/ui/cards/LoadingOverlay";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register/Register";
+import Configuracion from "./components/Modulos/Configuracion/Configuracion";
+import Perfil from "./components/Modulos/Perfil/Perfil";
 
-      <Routes>
-        <Route element={<AuthLayout title="Iniciar Sesión" />}>
-          <Route path="/" element={<Login />} />
-          <Route path="/registrar" element={<Register />} />
-        </Route>
-        {/* <Route path="/*" element={<Error />} />
-              <Route element={<ProtectedRoute />}>
-                <Route path="/home" element={<Home />} />
-                <Route path="/:module/:submodule" element={<Title />} />
-                <Route path="/profile" element={<OtherProfiles />} />
-                <Route path="/notificaciones" element={<Notificaciones />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/notas" element={<Notas />} />
-              </Route> */}
-      </Routes>
-      {/* </div> */}
-      {/* </Suspense> */}
-    </AuthProvider>
-  )
+// Capa Privada: Módulos con Carga Perezosa (Lazy Loading)
+const Dashboard = lazy(() => import("./components/Modulos/Dashboard/Dashboard"));
+const Transportistas = lazy(() => import("./components/Modulos/Transportistas/Transportistas"));
+const Manifiestos = lazy(() => import("./components/Modulos/Manifiestos/Manifiestos"));
+const Generadores = lazy(() => import("./components/Modulos/Generadores/Generadores"));
+
+const LoadingModulo = () => (
+  <div className="flex items-center justify-center h-screen bg-gray-50">
+    <p className="text-gray-500 animate-pulse font-medium">Cargando módulo...</p>
+  </div>
+);
+
+const router = createBrowserRouter([
+  {
+    // 🌟 CAPA PÚBLICA: Tu AuthLayout es el Padre Estructural
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "login", // URL: /login
+        element: <Login />,
+      },
+      {
+        path: "registrar", // URL: /registrar (Coincide exacto con tu check condicional)
+        element: <Register />,
+      },
+    ],
+  },
+  {
+    // 2. CAPA PRIVADA (Protegida y con estructura fija)
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <MainLayout /> {/* 🌟 Contiene Sidebar + Header fijados */}
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        // Si entran a "/", los redirige automáticamente a "/dashboard"
+        index: true,
+        element: <Navigate to="/dashboard" replace />,
+      },
+      {
+        path: "dashboard", // URL: /dashboard
+        element: <Suspense fallback={<LoadingOverlay />}><Dashboard /></Suspense>,
+      },
+      {
+        path: "manifiestos", // URL: /manifiestos
+        element: <Suspense fallback={<LoadingOverlay />}><Manifiestos /></Suspense>,
+      },
+      {
+        path: "transportistas", // URL: /transportistas
+        element: <Suspense fallback={<LoadingModulo />}><Transportistas /></Suspense>,
+      },
+      {
+        path: "generadores", // URL: /generadores
+        element: <Suspense fallback={<LoadingModulo />}><Generadores /></Suspense>,
+      },
+      {
+        path: "perfil",
+        element: <Suspense fallback={<LoadingModulo />}><Perfil /></Suspense>
+      },
+      {
+        path: "configuracion",
+        element: <Suspense fallback={<LoadingModulo />}><Configuracion /></Suspense>
+      }
+    ],
+  },
+  {
+    path: "*",
+    element: <Navigate to="/login" replace />,
+  },
+]);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App

@@ -14,24 +14,27 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [activeRole, setActiveRole] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     const signin = async (userData) => {
         try {
-            const response = await axios.post("/login", userData);
+            const response = await axios.post("/manifesTower/login", userData);
             const data = response.data;
+            console.log("Respuesta del servidor en signin:", data);
             if (data.token) {
+                console.log("Token recibido:", data.token);
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("token_expiry", Date.now() + 24 * 60 * 60 * 1000);
-                setUser(data.data);
+                setUser(data.user);
+                setActiveRole(data.user.rolActivo); // Establecer el primer rol como activo
                 setIsAuthenticated(true);
                 return { success: true };
             } else {
                 throw new Error("Token no recibido");
             }
         } catch (error) {
-            // El error se maneja y se retorna al componente que llamó al login
             return {
                 success: false,
                 message: error?.response?.data?.message || "Error al iniciar sesión"
@@ -51,27 +54,28 @@ export const AuthProvider = ({ children }) => {
             const token = localStorage.getItem("token");
             const expiry = localStorage.getItem("token_expiry");
 
+            // 1. Validar expiración local por tiempo simulado
             if (expiry && Date.now() > Number(expiry)) {
                 logout();
                 setIsLoading(false);
                 return;
             }
 
+            // 2. Si hay token, ir al backend a verificarlo de verdad
             if (token) {
                 try {
-                    const response = await verifyToken(token);
-                    if (response?.response?.data?.message === "No se encuentra este usuario") {
-                        logout();
-                    } else if (response?.data) {
-                        setUser(response.data);
-                        setIsAuthenticated(true);
-                    } else {
-                        setIsAuthenticated(false);
-                    }
+                    const { user, activeRole } = await verifyToken(token);
+                    setUser(user);
+                    setActiveRole(activeRole);
+                    setIsAuthenticated(true);
                 } catch (error) {
                     logout();
                 }
+            } else {
+                setIsAuthenticated(false);
             }
+
+            // Deshabilitar el estado de carga al terminar cualquier flujo
             setIsLoading(false);
         }
         checkLogin();
@@ -81,9 +85,10 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user,
+                activeRole,
                 signin,
                 isAuthenticated,
-                isLoading,
+                isLoading, // Asegúrate de usar 'isLoading' en tu App.jsx o ProtectedRoute
                 logout,
             }}
         >
