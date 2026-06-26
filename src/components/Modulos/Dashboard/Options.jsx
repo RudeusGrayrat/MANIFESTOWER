@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 
@@ -7,20 +7,21 @@ const PERMISSIONS_MATRIX = {
         ALL: ["VER", "CREAR", "EDITAR", "ELIMINAR", "REPORTAR", "APROBAR", "DESAPROBAR", "ENVIAR"]
     },
     GENERADOR: {
-        MANIFIESTOS: ["VER", "CREAR", "EDITAR", "REPORTAR", "ENVIAR"],
+        MANIFIESTOS: ["VER", "EDITAR", "REPORTAR", "ENVIAR"],
         TRANSPORTISTAS: ["VER", "CREAR"]
     },
     TRANSPORTISTA: {
-        MANIFIESTOS: ["VER", "EDITAR", "REPORTAR", "APROBAR", "DESAPROBAR", "ENVIAR"],
-        GENERADORES: ["VER"]
+        MANIFIESTOS: ["VER", "CREAR", "EDITAR", "REPORTAR", "APROBAR", "DESAPROBAR", "ENVIAR"],
+        GENERADORES: ["VER", "CREAR"]
     }
 };
 
 const OptionGlobal = ({
     ItemRegister,
     ItemList,
-    module,          // ← solo esto
+    module,
     ItemReporte,
+    ItemSolicitudes, // 🌟 NUEVA PROP: Para el componente de vinculaciones/solicitudes
     entityName = "Registro"
 }) => {
     const { user, activeRole } = useAuth();
@@ -81,6 +82,8 @@ const OptionGlobal = ({
                 ) : "Componente de Lista no asignado";
             case "Reporte":
                 return ItemReporte ? <ItemReporte /> : "Componente de Reporte no asignado";
+            case "Solicitudes": // 🌟 NUEVO CASO
+                return ItemSolicitudes ? <ItemSolicitudes /> : "Componente de Solicitudes no asignado";
             case "NoDisponible":
                 return <div className="p-10 text-center text-gray-500">No tienes permisos suficientes.</div>;
             default:
@@ -88,17 +91,41 @@ const OptionGlobal = ({
         }
     };
 
+    const getViewTitle = () => {
+        if (currentView === "Listar") return `Registro Central de ${entityName}s`;
+        if (currentView === "Crear") return `Nuevo ${entityName}`;
+        if (currentView === "Reporte") return `Panel de Reportes`;
+        if (currentView === "Solicitudes") return `Bandeja de Solicitudes de Vinculación`; // 🌟 NUEVO TÍTULO
+        return "Cargando...";
+    };
+
     return (
         <div className="w-full flex flex-col h-full">
             <div className="p-2 flex w-full items-center justify-between">
-                <div className="p-1">
-                    <h2 className="text-xl font-bold text-gray-900">
-                        {entityName} - {currentView || "Cargando..."}
-                    </h2>
-                    <p className="text-sm text-gray-500">{module}</p>  {/* ← solo el módulo */}
+                <div className="flex flex-col gap-2 my-1">
+                    {/* Breadcrumbs (Ruta de navegación) */}
+                    <nav className="flex items-center gap-2 text-xl font-medium text-gray-700">
+                        <Link to="/" className="flex items-center gap-1 hover:text-slate-700 cursor-pointer">
+                            <i className="pi pi-home text-[20px]! mr-1.5"></i> Inicio
+                        </Link>
+                        <i className="pi pi-angle-right text-[10px] text-slate-400"></i>
+                        <span className="capitalize">{module?.toLowerCase()}</span>
+                        <i className="pi pi-angle-right text-[10px] text-slate-400"></i>
+                        <span className="text-blue-800 font-semibold">{currentView}</span>
+                    </nav>
                 </div>
 
-                <div className="bg-white flex items-center gap-3 rounded-xl">
+                <div className="bg-white flex items-center gap-3 my-1 rounded-xl">
+                    {/* Botón de Solicitudes (Aparece al lado de Nuevo o Reporte) */}
+                    {currentView === "Listar" && ItemSolicitudes && (
+                        <button
+                            onClick={() => handleOptionClick("Solicitudes")}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 transition-all hover:scale-105 shadow-lg text-white text-sm font-semibold rounded-xl"
+                        >
+                            <i className="pi pi-envelope text-xs"></i> Solicitudes
+                        </button>
+                    )}
+
                     {currentView === "Listar" && permissionCreate && (
                         <button
                             onClick={() => handleOptionClick("Crear")}

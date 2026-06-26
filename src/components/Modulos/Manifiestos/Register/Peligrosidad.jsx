@@ -52,7 +52,7 @@ const Paso3_Peligrosidad = ({ formData, setFormData }) => {
                                 type="checkbox"
                                 checked={formData.peligrosidad?.[peli.key] || false}
                                 onChange={(e) => handleCheckboxChange(peli.key, e.target.checked)}
-                                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                className="h-4 w-4 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
                             />
                             <span className="text-sm text-gray-700">{peli.label}</span>
                         </label>

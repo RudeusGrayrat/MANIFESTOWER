@@ -5,14 +5,20 @@ import ListPrincipal from "../../ui/table/MainTable";
 import OptionGlobal from "../../Modulos/Dashboard/Options";
 import { useToast } from "../../notificaciones/ToastContext";
 import DetailGenerador from "./Actions/Detail";
+import { useAuth } from "../../context/AuthContext";
+import AddGenerador from "./Register/AddGenerador";
+import SolicitudesVinculacion from "../../notificaciones/Solicitudes";
 
 const Generadores = () => {
     const { showError } = useToast();
-
+    const { user } = useAuth();
     const fetchGeneradoresData = async (page, limit, search) => {
         try {
+            if (!user?._id) {
+                return { data: [], total: 0 };
+            }
             const response = await axios.get("/certificaciones/getGeneradoresPaginacion", {
-                params: { limit, page, search },
+                params: { limit, page, search, usuario: user?._id },
             });
             return {
                 data: response.data.data || [],
@@ -56,14 +62,30 @@ const Generadores = () => {
             </ListPrincipal>
         );
     };
+    const SolicitudesGeneradoresWrapper = () => {
+        return (
+            <div className="p-6 bg-white rounded-xl shadow-xs border border-slate-100">
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">Solicitudes de Vinculación Recibidas</h3>
+                <p className="text-sm text-slate-500 mb-4">
+                    Revisa y gestiona las invitaciones de Generadores que desean contratar tus unidades de transporte.
+                </p>
+                {/* Aquí pondrás la lógica de botones de [Aceptar] o [Rechazar] */}
+                <div className="p-10 border border-dashed border-slate-200 rounded-xl text-center text-slate-400">
+                    <i className="pi pi-bell text-3xl mb-2 block"></i>
+                    Bandeja de entrada de solicitudes de clientes listas para Procesar (Aceptar/Rechazar)
+                </div>
+            </div>
+        );
+    };
 
     return (
         <OptionGlobal
             module="GENERADORES"
             entityName="Generador"
             ItemList={GeneradoresListWrapper}
-            ItemRegister={() => <div className="p-5 text-gray-500">Módulo de registro en construcción...</div>}
+            ItemRegister={AddGenerador}
             ItemReporte={() => <div className="p-5 text-gray-500">Módulo de reportes en construcción...</div>}
+            ItemSolicitudes={SolicitudesVinculacion}
         />
     );
 };

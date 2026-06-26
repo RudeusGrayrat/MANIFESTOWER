@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token_expiry");
         setUser(null);
         setIsAuthenticated(false);
+        console.log("Usuario ha cerrado sesión. Token eliminado del localStorage.");
     };
 
     useEffect(() => {

@@ -170,7 +170,7 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                                 }
                             }))
                         }
-                        className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                        className="h-5 w-5 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
                     />
                     <span className="ml-2 text-md text-gray-600">Referendo</span>
                 </div>

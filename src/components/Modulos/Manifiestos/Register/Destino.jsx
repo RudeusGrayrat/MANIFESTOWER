@@ -211,7 +211,7 @@ const Paso5_Destino = ({ formData, setFormData }) => {
                             referendo: e.target.checked
                         }
                     }))}
-                    className="h-6 w-10 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    className="h-6 w-10 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
                 />
             </div>
             <div className="w-full ">
@@ -270,7 +270,7 @@ const Paso5_Destino = ({ formData, setFormData }) => {
                                 type="checkbox"
                                 checked={formData.otrosManejos?.comercializacion || false}
                                 onChange={(e) => handleCheckboxChange('comercializacion', e.target.checked)}
-                                className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                className="h-5 w-5 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
                             />
                             <span className="ml-2 text-sm text-gray-600">Comercialización</span>
                         </div>
@@ -280,7 +280,7 @@ const Paso5_Destino = ({ formData, setFormData }) => {
                                 type="checkbox"
                                 checked={formData.otrosManejos?.exportacion || false}
                                 onChange={(e) => handleCheckboxChange('exportacion', e.target.checked)}
-                                className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                className="h-5 w-5 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
                             />
                             <span className="ml-2 text-sm text-gray-600">Exportación</span>
                         </div>
@@ -290,7 +290,7 @@ const Paso5_Destino = ({ formData, setFormData }) => {
                                 type="checkbox"
                                 checked={formData.otrosManejos?.otro || false}
                                 onChange={(e) => handleCheckboxChange('otro', e.target.checked)}
-                                className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                className="h-5 w-5 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
                             />
                             <span className="ml-2 text-sm text-gray-600">Otro</span>
                         </div>

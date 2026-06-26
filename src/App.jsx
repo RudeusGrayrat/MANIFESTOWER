@@ -10,6 +10,8 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register/Register";
 import Configuracion from "./components/Modulos/Configuracion/Configuracion";
 import Perfil from "./components/Modulos/Perfil/Perfil";
+import Notificaciones from "./components/notificaciones/Notificaciones";
+import { NotificacionesProvider } from "./components/context/NotificacionesContext";
 
 // Capa Privada: Módulos con Carga Perezosa (Lazy Loading)
 const Dashboard = lazy(() => import("./components/Modulos/Dashboard/Dashboard"));
@@ -17,25 +19,13 @@ const Transportistas = lazy(() => import("./components/Modulos/Transportistas/Tr
 const Manifiestos = lazy(() => import("./components/Modulos/Manifiestos/Manifiestos"));
 const Generadores = lazy(() => import("./components/Modulos/Generadores/Generadores"));
 
-const LoadingModulo = () => (
-  <div className="flex items-center justify-center h-screen bg-gray-50">
-    <p className="text-gray-500 animate-pulse font-medium">Cargando módulo...</p>
-  </div>
-);
-
 const router = createBrowserRouter([
   {
     // 🌟 CAPA PÚBLICA: Tu AuthLayout es el Padre Estructural
     element: <AuthLayout />,
     children: [
-      {
-        path: "login", // URL: /login
-        element: <Login />,
-      },
-      {
-        path: "registrar", // URL: /registrar (Coincide exacto con tu check condicional)
-        element: <Register />,
-      },
+      { path: "login", element: <Login /> },
+      { path: "registrar", element: <Register /> },
     ],
   },
   {
@@ -43,7 +33,9 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <ProtectedRoute>
-        <MainLayout /> {/* 🌟 Contiene Sidebar + Header fijados */}
+        <NotificacionesProvider>
+          <MainLayout />
+        </NotificacionesProvider>
       </ProtectedRoute>
     ),
     children: [
@@ -62,19 +54,25 @@ const router = createBrowserRouter([
       },
       {
         path: "transportistas", // URL: /transportistas
-        element: <Suspense fallback={<LoadingModulo />}><Transportistas /></Suspense>,
+        element: <Suspense fallback={<LoadingOverlay />}><Transportistas /></Suspense>,
       },
       {
         path: "generadores", // URL: /generadores
-        element: <Suspense fallback={<LoadingModulo />}><Generadores /></Suspense>,
+        element: <Suspense fallback={<LoadingOverlay />}><Generadores /></Suspense>,
       },
       {
         path: "perfil",
-        element: <Suspense fallback={<LoadingModulo />}><Perfil /></Suspense>
+        element: <Suspense fallback={<LoadingOverlay />}><Perfil /></Suspense>
       },
       {
         path: "configuracion",
-        element: <Suspense fallback={<LoadingModulo />}><Configuracion /></Suspense>
+        element: <Suspense fallback={<LoadingOverlay />}><Configuracion /></Suspense>
+      },
+      {
+        path: "notificaciones",
+        element: <Suspense fallback={<LoadingOverlay />}>
+          <Notificaciones />
+        </Suspense>
       }
     ],
   },

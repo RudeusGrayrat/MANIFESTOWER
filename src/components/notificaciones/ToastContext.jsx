@@ -8,19 +8,19 @@ export const ToastProvider = ({ children }) => {
 
     // Funciones wrappers personalizadas y seguras
     const showSuccess = (detail, summary = "Éxito") => {
-        toastRef.current?.show({ severity: "success", summary, detail, life: 3000 });
+        toastRef.current?.show({ severity: "success", summary, detail: detail?.message || detail, life: 5000 });
     };
 
     const showError = (detail, summary = "Error") => {
-        toastRef.current?.show({ severity: "error", summary, detail, life: 4000 });
+        toastRef.current?.show({ severity: "error", summary, detail: detail?.message || detail, life: 5000 });
     };
 
     const showWarning = (detail, summary = "Advertencia") => {
-        toastRef.current?.show({ severity: "warn", summary, detail, life: 3500 });
+        toastRef.current?.show({ severity: "warn", summary, detail: detail?.message || detail, life: 5000 });
     };
 
     const showInfo = (detail, summary = "Información") => {
-        toastRef.current?.show({ severity: "info", summary, detail, life: 3000 });
+        toastRef.current?.show({ severity: "info", summary, detail: detail?.message || detail, life: 5000 });
     };
 
     return (

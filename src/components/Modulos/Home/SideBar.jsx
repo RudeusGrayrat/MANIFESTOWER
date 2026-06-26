@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNotificaciones } from "../../context/NotificacionesContext";
 
 const ICONS = {
     //logo de engranaje :
@@ -18,6 +19,7 @@ const ICONS = {
 const SideBar = ({ user, activeRole }) => {
     const [isHovered, setIsHovered] = useState(false);
     const ruc = user?.ruc || "00000000000";
+    const { unreadCount } = useNotificaciones();
 
     const getAvailableModules = () => {
         if (activeRole === "GENERADOR") {
@@ -139,8 +141,31 @@ const SideBar = ({ user, activeRole }) => {
                         </span>
                     </div>
                 </Link>
+                <Link
+                    to="/notificaciones"
+                    className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline
+                        ${isHovered ? 'w-[85%]' : 'w-14'}
+                    `}
+                    title="Notificaciones"
+                >
 
-                {/* BOTÓN CONFIGURACIÓN */}
+                    <div className="w-14 h-full flex items-center justify-center shrink-0">
+                        <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5 relative">
+                            {unreadCount > 0 && (
+                                <div className="absolute -right-1 top-1 p-1 flex justify-center items-center w-4 h-4 bg-red-400 rounded-full text-white text-xs font-bold ready-badge">
+                                    {unreadCount}
+                                </div>
+                            )}
+                            <span className="pi pi-bell text-[24px]!"></span>
+                        </div>
+                    </div>
+                    <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden
+                        ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}
+                    >
+                        Notificaciones
+                    </span>
+                </Link>
+
                 <Link
                     to="/configuracion"
                     className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline
@@ -161,7 +186,6 @@ const SideBar = ({ user, activeRole }) => {
                         Configuración
                     </span>
                 </Link>
-
                 {/* BOTÓN CERRAR SESIÓN (DISEÑO INTEGRADO Y UNIFICADO) */}
                 <button
                     onClick={logout}

@@ -14,7 +14,6 @@ import ButtonOk from "../../../ui/Buttons/Buttons";
 
 const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) => {
 
-    const sendMessage = useSendMessage();
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [pasoActual, setPasoActual] = useState(1);
     const { user } = useAuth();
@@ -230,12 +229,12 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
         <div className="w-full p-4">
             {/* Barra de progreso */}
             <div className="mb-4 mx-4">
-                <ProgressBar style={{ borderRadius: "20px" }} value={parseFloat(((pasoActual / pasos.length) * 100).toFixed(2))} ></ProgressBar>
+                <ProgressBar style={{ borderRadius: "20px" }} value={parseFloat(((pasoActual / pasos.length) * 100).toFixed(0))} ></ProgressBar>
             </div>
 
             {/* Paso actual */}
             <CardPlegable title={` ${pasos[pasoActual - 1].nombre}`}>
-                <PasoComponente formData={formEdit ? formEdit : formData} setFormData={setFormEdit ? setFormEdit : setFormData} />
+                <PasoComponente user={user} formData={formEdit ? formEdit : formData} setFormData={setFormEdit ? setFormEdit : setFormData} />
             </CardPlegable>
 
             {/* Botones de navegación */}

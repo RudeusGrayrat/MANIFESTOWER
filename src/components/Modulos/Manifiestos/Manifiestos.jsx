@@ -14,6 +14,10 @@ const Manifiestos = () => {
 
     const fetchManifiestosData = async (page, limit, search) => {
         try {
+            if (!user?._id) {
+                return { data: [], total: 0 };
+            }
+
             const params = { page, limit, search, usuario: user?._id };
             const response = await axios.get("/certificaciones/getManifiestosPaginacion", { params });
 

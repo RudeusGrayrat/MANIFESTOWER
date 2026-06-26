@@ -7,8 +7,6 @@ import { useAuth } from "../../context/AuthContext";
 
 const MainLayout = () => {
     const { user, activeRole } = useAuth();
-    console.log("MainLayout - Usuario actual:", user);
-    console.log("MainLayout - Rol activo:", activeRole);
     return (
         <div className="flex h-screen w-screen overflow-hidden bg-[#ffffff]">
             {/* Barra lateral izquierda fija */}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Input from "../../../ui/inputs/Input";
 
-const Paso1_DatosGenerales = ({ formData, setFormData }) => {
+const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
     const [transportistaOptions, setTransportistaOptions] = useState([]);
     const [generadorOptions, setGeneradorOptions] = useState([]);
     const [plantaOptions, setPlantaOptions] = useState(formData.generadorId?.plantas || []);
@@ -21,6 +21,7 @@ const Paso1_DatosGenerales = ({ formData, setFormData }) => {
                 value={formData.transportistaId}
                 setForm={setFormData}
                 fetchData="/certificaciones/getTransportistasPaginacion"
+                extraParams={{ usuario: user?._id }}
                 setOptions={setTransportistaOptions}
                 options={transportistaOptions}
                 field="razonSocial"

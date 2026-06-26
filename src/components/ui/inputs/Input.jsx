@@ -25,6 +25,7 @@ const Input = ({
     extraParams = {},
     disabled = false,
     optionLabel,
+    className,
     ...OtherProps
 }) => {
     if (setForm === undefined) {
@@ -318,7 +319,7 @@ const Input = ({
         case "select":
             content = (
                 <Dropdown
-                    className={estilo + " py-0!"}
+                    className={estilo + " py-0! rounded-md!"}
                     value={value}
                     onChange={(e) => {
                         if (OtherProps.onChange) {
@@ -351,7 +352,7 @@ const Input = ({
                                 setForm((prev) => ({ ...prev, [name]: e.target.checked }));
                             }
                         }}
-                        className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                        className="h-5 w-5 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
                         disabled={disabled}
                     />
                     <span className="ml-2 text-sm text-gray-600">
@@ -381,7 +382,7 @@ const Input = ({
     }
 
     return (
-        <div className="flex flex-col mx-3 F h-20" title={OtherProps.title || ""}>
+        <div className={`flex flex-col mx-3 h-20 ${className || ""}`} title={OtherProps.title || ""}>
             <label
                 className={`text-base font-medium ${error ? "text-red-500" : "text-gray-700"
                     }`}
