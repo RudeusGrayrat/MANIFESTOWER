@@ -63,7 +63,7 @@ const Paso6_OtrasObligaciones = ({ formData, setFormData }) => {
 
             <div className="grid">
                 <h4 className="font-medium mb-2">Representante EO-RS (entrega)</h4>
-                <div className="border flex flex-wrap rounded-lg p-3">
+                <div className="border border-gray-200 flex flex-wrap rounded-lg p-3">
                     <Input
                         label="Nombre"
                         type="select"
@@ -93,7 +93,7 @@ const Paso6_OtrasObligaciones = ({ formData, setFormData }) => {
                 </div>
 
                 <h4 className="font-medium mb-2">Responsable Generador (recibe)</h4>
-                <div className="border flex flex-wrap rounded-lg p-3">
+                <div className="border border-gray-200 flex flex-wrap rounded-lg p-3">
                     <Input
                         label="Nombre"
                         value={devolucionForm.generadorResponsableManejo}

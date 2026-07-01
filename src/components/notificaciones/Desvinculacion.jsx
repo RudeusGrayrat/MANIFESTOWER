@@ -19,7 +19,7 @@ const ConfirmDesvinculacionModal = ({ visible, onHide, onConfirm, rowData, loadi
                 label={loading ? "Desvinculando..." : "Sí, Desvincular"}
                 icon={loading ? "pi pi-spin pi-spinner" : "pi pi-trash"}
                 severity="danger"
-                onClick={onConfirm}
+                onClick={onConfirm} // Gatilla handleDesvincular del padre
                 className="bg-red-600 hover:bg-red-700 text-white border-none"
                 disabled={loading}
             />
@@ -46,7 +46,7 @@ const ConfirmDesvinculacionModal = ({ visible, onHide, onConfirm, rowData, loadi
             <div className="flex flex-col gap-3 py-2 text-gray-700">
                 <p className="font-medium">
                     ¿Estás seguro de que deseas desvincularte de la empresa: <br />
-                    <strong className="text-gray-900 block mt-1 text-base bg-gray-50 p-2 rounded-lg border border-gray-150">
+                    <strong className="text-gray-900 block mt-1 text-base bg-gray-50 p-2 rounded-lg border border-gray-200">
                         {rowData?.razonSocial || "este transportista"}
                     </strong>
                 </p>

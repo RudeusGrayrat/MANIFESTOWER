@@ -161,7 +161,7 @@ const ListPrincipal = ({
                 {permissionDelete && (
                     <Button icon="pi pi-trash" title="Eliminar" rounded outlined className={`text-red-600 rounded-full ${isApproved ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showDelete ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} severity="danger" onClick={() => handleShowDelete(rowData)} disabled={isApproved} />
                 )}
-                {actionBody && actionBody}
+                {actionBody && actionBody(rowData)}
             </React.Fragment>
         );
     };

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button"; // 🌟 Importamos el botón de PrimeReact
 import axios from "../../api/axios";
 import ListPrincipal from "../../ui/table/MainTable";
 import OptionGlobal from "../../Modulos/Dashboard/Options";
@@ -13,10 +12,8 @@ import ConfirmDesvinculacionModal from "../../notificaciones/Desvinculacion";
 
 const Transportistas = () => {
     const { showError, showSuccess } = useToast();
-    const [desvincularId, setDesvincularId] = useState(false);
     const { user } = useAuth();
     const [refreshKey, setRefreshKey] = useState(0);
-    const [showDesvinculationModal, setShowDesvinculationModal] = useState(false);
 
     const fetchTransportistasData = async (page, limit, search) => {
         if (!user?._id) {
@@ -38,70 +35,59 @@ const Transportistas = () => {
         }
     };
 
-    // 🌟 Función para romper el vínculo operacional en caliente
-    const handleDesvincular = async (rowData) => {
-        setDesvincularId(true)
-        setShowDesvinculationModal(true);
-        // const idVinculacion = rowData.vinculacionId; // El backend debe proveer este ID en el paginado
+    // 🌟 Wrapper que adaptará tu modal personalizado al estándar de MainTable
+    const DesvincularModalWrapper = ({ setShowDelete, selected, reload }) => {
+        const [loading, setLoading] = useState(false);
 
-        // if (!idVinculacion) {
-        //     showError("No se encontró el identificador de la vinculación para realizar esta acción.");
-        //     return;
-        // }
+        const handleConfirm = async () => {
+            setLoading(true);
 
-        // if (!window.confirm(`¿Estás seguro de que deseas desvincularte de la empresa ${rowData.razonSocial}?`)) {
-        //     return;
-        // }
+            // Mapeo correcto utilizando el prop "selected" que MainTable le inyecta automáticamente
+            const transportistaId = selected._id;
+            const generadorId = user?.generadorId || "CORE";
+            const usuarioId = user?._id;
+            const rolActivo = "GENERADOR";
 
-        try {
-            //     const response = await axios.patch(`/certificaciones/responderSolicitud/${idVinculacion}`, null, {
-            //         params: {
-            //             accion: 'CANCELAR',
-            //             usuarioId: user?._id,
-            //             rolActivo: 'GENERADOR' // Ajustar dinámicamente si el usuario maneja múltiples roles
-            //         }
-            //     });
+            try {
+                console.log("Iniciando desvinculación para:", selected);
+                const response = await axios.patch("/manifesTower/desvinculacion", null, {
+                    params: { transportistaId, generadorId, usuarioId, rolActivo }
+                });
 
-            //     if (response.status === 200) {
-            //         showSuccess("Desvinculación completada con éxito.");
-            //         setRefreshKey(prev => prev + 1); // Forzamos la recarga de datos en la tabla
-            //     }
-            console.log("Desvinculación simulada para:", rowData);
-        } catch (error) {
-            console.error("Error al desvincular:", error);
-            showError(error.response?.data?.message || "Error interno al procesar la desvinculación.");
-        } finally {
-            setDesvincularId(false); // Reseteamos el estado de desvinculación
-        }
+                if (response.status === 200) {
+                    showSuccess("Desvinculación completada con éxito.");
+                    reload(); // Recarga los datos de la tabla de forma fluida
+                    setShowDelete(false); // Cierra el modal
+                }
+            } catch (error) {
+                console.error("Error al desvincular:", error);
+                showError(error.response?.data?.message || "Error interno al procesar la desvinculación.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        return (
+            <ConfirmDesvinculacionModal
+                visible={true}
+                onHide={() => setShowDelete(false)} // Cierra usando la función nativa de MainTable
+                onConfirm={handleConfirm}
+                rowData={selected} // "selected" contiene la fila actual de la tabla
+                loading={loading}
+            />
+        );
     };
 
     const TransportistasListWrapper = (props) => {
         return (
             <ListPrincipal
                 {...props}
-                key={refreshKey} // 🌟 El key obliga al componente a remontarse y pedir datos frescos al eliminar
+                key={refreshKey}
                 fetchData={fetchTransportistasData}
-                actionBody={
-                    <Button icon="pi pi-times "
-                        title="Desvincular" rounded outlined
-                        className={`text-red-600 rounded-full mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out  ${desvincularId ? "shadow-inner translate-y-[2px]" : "shadow-xl! "}`}
-                        severity="danger"
-                        onClick={() => setShowDesvinculationModal(true)}
-                        disabled={desvincularId}
-                    />
-
-                }
+                permissionDelete={true}
+                DeleteItem={DesvincularModalWrapper}
                 DetailItem={DetailTransportista}
             >
-                {showDesvinculationModal && (
-                    <ConfirmDesvinculacionModal
-                        visible={showDesvinculationModal}
-                        onHide={() => setShowDesvinculationModal(false)}
-                        onConfirm={(rowData) => handleDesvincular(rowData)}
-                        rowData={(rowData) => rowData}
-                        loading={desvincularId}
-                    />
-                )}
                 <Column field="ruc" header="RUC / Identificación" />
                 <Column field="razonSocial" header="Razón Social" />
                 <Column field="contacto.telefono" header="Teléfono" body={(row) => row.contacto?.telefono || "-"} />

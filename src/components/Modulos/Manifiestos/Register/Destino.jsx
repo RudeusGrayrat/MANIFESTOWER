@@ -216,7 +216,7 @@ const Paso5_Destino = ({ formData, setFormData }) => {
             </div>
             <div className="w-full ">
                 {formData.referendoRecepcion?.referendo && (
-                    <div className="flex flex-col mt-4  pt-4 border-t gap-4 ">
+                    <div className="flex flex-col mt-4  pt-4 border-t border-gray-300 gap-4 ">
                         <div className="flex flex-wrap">
                             <Input
                                 label="Responsable EO-RS del destino final"
@@ -262,7 +262,7 @@ const Paso5_Destino = ({ formData, setFormData }) => {
                         </div>
                     </div>
                 )}
-                <div className="w-full mt-4 border-t pt-4 ">
+                <div className="w-full mt-4 border-t border-gray-300 pt-4 ">
                     <span className="text-lg font-semibold">Otros Manejos</span>
                     <div className="flex gap-8 mt-3">
                         <div className="flex items-center mt-2">

@@ -1,43 +1,75 @@
 import { useEffect, useState } from "react";
 import Input from "../../../ui/inputs/Input";
+import axios from "../../../api/axios"; // 🌟 Asegúrate de importar axios
 
 const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
     const [transportistaOptions, setTransportistaOptions] = useState([]);
     const [generadorOptions, setGeneradorOptions] = useState([]);
     const [plantaOptions, setPlantaOptions] = useState(formData.generadorId?.plantas || []);
 
+    // 🌟 1. Efecto para cargar los datos del Transportista por el ID del usuario
     useEffect(() => {
-        if (!formData.generadorId) return;
+        const cargarTransportista = async () => {
+            // Si el usuario tiene un transportistaId y no se ha cargado aún en el formData
+            if (user?.transportistaId && !formData.transportistaId) {
+                try {
+                    const response = await axios.get(`/certificaciones/getTransportistaById/${user.transportistaId}`);
+                    const data = response.data;
+                    console.log("Datos del transportista obtenidos:", data);
+                    if (data) {
+                        // Guardamos todo el objeto en el formData
+                        setFormData((prev) => ({
+                            ...prev,
+                            transportistaId: data
+                        }));
+                        setTransportistaOptions([data]);
+                        const generadoresAplanados = (data.generadores || [])
+                            .map(g => g.generadorId)
+                            .filter(Boolean);
+
+                        setGeneradorOptions(generadoresAplanados);
+                    }
+                } catch (error) {
+                    console.error("Error al obtener los datos del transportista:", error);
+                }
+            }
+        };
+
+        cargarTransportista();
+    }, []);
+
+    // 2. Efecto para manejar el cambio de plantas cuando cambia el generador
+    useEffect(() => {
+        if (!formData.generadorId) {
+            setPlantaOptions([]);
+            return;
+        }
         const plantasDisponibles = formData.generadorId.plantas || [];
         setPlantaOptions(plantasDisponibles);
     }, [formData.generadorId]);
 
     return (
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap gap-4">
             <Input
                 label="EO-RS Transportista *"
-                type="autocomplete"
+                disabled
+                type="select"
                 name="transportistaId"
                 value={formData.transportistaId}
-                setForm={setFormData}
-                fetchData="/certificaciones/getTransportistasPaginacion"
-                extraParams={{ usuario: user?._id }}
-                setOptions={setTransportistaOptions}
                 options={transportistaOptions}
-                field="razonSocial"
-                placeholder="Buscar transportista por RUC o razón social"
+                optionLabel="razonSocial"
+                editable={false}
+                placeholder="Cargando transportista..."
             />
             <Input
                 label="Generador"
-                type="autocomplete"
+                type="select"
                 name="generadorId"
                 ancho="!w-80"
                 value={formData.generadorId}
                 setForm={setFormData}
-                fetchData={`/certificaciones/getGeneradoresByTransportista/${formData.transportistaId?._id || formData.transportistaId}`}
-                setOptions={setGeneradorOptions}
                 options={generadorOptions}
-                field="razonSocial"
+                optionLabel="razonSocial"
                 placeholder="Buscar generador por RUC o razón social"
                 disabled={!formData.transportistaId}
             />
@@ -58,7 +90,7 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
                 type="select"
                 name="responsableGestion"
                 value={formData.responsableGestion}
-                options={formData.generadorId?.responsablesTecnicos || []} // ✅ ya disponible
+                options={formData.generadorId?.responsablesTecnicos || []}
                 setForm={setFormData}
                 optionLabel="nombreResponsable"
                 placeholder="Seleccionar responsable de gestión"

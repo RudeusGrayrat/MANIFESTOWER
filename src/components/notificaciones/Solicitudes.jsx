@@ -14,7 +14,6 @@ const SolicitudesVinculacion = () => {
     const { showSuccess, showError } = useToast();
     const [activeTab, setActiveTab] = useState("RECIBIDAS");
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-
     const esGenerador = !!user?.generadorId;
 
     const obtenerContraparte = (rowData) => {
@@ -93,25 +92,29 @@ const SolicitudesVinculacion = () => {
     };
 
     const estadoTemplate = (rowData) => {
+        const esDesvinculado = !!(rowData.fechaDesvinculacion || rowData.desvinculadoPor);
+        const configRechazada = "text-rose-600 bg-rose-50 border-rose-200";
         const config = {
             PENDIENTE: "text-amber-600 bg-amber-50 border-amber-200",
             ACEPTADA: "text-green-600 bg-green-50 border-green-200",
             RECHAZADA: "text-rose-600 bg-rose-50 border-rose-200"
         };
         return (
-            <span className={`px-3 py-1 rounded-full text-xs font-medium border shadow-xs ${config[rowData.status] || "text-slate-500 bg-slate-50"}`}>
-                {rowData.status}
+            <span className={`px-3 py-1 rounded-full text-xs font-medium border shadow-xs ${esDesvinculado ? configRechazada : config[rowData.status] || "text-slate-500 bg-slate-50"}`}>
+                {esDesvinculado ? "DESVINCULADO" : rowData.status}
             </span>
         );
     };
 
     const permisosTemplate = (rowData) => {
         if (rowData.status !== "ACEPTADA") return <span className="text-slate-400 text-xs">Aún no vinculados</span>;
+        const esDesvinculado = !!(rowData.fechaDesvinculacion || rowData.desvinculadoPor);
 
         if (esGenerador) {
             return (
                 <div className="flex items-center gap-2">
                     <InputSwitch
+                        disabled={esDesvinculado}
                         checked={rowData.tienePermisoLlenado || false}
                         onChange={(e) => handleTogglePermisoEnLinea(rowData, e.value)}
                     />
@@ -124,7 +127,7 @@ const SolicitudesVinculacion = () => {
             return (
                 <span className={`text-xs font-semibold px-2 py-1 rounded ${rowData.tienePermisoLlenado ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {rowData.tienePermisoLlenado ? "Permiso Concedido" : "Sin Autorización"}
-                    
+
                 </span>
             );
         }

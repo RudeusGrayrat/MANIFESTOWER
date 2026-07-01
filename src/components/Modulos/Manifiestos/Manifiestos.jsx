@@ -10,7 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const Manifiestos = () => {
     const { showError, showSuccess } = useToast();
-    const { user } = useAuth()
+    const { user, activeRole } = useAuth()
 
     const fetchManifiestosData = async (page, limit, search) => {
         try {
@@ -18,11 +18,8 @@ const Manifiestos = () => {
                 return { data: [], total: 0 };
             }
 
-            const params = { page, limit, search, usuario: user?._id };
+            const params = { page, limit, search, usuario: user?._id, rolActivo: activeRole };
             const response = await axios.get("/certificaciones/getManifiestosPaginacion", { params });
-
-            // Ejemplo opcional de éxito discreto si quieres:
-            // showSuccess("Datos sincronizados."); 
 
             return {
                 data: response.data.data || [],

@@ -43,7 +43,7 @@ const AddTransportista = () => {
             }
             console.log('🚀 ~ file: AddTransportista.jsx:58 ~ handleSendRequest ~ params:', params);
 
-            const response = await axios.post('/manifesTower/postVinculacion',null, {
+            const response = await axios.post('/manifesTower/postVinculacion', null, {
                 params: params
             });
 
@@ -51,6 +51,7 @@ const AddTransportista = () => {
             setForm({ transportista: '' });
             setTransportistaOptions([]);
             showSuccess(response.data?.message || `Solicitud de vinculación enviada con éxito a ${transportista.razonSocial}`);
+            setLocalSearch('');
         } catch (error) {
             console.error('Error al enviar solicitud:', error);
             const errorMsg = error.response?.data?.message || 'Error al procesar la vinculación';

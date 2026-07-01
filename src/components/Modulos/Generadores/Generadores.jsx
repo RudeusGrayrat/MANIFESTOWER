@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Column } from "primereact/column";
 import axios from "../../api/axios";
 import ListPrincipal from "../../ui/table/MainTable";
@@ -8,10 +8,13 @@ import DetailGenerador from "./Actions/Detail";
 import { useAuth } from "../../context/AuthContext";
 import AddGenerador from "./Register/AddGenerador";
 import SolicitudesVinculacion from "../../notificaciones/Solicitudes";
+import ConfirmDesvinculacionModal from "../../notificaciones/Desvinculacion";
 
 const Generadores = () => {
-    const { showError } = useToast();
+    const { showError, showSuccess } = useToast();
     const { user } = useAuth();
+    const [refreshKey, setRefreshKey] = useState(0);
+
     const fetchGeneradoresData = async (page, limit, search) => {
         try {
             if (!user?._id) {
@@ -31,11 +34,57 @@ const Generadores = () => {
         }
     };
 
+    // 🌟 Wrapper adaptado para el rol TRANSPORTISTA desvinculando un GENERADOR
+    const DesvincularModalWrapper = ({ setShowDelete, selected, reload }) => {
+        const [loading, setLoading] = useState(false);
+
+        const handleConfirm = async () => {
+            setLoading(true);
+
+            // Mapeo invertido correspondiente al rol de Transportista
+            const transportistaId = user?.transportistaId || "CORE";
+            const generadorId = selected._id; // La fila es el Generador
+            const usuarioId = user?._id;
+            const rolActivo = "TRANSPORTISTA";
+
+            try {
+                console.log("Iniciando desvinculación desde Transportista para:", selected);
+                const response = await axios.patch("/manifesTower/desvinculacion", null, {
+                    params: { transportistaId, generadorId, usuarioId, rolActivo }
+                });
+
+                if (response.status === 200) {
+                    showSuccess("Desvinculación completada con éxito.");
+                    reload(); // Recarga la tabla de forma limpia
+                    setShowDelete(false); // Cierra el modal
+                }
+            } catch (error) {
+                console.error("Error al desvincular:", error);
+                showError(error.response?.data?.message || "Error interno al procesar la desvinculación.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        return (
+            <ConfirmDesvinculacionModal
+                visible={true}
+                onHide={() => setShowDelete(false)}
+                onConfirm={handleConfirm}
+                rowData={selected} 
+                loading={loading}
+            />
+        );
+    };
+
     const GeneradoresListWrapper = (props) => {
         return (
             <ListPrincipal
                 {...props}
+                key={refreshKey}
                 fetchData={fetchGeneradoresData}
+                permissionDelete={true} // 🌟 Habilitamos el botón de eliminación en las acciones
+                DeleteItem={DesvincularModalWrapper} // 🌟 Pasamos nuestro puente del modal
                 DetailItem={DetailGenerador || (() => <div>Detalle no disponible</div>)}
             >
                 <Column field="ruc" header="RUC / Identificación" />
@@ -60,21 +109,6 @@ const Generadores = () => {
                     }}
                 />
             </ListPrincipal>
-        );
-    };
-    const SolicitudesGeneradoresWrapper = () => {
-        return (
-            <div className="p-6 bg-white rounded-xl shadow-xs border border-slate-100">
-                <h3 className="text-lg font-semibold text-slate-800 mb-2">Solicitudes de Vinculación Recibidas</h3>
-                <p className="text-sm text-slate-500 mb-4">
-                    Revisa y gestiona las invitaciones de Generadores que desean contratar tus unidades de transporte.
-                </p>
-                {/* Aquí pondrás la lógica de botones de [Aceptar] o [Rechazar] */}
-                <div className="p-10 border border-dashed border-slate-200 rounded-xl text-center text-slate-400">
-                    <i className="pi pi-bell text-3xl mb-2 block"></i>
-                    Bandeja de entrada de solicitudes de clientes listas para Procesar (Aceptar/Rechazar)
-                </div>
-            </div>
         );
     };
 
