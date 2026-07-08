@@ -40,24 +40,6 @@ const SolicitudesVinculacion = () => {
         }
     };
 
-    const handleTogglePermisoEnLinea = async (rowData, nuevoValor) => {
-        try {
-            const response = await axios.patch(`/manifesTower/patchVinculacion/${rowData._id}`, null, {
-                params: {
-                    accion: "TOGGLE_PERMISO",
-                    usuarioId: user?._id,
-                    rolActivo: activeRole,
-                    tienePermisoLlenado: nuevoValor
-                }
-            });
-            showSuccess(response.data?.message);
-            setRefreshTrigger(prev => prev + 1);
-        } catch (error) {
-            console.error(error);
-            showError("No se pudo cambiar el permiso.");
-        }
-    };
-
     const handleCancelarEnlace = async (rowData) => {
         try {
             const response = await axios.patch(`/manifesTower/patchVinculacion/${rowData._id}`, null, {
@@ -104,33 +86,6 @@ const SolicitudesVinculacion = () => {
                 {esDesvinculado ? "DESVINCULADO" : rowData.status}
             </span>
         );
-    };
-
-    const permisosTemplate = (rowData) => {
-        if (rowData.status !== "ACEPTADA") return <span className="text-slate-400 text-xs">Aún no vinculados</span>;
-        const esDesvinculado = !!(rowData.fechaDesvinculacion || rowData.desvinculadoPor);
-
-        if (esGenerador) {
-            return (
-                <div className="flex items-center gap-2">
-                    <InputSwitch
-                        disabled={esDesvinculado}
-                        checked={rowData.tienePermisoLlenado || false}
-                        onChange={(e) => handleTogglePermisoEnLinea(rowData, e.value)}
-                    />
-                    <span className="text-xs font-medium text-slate-600">
-                        {rowData.tienePermisoLlenado ? "Autorizado" : "Restringido"}
-                    </span>
-                </div>
-            );
-        } else {
-            return (
-                <span className={`text-xs font-semibold px-2 py-1 rounded ${rowData.tienePermisoLlenado ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {rowData.tienePermisoLlenado ? "Permiso Concedido" : "Sin Autorización"}
-
-                </span>
-            );
-        }
     };
 
     const ApproveModal = ({ setShowApprove, selected, reload }) => {
@@ -311,7 +266,6 @@ const SolicitudesVinculacion = () => {
                 }} />
                 <Column header="Fecha Solicitud" body={(row) => <span className="text-sm text-slate-600">{new Date(row.createdAt).toLocaleDateString()}</span>} />
                 <Column header="Estado" body={estadoTemplate} />
-                <Column header="Autorización de Llenado" body={permisosTemplate} />
             </ListPrincipal>
         </div>
     );

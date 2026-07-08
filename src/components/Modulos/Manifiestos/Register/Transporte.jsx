@@ -22,14 +22,18 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
             }
         }));
     };
+
+    // 1. Cargar conductores del transportista
     useEffect(() => {
         if (formData.transportistaId) {
             const transportistaSeleccionado = formData?.transportistaId;
             const conductores = transportistaSeleccionado?.conductores || [];
-            const allConductores = conductores?.map(c => c.nombre)
+            const allConductores = conductores?.map(c => c.nombre);
             setConductoresOptions(allConductores);
         }
     }, [formData.transportistaId]);
+
+    // 2. Resetear referendo si se desmarca el checkbox
     useEffect(() => {
         if (formData.referendoEntrega?.referendo === false) {
             setFormReferendo({
@@ -48,49 +52,93 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                     cargoResponsableEors: "",
                     fechaRecepcion: "",
                     horaRecepcion: "",
+                    referendo: false
                 }
             }));
         }
     }, [formData.referendoEntrega?.referendo]);
+
+    // 3. Opciones Responsable Generador + Vinculación de Objeto Inicial
     useEffect(() => {
-        if (Object.keys(formData.generadorId).length > 0) {
-            const responsablesGenerador = formData.generadorId.responsablesTecnicos
-            if (responsablesGenerador.length > 0) {
-                setResponsableGeneradorOptions(responsablesGenerador);
-            } else {
-                setResponsableGeneradorOptions([]);
+        if (formData.generadorId && Object.keys(formData.generadorId).length > 0) {
+            const responsablesGenerador = formData.generadorId.responsablesTecnicos || [];
+            setResponsableGeneradorOptions(responsablesGenerador);
+
+            // Si es un string inicial, buscamos su objeto para inicializar correctamente el select
+            if (typeof formReferendo.generadorResponsableManejo === 'string' && formReferendo.generadorResponsableManejo) {
+                const encontrado = responsablesGenerador.find(r => r.nombreResponsable === formReferendo.generadorResponsableManejo);
+                if (encontrado) {
+                    setFormReferendo(prev => ({ ...prev, generadorResponsableManejo: encontrado }));
+                }
             }
         }
     }, [formData.generadorId]);
+
+    // 4. Opciones Responsable EORS + Vinculación de Objeto Inicial
     useEffect(() => {
         if (formData.transportistaId) {
-            const responsablesEORS = formData.transportistaId?.responsables
-            if (responsablesEORS.length > 0) {
-                setResponsableEORSOptions(responsablesEORS);
-            } else {
-                setResponsableEORSOptions([]);
+            const responsablesEORS = formData.transportistaId?.responsables || [];
+            setResponsableEORSOptions(responsablesEORS);
+
+            // Si es un string inicial, buscamos su objeto para inicializar correctamente el select
+            if (typeof formReferendo.responsableEors === 'string' && formReferendo.responsableEors) {
+                const encontrado = responsablesEORS.find(r => r.nombre === formReferendo.responsableEors);
+                if (encontrado) {
+                    setFormReferendo(prev => ({ ...prev, responsableEors: encontrado }));
+                }
             }
         }
-
     }, [formData.transportistaId]);
 
+    // 5. Sincronización SEGURA hacia el formData global (Evita sobreescrituras con undefined)
     useEffect(() => {
-        if (formReferendo.generadorResponsableManejo && formReferendo.responsableEors) {
-            setFormData(prev => ({
-                ...prev,
-                referendoEntrega: {
-                    generadorResponsableManejo: formReferendo.generadorResponsableManejo.nombreResponsable,
-                    firmaGenerador: formReferendo.generadorResponsableManejo.firmaResponsable || "",
-                    responsableEors: formReferendo.responsableEors.nombre,
-                    firmaResponsableEors: formReferendo.responsableEors.firmaResponsable || "",
-                    dniResponsableEors: formReferendo.responsableEors.dni,
-                    cargoResponsableEors: formReferendo.responsableEors.cargo,
-                    fechaRecepcion: formReferendo.fechaRecepcion,
-                    referendo: formData.referendoEntrega?.referendo || false,
+        const gen = formReferendo.generadorResponsableManejo;
+        const eors = formReferendo.responsableEors;
+
+        setFormData(prev => {
+            const nuevoReferendo = {
+                ...prev.referendoEntrega,
+                referendo: prev.referendoEntrega?.referendo || false,
+            };
+
+            // Procesar Generador de forma segura
+            if (gen) {
+                if (typeof gen === 'object' && gen.nombreResponsable) {
+                    nuevoReferendo.generadorResponsableManejo = gen.nombreResponsable;
+                    nuevoReferendo.firmaGenerador = gen.firmaResponsable || "";
+                } else if (typeof gen === 'string') {
+                    nuevoReferendo.generadorResponsableManejo = gen;
                 }
-            }));
-        }
-    }, [formReferendo.generadorResponsableManejo, formReferendo.responsableEors]);
+            }
+
+            // Procesar Responsable EORS de forma segura
+            if (eors) {
+                if (typeof eors === 'object' && eors.nombre) {
+                    nuevoReferendo.responsableEors = eors.nombre;
+                    nuevoReferendo.firmaResponsableEors = eors.firmaResponsable || "";
+                    nuevoReferendo.dniResponsableEors = eors.dni || "";
+                    nuevoReferendo.cargoResponsableEors = eors.cargo || "";
+                } else if (typeof eors === 'string') {
+                    nuevoReferendo.responsableEors = eors;
+                }
+            }
+
+            if (formReferendo.fechaRecepcion) {
+                nuevoReferendo.fechaRecepcion = formReferendo.fechaRecepcion;
+            }
+
+            // Evitar bucles infinitos de renderizado si el objeto no ha cambiado realmente
+            if (JSON.stringify(prev.referendoEntrega) === JSON.stringify(nuevoReferendo)) {
+                return prev;
+            }
+
+            return {
+                ...prev,
+                referendoEntrega: nuevoReferendo
+            };
+        });
+    }, [formReferendo.generadorResponsableManejo, formReferendo.responsableEors, formReferendo.fechaRecepcion]);
+
     return (
         <div className="gap-4">
             <div className="flex flex-wrap">
@@ -154,8 +202,8 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                     placeholder="Observaciones del transporte"
                     ancho="w-full"
                 />
-
             </div>
+
             <div className="flex flex-col gap-4 mt-4">
                 <div className="flex items-center mt-4 m-2">
                     <input
@@ -174,9 +222,9 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                     />
                     <span className="ml-2 text-md text-gray-600">Referendo</span>
                 </div>
+
                 {formData.referendoEntrega?.referendo && (
                     <div className="flex flex-wrap">
-
                         <Input
                             label="Generador - Responsable del manejo"
                             type="select"
@@ -188,6 +236,7 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                             placeholder="Nombre del generador - responsable del manejo"
                             ancho="w-full"
                         />
+
                         <Input
                             label="Responsable EORS"
                             type="select"
@@ -199,20 +248,23 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                             placeholder="Nombre del responsable EORS"
                             ancho="w-full"
                         />
+
                         <Input
                             label="DNI del responsable EORS"
-                            value={formReferendo.responsableEors?.dni || ""}
+                            value={formReferendo.responsableEors?.dni || formData.referendoEntrega?.dniResponsableEors || ""}
                             placeholder="DNI del responsable EORS"
                             ancho="w-full"
                             disabled
                         />
+
                         <Input
                             label="Cargo del responsable EORS"
-                            value={formReferendo.responsableEors?.cargo || ""}
+                            value={formReferendo.responsableEors?.cargo || formData.referendoEntrega?.cargoResponsableEors || ""}
                             placeholder="Cargo del responsable EORS"
                             disabled
                             ancho="w-full"
                         />
+
                         <Input
                             label="Fecha"
                             type="date"
@@ -221,6 +273,7 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                             ancho="!min-w-40"
                             disabled
                         />
+
                         <InputNormal
                             label="Hora"
                             type="time"

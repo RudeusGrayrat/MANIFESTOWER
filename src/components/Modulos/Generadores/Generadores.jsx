@@ -71,7 +71,7 @@ const Generadores = () => {
                 visible={true}
                 onHide={() => setShowDelete(false)}
                 onConfirm={handleConfirm}
-                rowData={selected} 
+                rowData={selected}
                 loading={loading}
             />
         );
@@ -89,8 +89,8 @@ const Generadores = () => {
             >
                 <Column field="ruc" header="RUC / Identificación" />
                 <Column field="razonSocial" header="Razón Social" />
-                <Column field="direccionFiscal" header="Dirección Fiscal" body={(row) => row.direccionFiscal || "-"} />
-                <Column field="contacto.nombre" header="Contacto" body={(row) => row.contacto?.nombre || "-"} />
+                <Column field="representanteLegal" header="Representante Legal" />
+                <Column field="correoElectronico" header="Correo" />
                 <Column
                     field="createdAt"
                     header="Fecha Registro"

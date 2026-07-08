@@ -11,7 +11,7 @@ const PERMISSIONS_MATRIX = {
         TRANSPORTISTAS: ["VER", "CREAR"]
     },
     TRANSPORTISTA: {
-        MANIFIESTOS: ["VER", "CREAR", "EDITAR", "REPORTAR", "APROBAR", "DESAPROBAR", "ENVIAR"],
+        MANIFIESTOS: ["VER", "CREAR", "EDITAR", "ENVIAR"],
         GENERADORES: ["VER", "CREAR"]
     }
 };
@@ -21,7 +21,7 @@ const OptionGlobal = ({
     ItemList,
     module,
     ItemReporte,
-    ItemSolicitudes, // 🌟 NUEVA PROP: Para el componente de vinculaciones/solicitudes
+    ItemSolicitudes,
     entityName = "Registro"
 }) => {
     const { user, activeRole } = useAuth();

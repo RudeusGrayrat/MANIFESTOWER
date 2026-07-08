@@ -147,7 +147,6 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
         });
         setPasoActual(1);
     };
-
     const register = async () => {
         setDeshabilitar(true);
 

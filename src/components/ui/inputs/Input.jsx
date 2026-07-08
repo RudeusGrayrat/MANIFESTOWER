@@ -365,11 +365,15 @@ const Input = ({
         // ✅ ELIMINAMOS EL case "number" → usamos el default
 
         default:
+            let displayValue = value ?? "";
+            if (type === "date" && typeof value === "string" && value.includes("T")) {
+                displayValue = value.split("T")[0];
+            }
             content = (
                 <input
                     type={type}
                     name={name}
-                    value={value ?? ""}
+                    value={displayValue}
                     autoComplete="off"
                     placeholder={error ? "Este campo es obligatorio" : label}
                     onChange={handleChange}

@@ -139,7 +139,7 @@ const ListPrincipal = ({
         const isActivated = rowData.state === "ACTIVO" || rowData.estado === "ACTIVO";
         const isApproved = rowData.state === "APROBADO" || rowData.estado === "APROBADO" || rowData.status === "ACEPTADA" || rowData.status === "RECHAZADA";
         const isRejected = rowData.state === "RECHAZADO" || rowData.estado === "RECHAZADO" || rowData.status === "RECHAZADA" || rowData.status === "ACEPTADA";
-        const isSend = rowData.estado !== "PENDIENTE" && rowData.estado !== "OBSERVADO";
+        const isSend = isRejected || isApproved || rowData.state === "ENVIADO" || rowData.estado === "ENVIADO" || rowData.status === "ENVIADA";
 
         return (
             <React.Fragment>

@@ -6,23 +6,25 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
     const [transportistaOptions, setTransportistaOptions] = useState([]);
     const [generadorOptions, setGeneradorOptions] = useState([]);
     const [plantaOptions, setPlantaOptions] = useState(formData.generadorId?.plantas || []);
-
-    // 🌟 1. Efecto para cargar los datos del Transportista por el ID del usuario
     useEffect(() => {
         const cargarTransportista = async () => {
-            // Si el usuario tiene un transportistaId y no se ha cargado aún en el formData
-            if (user?.transportistaId && !formData.transportistaId) {
+            if (formData.generadorId && generadorOptions.length === 0) {
+                setGeneradorOptions([formData.generadorId]);
+            }
+            const idTransportista = formData.transportistaId?._id || formData.transportistaId || user?.transportistaId;
+
+            if (idTransportista) {
                 try {
-                    const response = await axios.get(`/certificaciones/getTransportistaById/${user.transportistaId}`);
+                    const response = await axios.get(`/certificaciones/getTransportistaById/${idTransportista}`);
                     const data = response.data;
-                    console.log("Datos del transportista obtenidos:", data);
+
                     if (data) {
-                        // Guardamos todo el objeto en el formData
-                        setFormData((prev) => ({
-                            ...prev,
-                            transportistaId: data
-                        }));
+                        if (typeof formData.transportistaId !== 'object') {
+                            setFormData((prev) => ({ ...prev, transportistaId: data }));
+                        }
+
                         setTransportistaOptions([data]);
+
                         const generadoresAplanados = (data.generadores || [])
                             .map(g => g.generadorId)
                             .filter(Boolean);
@@ -36,9 +38,8 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
         };
 
         cargarTransportista();
-    }, []);
+    }, [formData.generadorId]);
 
-    // 2. Efecto para manejar el cambio de plantas cuando cambia el generador
     useEffect(() => {
         if (!formData.generadorId) {
             setPlantaOptions([]);
@@ -53,19 +54,18 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
             <Input
                 label="EO-RS Transportista *"
                 disabled
-                type="select"
                 name="transportistaId"
-                value={formData.transportistaId}
+                value={formData.transportistaId?.razonSocial || ""}
                 options={transportistaOptions}
-                optionLabel="razonSocial"
-                editable={false}
                 placeholder="Cargando transportista..."
             />
             <Input
                 label="Generador"
                 type="select"
                 name="generadorId"
+                editable={false}
                 ancho="!w-80"
+                dataKey="_id"
                 value={formData.generadorId}
                 setForm={setFormData}
                 options={generadorOptions}

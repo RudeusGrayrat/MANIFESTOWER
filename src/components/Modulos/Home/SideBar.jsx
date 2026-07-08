@@ -152,7 +152,7 @@ const SideBar = ({ user, activeRole }) => {
                     <div className="w-14 h-full flex items-center justify-center shrink-0">
                         <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5 relative">
                             {unreadCount > 0 && (
-                                <div className="absolute -right-1 top-1 p-1 flex justify-center items-center w-4 h-4 bg-red-400 rounded-full text-white text-xs font-bold ready-badge">
+                                <div className="absolute -right-1.5 top-0.5 flex justify-center items-center w-5 h-5  bg-red-400 rounded-full text-white text-[10px] font-bold ready-badge">
                                     {unreadCount}
                                 </div>
                             )}
