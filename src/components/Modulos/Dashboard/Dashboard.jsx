@@ -74,15 +74,16 @@ const Dashboard = () => {
                         <ResumenManifiestos data={stats} />
                     </div>
 
-                    {/* Fila de gráficos: proporción 3:1 en laptop/tablet, 5:3 en monitores grandes (más aire para la dona) */}
+                    {/* Fila de gráficos: proporción 3:1 en laptop/tablet, 5:3 en monitores grandes */}
                     <div className="flex-1 min-h-0 grid grid-cols-1 xl:grid-cols-[3fr_1fr] 2xl:grid-cols-[5fr_3fr] gap-4 md:gap-[clamp(0.75rem,1.5vw,1.5rem)]">
 
                         {/* Gráfico de barras */}
-                        <div className="bg-white shadow-sm border border-gray-100 rounded-2xl p-[clamp(0.75rem,1.2vw,1.5rem)] flex flex-col min-h-0">
+                        <div className="bg-white shadow-sm border border-gray-100 rounded-2xl p-[clamp(0.75rem,1.2vw,1.5rem)] flex flex-col min-h-0 overflow-hidden">
                             <h2 className="text-[clamp(0.65rem,0.35vw+0.5rem,0.8125rem)] font-bold text-gray-400 uppercase tracking-wider mb-2 flex-none">
                                 Manifiestos por mes
                             </h2>
-                            <div className="flex-1 min-h-0 relative">
+                            {/* Contenedor estable: SIN absolute, con overflow-hidden como red de seguridad */}
+                            <div className="flex-1 min-h-[8rem] overflow-hidden">
                                 <Chart
                                     type="bar"
                                     data={{
@@ -90,37 +91,33 @@ const Dashboard = () => {
                                         datasets: [{ label: 'Manifiestos', data: data.mensual.map(i => i.cantidad), backgroundColor: '#8884d8' }]
                                     }}
                                     options={{ responsive: true, maintainAspectRatio: false }}
-                                    className="!absolute !inset-0 !w-full !h-full"
+                                    className="!w-full !h-full"
                                 />
                             </div>
                         </div>
 
-                        {/* Dona: layout vertical por defecto, HORIZONTAL en 2xl+ (cuando la tarjeta se vuelve corta y ancha por la tabla) */}
-                        <div className="bg-white shadow-sm border border-gray-100 rounded-2xl p-[clamp(0.75rem,1.2vw,1.5rem)] flex flex-col min-h-0">
+                        {/* Dona: vertical por defecto, horizontal en 2xl+ */}
+                        <div className="bg-white shadow-sm border border-gray-100 rounded-2xl p-[clamp(0.75rem,1.2vw,1.5rem)] flex flex-col min-h-0 overflow-hidden">
                             <h3 className="text-[clamp(0.65rem,0.35vw+0.5rem,0.8125rem)] font-bold text-gray-400 uppercase tracking-wider mb-2 flex-none">
                                 Estado de manifiestos
                             </h3>
 
-                            {/* flex-col -> flex-row en 2xl: la dona pasa de estar arriba a estar a la izquierda */}
-                            <div className="flex-1 min-h-0 flex flex-col 2xl:flex-row items-center gap-3 2xl:gap-5">
+                            <div className="flex-1 min-h-0 flex flex-col 2xl:flex-row items-center gap-3 2xl:gap-5 overflow-hidden">
 
-                                {/* Wrapper de la dona: en vertical se limita por ANCHO, en horizontal se limita por ALTO */}
-                                <div className="w-full 2xl:w-auto flex-1 2xl:flex-none min-h-0 2xl:h-full flex items-center justify-center">
-                                    <div className="relative aspect-square
-                    h-full max-h-[clamp(5rem,12vw,11rem)] w-full max-w-[clamp(5rem,12vw,11rem)]
-                    2xl:h-full 2xl:max-h-full 2xl:w-auto 2xl:max-w-none
-                ">
+                                {/* Wrapper de la dona: tamaño ESTABLE, sin absolute, sin conflictos w/h */}
+                                <div className="shrink-0 2xl:h-full 2xl:flex-1 2xl:flex 2xl:items-center 2xl:justify-center">
+                                    <div className="mx-auto w-[clamp(5rem,25vw,10rem)] h-[clamp(5rem,25vw,10rem)] 2xl:w-full 2xl:h-[85%] 2xl:max-w-[min(85%,14rem)] overflow-hidden">
                                         <Chart
                                             type="doughnut"
                                             data={pieData}
                                             options={{ plugins: { legend: { display: false } }, cutout: '70%', maintainAspectRatio: false }}
-                                            className="!absolute !inset-0 !w-full !h-full"
+                                            className="!w-full !h-full"
                                         />
                                     </div>
                                 </div>
 
-                                {/* Leyenda: ocupa el resto del espacio, centrada verticalmente cuando está a la derecha */}
-                                <div className="w-full 2xl:flex-1 flex-none 2xl:h-full flex flex-col justify-center gap-[clamp(0.25rem,0.4vw,0.5rem)] overflow-y-auto max-h-full min-w-0">
+                                {/* Leyenda */}
+                                <div className="w-full 2xl:flex-1 flex-1 min-h-0 2xl:h-full flex flex-col justify-center gap-[clamp(0.25rem,0.4vw,0.5rem)] overflow-y-auto">
                                     {estadosOrdenados.map((estado) => {
                                         const valor = data.estados[estado] || 0;
                                         const total = stats.total || 1;
@@ -187,7 +184,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Columna derecha: notificaciones, a tope, altura completa siempre */}
-                <div className="col-span-12 lg:col-span-3 min-h-0">
+                <div className="hidden lg:block lg:col-span-3 min-h-0">
                     <NotificacionesWidget />
                 </div>
             </div>

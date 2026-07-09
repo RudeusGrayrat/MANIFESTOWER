@@ -15,9 +15,8 @@ const ICONS = {
     )
 };
 
-const SideBar = ({ user, activeRole }) => {
+const SideBar = ({ user, activeRole, mobileOpen, setMobileOpen }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const [mobileOpen, setMobileOpen] = useState(false);
     const ruc = user?.ruc || "00000000000";
     const { unreadCount } = useNotificaciones();
 
@@ -44,104 +43,9 @@ const SideBar = ({ user, activeRole }) => {
         window.location.href = "/login";
     };
 
-    // Contenido de navegación compartido entre desktop y el drawer mobile
-    const NavLinks = ({ expanded, onNavigate }) => (
-        <>
-            <div className="w-full flex flex-col items-center space-y-4 flex-1 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
-                {userOptions.map((options, index) => (
-                    <Link
-                        key={index}
-                        to={options.path}
-                        onClick={onNavigate}
-                        className={`h-14 flex items-center border border-gray-200 shadow-md shadow-emerald-950/20 bg-gradient-to-tr from-white to-gray-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden no-underline
-                            ${expanded ? 'w-[85%]' : 'w-14'}
-                        `}
-                        title={options.module}
-                    >
-                        <div className="w-14 h-full flex items-center justify-center shrink-0">
-                            <img src={`/${options.module}.svg`} alt="icon" width={32} height={32} className="transition-transform duration-300 group-hover:scale-110" />
-                        </div>
-                        <span className={`font-bold text-sm text-emerald-900 tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden
-                            ${expanded ? 'opacity-100 translate-x-0 w-auto ml-2' : 'opacity-0 -translate-x-10 w-0 ml-0 pointer-events-none'}`}
-                        >
-                            {options.module}
-                        </span>
-                    </Link>
-                ))}
-            </div>
-
-            <div className="mt-auto w-full flex flex-col items-center space-y-3 pb-6 shrink-0 border-t border-emerald-400/20 pt-4">
-                <Link to="/perfil" onClick={onNavigate}
-                    className={`h-14 flex items-center border border-emerald-300/30 bg-white/10 text-white rounded-full transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'w-[85%]' : 'w-14'}`}
-                    title={`${activeRole} - ${ruc}`}>
-                    <div className="w-14 h-full flex items-center justify-center shrink-0">{ICONS.empresa}</div>
-                    <div className={`flex flex-col min-w-0 transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
-                        <span className="text-xs font-bold tracking-wide truncate pr-1">{activeRole}</span>
-                        <span className="text-[10px] text-emerald-200 font-medium tracking-wider">{ruc}</span>
-                    </div>
-                </Link>
-
-                <Link to="/notificaciones" onClick={onNavigate}
-                    className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline ${expanded ? 'w-[85%]' : 'w-14'}`}
-                    title="Notificaciones">
-                    <div className="w-14 h-full flex items-center justify-center shrink-0">
-                        <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5 relative">
-                            {unreadCount > 0 && (
-                                <div className="absolute -right-1.5 top-0.5 flex justify-center items-center w-5 h-5 bg-red-400 rounded-full text-white text-[10px] font-bold">
-                                    {unreadCount}
-                                </div>
-                            )}
-                            <span className="pi pi-bell text-[24px]!"></span>
-                        </div>
-                    </div>
-                    <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
-                        Notificaciones
-                    </span>
-                </Link>
-
-                <Link to="/configuracion" onClick={onNavigate}
-                    className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline ${expanded ? 'w-[85%]' : 'w-14'}`}
-                    title="Configuración">
-                    <div className="w-14 h-full flex items-center justify-center shrink-0">
-                        <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5">
-                            <span className="pi pi-cog !text-[24px]"></span>
-                        </div>
-                    </div>
-                    <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
-                        Configuración
-                    </span>
-                </Link>
-
-                <button onClick={logout}
-                    className={`h-14 flex items-center bg-red-950/20 hover:bg-red-500/20 text-red-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden border border-transparent hover:border-red-400/30 ${expanded ? 'w-[85%]' : 'w-14'}`}
-                    title="Cerrar Sesión">
-                    <div className="w-14 h-full flex items-center justify-center shrink-0">
-                        <div className="transition-transform duration-300 group-hover:translate-x-0.5">{ICONS.logout}</div>
-                    </div>
-                    <span className={`font-bold text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
-                        Cerrar Sesión
-                    </span>
-                </button>
-            </div>
-        </>
-    );
-
     return (
         <>
-            {/* ===== MOBILE: botón hamburguesa fijo (solo < md) ===== */}
-            <button
-                onClick={() => setMobileOpen(true)}
-                className={`md:hidden fixed top-4 left-4 z-[60] w-11 h-11 rounded-xl bg-gradient-to-br from-[#8fe29a] to-[#0e5836] shadow-lg flex items-center justify-center transition-opacity ${mobileOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-                aria-label="Abrir menú"
-            >
-                <div className="flex flex-col gap-1.5">
-                    <span className="block w-5 h-0.5 bg-white rounded-full" />
-                    <span className="block w-5 h-0.5 bg-white rounded-full" />
-                    <span className="block w-5 h-0.5 bg-white rounded-full" />
-                </div>
-            </button>
-
-            {/* Overlay oscuro detrás del drawer */}
+            {/* Overlay oscuro detrás del drawer (mobile) */}
             {mobileOpen && (
                 <div
                     className="md:hidden fixed inset-0 bg-black/40 z-[65]"
@@ -151,7 +55,7 @@ const SideBar = ({ user, activeRole }) => {
 
             {/* Drawer deslizante mobile */}
             <div
-                className={`md:hidden fixed top-0 left-0 h-full w-72 max-w-[80vw] z-[70] bg-gradient-to-b from-[#8fe29a] to-[#0e5836] shadow-2xl flex flex-col transition-transform duration-300 ease-in-out
+                className={`md:hidden fixed top-0 left-0 h-full w-72 max-w-[80vw] z-[70] bg-gradient-to-b from-[#8fe29a] to-[#0e5836] shadow-2xl flex flex-col transition-transform duration-300 
                     ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
                 `}
             >
@@ -166,8 +70,57 @@ const SideBar = ({ user, activeRole }) => {
                         </svg>
                     </button>
                 </div>
-                <div className="flex flex-col flex-1 min-h-0 px-4 pb-4">
-                    <NavLinks expanded={true} onNavigate={() => setMobileOpen(false)} />
+
+                <div className="w-full flex flex-col items-center space-y-4 flex-1 overflow-y-auto px-4" style={{ scrollbarWidth: "none" }}>
+                    {userOptions.map((options, index) => (
+                        <Link
+                            key={index}
+                            to={options.path}
+                            onClick={() => setMobileOpen(false)}
+                            className="h-14 w-[85%] flex items-center border border-gray-200 shadow-md shadow-emerald-950/20 bg-gradient-to-tr from-white to-gray-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden no-underline"
+                        >
+                            <div className="w-14 h-full flex items-center justify-center shrink-0">
+                                <img src={`/${options.module}.svg`} alt="icon" width={32} height={32} />
+                            </div>
+                            <span className="font-bold text-sm text-emerald-900 tracking-wide whitespace-nowrap ml-2">
+                                {options.module}
+                            </span>
+                        </Link>
+                    ))}
+                </div>
+
+                <div className="w-full flex flex-col items-center space-y-3 pb-6 shrink-0 border-t border-emerald-400/20 pt-4 px-4">
+                    <Link to="/perfil" onClick={() => setMobileOpen(false)} className="h-14 w-[85%] flex items-center border border-emerald-300/30 bg-white/10 text-white rounded-full overflow-hidden">
+                        <div className="w-14 h-full flex items-center justify-center shrink-0">{ICONS.empresa}</div>
+                        <div className="flex flex-col min-w-0">
+                            <span className="text-xs font-bold tracking-wide truncate pr-1">{activeRole}</span>
+                            <span className="text-[10px] text-emerald-200 font-medium tracking-wider">{ruc}</span>
+                        </div>
+                    </Link>
+
+                    <Link to="/notificaciones" onClick={() => setMobileOpen(false)} className="h-12 w-[85%] flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer overflow-hidden no-underline">
+                        <div className="w-14 h-full flex items-center justify-center shrink-0 relative">
+                            {unreadCount > 0 && (
+                                <div className="absolute -right-0.5 top-1 flex justify-center items-center w-5 h-5 bg-red-400 rounded-full text-white text-[10px] font-bold">
+                                    {unreadCount}
+                                </div>
+                            )}
+                            <span className="pi pi-bell text-[22px]!"></span>
+                        </div>
+                        <span className="font-medium text-sm tracking-wide">Notificaciones</span>
+                    </Link>
+
+                    <Link to="/configuracion" onClick={() => setMobileOpen(false)} className="h-12 w-[85%] flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer overflow-hidden no-underline">
+                        <div className="w-14 h-full flex items-center justify-center shrink-0">
+                            <span className="pi pi-cog !text-[22px]"></span>
+                        </div>
+                        <span className="font-medium text-sm tracking-wide">Configuración</span>
+                    </Link>
+
+                    <button onClick={logout} className="h-14 w-[85%] flex items-center bg-red-950/20 hover:bg-red-500/20 text-red-100 rounded-full cursor-pointer overflow-hidden border border-transparent hover:border-red-400/30">
+                        <div className="w-14 h-full flex items-center justify-center shrink-0">{ICONS.logout}</div>
+                        <span className="font-bold text-sm tracking-wide">Cerrar Sesión</span>
+                    </button>
                 </div>
             </div>
 
@@ -189,20 +142,18 @@ const SideBar = ({ user, activeRole }) => {
                 </Link>
 
                 <div className="w-full flex flex-col items-center space-y-4" style={{ scrollBehavior: "smooth", overflowY: "auto", height: "55vh", scrollbarWidth: "none" }}>
-                    {userOptions.length > 0 && userOptions[0].module !== "" ? (
-                        userOptions.map((options, index) => (
-                            <Link key={index} to={options.path}
-                                className={`h-14 flex items-center border border-gray-200 shadow-md shadow-emerald-950/20 bg-gradient-to-tr from-white to-gray-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden no-underline ${isHovered ? 'w-[85%]' : 'w-14'}`}
-                                title={options.module}>
-                                <div className="w-14 h-full flex items-center justify-center shrink-0">
-                                    <img src={`/${options.module}.svg`} alt="icon" width={32} height={32} className="transition-transform duration-300 group-hover:scale-110" />
-                                </div>
-                                <span className={`font-bold text-sm text-emerald-900 tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto ml-2' : 'opacity-0 -translate-x-10 w-0 ml-0 pointer-events-none'}`}>
-                                    {options.module}
-                                </span>
-                            </Link>
-                        ))
-                    ) : null}
+                    {userOptions.map((options, index) => (
+                        <Link key={index} to={options.path}
+                            className={`h-14 flex items-center border border-gray-200 shadow-md shadow-emerald-950/20 bg-gradient-to-tr from-white to-gray-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden no-underline ${isHovered ? 'w-[85%]' : 'w-14'}`}
+                            title={options.module}>
+                            <div className="w-14 h-full flex items-center justify-center shrink-0">
+                                <img src={`/${options.module}.svg`} alt="icon" width={32} height={32} className="transition-transform duration-300 group-hover:scale-110" />
+                            </div>
+                            <span className={`font-bold text-sm text-emerald-900 tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto ml-2' : 'opacity-0 -translate-x-10 w-0 ml-0 pointer-events-none'}`}>
+                                {options.module}
+                            </span>
+                        </Link>
+                    ))}
                 </div>
 
                 <div className="mt-auto w-full flex flex-col items-center space-y-3 pb-6 shrink-0 border-t border-emerald-400/20 pt-4">
