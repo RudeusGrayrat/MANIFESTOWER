@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useNotificaciones } from "../../context/NotificacionesContext";
 
 const ICONS = {
-    //logo de engranaje :
     empresa: (
         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h18v18H3V3z" />
@@ -18,6 +17,7 @@ const ICONS = {
 
 const SideBar = ({ user, activeRole }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
     const ruc = user?.ruc || "00000000000";
     const { unreadCount } = useNotificaciones();
 
@@ -33,7 +33,7 @@ const SideBar = ({ user, activeRole }) => {
                 { module: "GENERADORES", path: "/generadores" }
             ];
         }
-        return []; // Si no hay rol, no mostrar nada
+        return [];
     };
 
     const userOptions = getAvailableModules();
@@ -44,171 +44,209 @@ const SideBar = ({ user, activeRole }) => {
         window.location.href = "/login";
     };
 
-    return (
-        <div
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className={` left-0 top-0 z-50 flex flex-col items-center min-h-screen bg-gradient-to-b from-[#8fe29a] to-[#0e5836] shadow-gray-300 transition-all duration-300 ease-in-out
-                ${isHovered ? 'w-64 shadow-[6px_0_20px_rgba(14,88,54,0.3)]' : 'w-20 shadow-[4px_0_8px_rgba(128,128,128,0.15)]'}
-            `}
-        >
-            {/* LOGO SUPERIOR */}
-            <Link to="/" className={`w-full flex items-center h-18 my-10 transition-all duration-300 ease-in-out ${isHovered ? 'pl-6 justify-start' : 'justify-center'}`}>
-                <div className="shrink-0">
-                    <img
-                        src="/TOWER_ICON.svg"
-                        width={66}
-                        height={66}
-                        alt="LOGO TOWER"
-                        className="transition-transform duration-300 hover:scale-105"
-                    />
-                </div>
-                <span className={`font-black text-white tracking-wider text-sm transition-all duration-300 ${isHovered ? 'ml-3 opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 pointer-events-none hidden'}`}>
-                    MANIFESTOWER
-                </span>
-            </Link>
-
-            {/* CONTENEDOR DE OPCIONES */}
-            <div
-                className="w-full flex flex-col items-center space-y-4"
-                style={{
-                    scrollBehavior: "smooth",
-                    overflowY: "auto",
-                    height: "55vh", /* Reducido ligeramente para dar holgura al menú inferior dinámico */
-                    scrollbarWidth: "none",
-                    msOverflowStyle: "none",
-                }}
-            >
-                {userOptions.length > 0 && userOptions[0].module !== ""
-                    ? userOptions.map((options, index) => (
-                        <Link
-                            key={index}
-                            to={options.path}
-                            className={`h-14 flex items-center border border-gray-200 shadow-md shadow-emerald-950/20 bg-gradient-to-tr from-white to-gray-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden no-underline
-                                ${isHovered ? 'w-[85%]' : 'w-14'}
-                            `}
-                            title={options.module}
+    // Contenido de navegación compartido entre desktop y el drawer mobile
+    const NavLinks = ({ expanded, onNavigate }) => (
+        <>
+            <div className="w-full flex flex-col items-center space-y-4 flex-1 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+                {userOptions.map((options, index) => (
+                    <Link
+                        key={index}
+                        to={options.path}
+                        onClick={onNavigate}
+                        className={`h-14 flex items-center border border-gray-200 shadow-md shadow-emerald-950/20 bg-gradient-to-tr from-white to-gray-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden no-underline
+                            ${expanded ? 'w-[85%]' : 'w-14'}
+                        `}
+                        title={options.module}
+                    >
+                        <div className="w-14 h-full flex items-center justify-center shrink-0">
+                            <img src={`/${options.module}.svg`} alt="icon" width={32} height={32} className="transition-transform duration-300 group-hover:scale-110" />
+                        </div>
+                        <span className={`font-bold text-sm text-emerald-900 tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden
+                            ${expanded ? 'opacity-100 translate-x-0 w-auto ml-2' : 'opacity-0 -translate-x-10 w-0 ml-0 pointer-events-none'}`}
                         >
-                            <div className="w-14 h-full flex items-center justify-center shrink-0">
-                                <img
-                                    src={`/${options.module}.svg`}
-                                    alt="icon"
-                                    width={32}
-                                    height={32}
-                                    className="transition-transform duration-300 group-hover:scale-110"
-                                />
-                            </div>
-
-                            {/* TITULO DEL MÓDULO */}
-                            <span
-                                className={`font-bold text-sm text-emerald-900 tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden
-                                    ${isHovered
-                                        ? 'opacity-100 translate-x-0 w-auto ml-2'
-                                        : 'opacity-0 -translate-x-10 w-0 ml-0 pointer-events-none'
-                                    }
-                                `}
-                            >
-                                {options.module}
-                            </span>
-                        </Link>
-                    ))
-                    : null}
+                            {options.module}
+                        </span>
+                    </Link>
+                ))}
             </div>
 
-            {/* CONTENEDOR INFERIOR (ADMINISTRACIÓN Y EMPRESA) */}
             <div className="mt-auto w-full flex flex-col items-center space-y-3 pb-6 shrink-0 border-t border-emerald-400/20 pt-4">
-
-                {/* TARJETA DE RAZÓN SOCIAL / RUC */}
-                <Link
-                    to="/perfil"
-                    className={`h-14 flex items-center border border-emerald-300/30 bg-white/10 text-white rounded-full transition-all duration-300 ease-in-out overflow-hidden
-                        ${isHovered ? 'w-[85%]' : 'w-14'}
-                    `}
-                    title={`${activeRole} - ${ruc}`}
-                >
-                    {/* Caja fija de w-14 */}
-                    <div className="w-14 h-full flex items-center justify-center shrink-0">
-                        {ICONS.empresa}
-                    </div>
-                    <div className={`flex flex-col min-w-0 transition-all duration-300 ease-in-out overflow-hidden
-                        ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}
-                    >
-                        <span className="text-xs font-bold tracking-wide truncate pr-1">
-                            {activeRole}
-                        </span>
-                        <span className="text-[10px] text-emerald-200 font-medium tracking-wider">
-                            {ruc}
-                        </span>
+                <Link to="/perfil" onClick={onNavigate}
+                    className={`h-14 flex items-center border border-emerald-300/30 bg-white/10 text-white rounded-full transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'w-[85%]' : 'w-14'}`}
+                    title={`${activeRole} - ${ruc}`}>
+                    <div className="w-14 h-full flex items-center justify-center shrink-0">{ICONS.empresa}</div>
+                    <div className={`flex flex-col min-w-0 transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
+                        <span className="text-xs font-bold tracking-wide truncate pr-1">{activeRole}</span>
+                        <span className="text-[10px] text-emerald-200 font-medium tracking-wider">{ruc}</span>
                     </div>
                 </Link>
-                <Link
-                    to="/notificaciones"
-                    className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline
-                        ${isHovered ? 'w-[85%]' : 'w-14'}
-                    `}
-                    title="Notificaciones"
-                >
 
+                <Link to="/notificaciones" onClick={onNavigate}
+                    className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline ${expanded ? 'w-[85%]' : 'w-14'}`}
+                    title="Notificaciones">
                     <div className="w-14 h-full flex items-center justify-center shrink-0">
                         <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5 relative">
                             {unreadCount > 0 && (
-                                <div className="absolute -right-1.5 top-0.5 flex justify-center items-center w-5 h-5  bg-red-400 rounded-full text-white text-[10px] font-bold ready-badge">
+                                <div className="absolute -right-1.5 top-0.5 flex justify-center items-center w-5 h-5 bg-red-400 rounded-full text-white text-[10px] font-bold">
                                     {unreadCount}
                                 </div>
                             )}
                             <span className="pi pi-bell text-[24px]!"></span>
                         </div>
                     </div>
-                    <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden
-                        ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}
-                    >
+                    <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
                         Notificaciones
                     </span>
                 </Link>
 
-                <Link
-                    to="/configuracion"
-                    className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline
-                        ${isHovered ? 'w-[85%]' : 'w-14'}
-                    `}
-                    title="Configuración"
-                >
-                    {/* Caja fija idéntica de w-14 */}
-
+                <Link to="/configuracion" onClick={onNavigate}
+                    className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline ${expanded ? 'w-[85%]' : 'w-14'}`}
+                    title="Configuración">
                     <div className="w-14 h-full flex items-center justify-center shrink-0">
                         <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5">
                             <span className="pi pi-cog !text-[24px]"></span>
                         </div>
                     </div>
-                    <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden
-                        ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}
-                    >
+                    <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
                         Configuración
                     </span>
                 </Link>
-                {/* BOTÓN CERRAR SESIÓN (DISEÑO INTEGRADO Y UNIFICADO) */}
-                <button
-                    onClick={logout}
-                    className={`h-14 flex items-center bg-red-950/20 hover:bg-red-500/20 text-red-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden border border-transparent hover:border-red-400/30
-                        ${isHovered ? 'w-[85%]' : 'w-14'}
-                    `}
-                    title="Cerrar Sesión"
-                >
-                    {/* Caja fija de w-14 */}
+
+                <button onClick={logout}
+                    className={`h-14 flex items-center bg-red-950/20 hover:bg-red-500/20 text-red-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden border border-transparent hover:border-red-400/30 ${expanded ? 'w-[85%]' : 'w-14'}`}
+                    title="Cerrar Sesión">
                     <div className="w-14 h-full flex items-center justify-center shrink-0">
-                        <div className="transition-transform duration-300 group-hover:translate-x-0.5">
-                            {ICONS.logout}
-                        </div>
+                        <div className="transition-transform duration-300 group-hover:translate-x-0.5">{ICONS.logout}</div>
                     </div>
-                    <span className={`font-bold text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden
-                        ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}
-                    >
+                    <span className={`font-bold text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${expanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
                         Cerrar Sesión
                     </span>
                 </button>
-
             </div>
-        </div>
+        </>
+    );
+
+    return (
+        <>
+            {/* ===== MOBILE: botón hamburguesa fijo (solo < md) ===== */}
+            <button
+                onClick={() => setMobileOpen(true)}
+                className={`md:hidden fixed top-4 left-4 z-[60] w-11 h-11 rounded-xl bg-gradient-to-br from-[#8fe29a] to-[#0e5836] shadow-lg flex items-center justify-center transition-opacity ${mobileOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                aria-label="Abrir menú"
+            >
+                <div className="flex flex-col gap-1.5">
+                    <span className="block w-5 h-0.5 bg-white rounded-full" />
+                    <span className="block w-5 h-0.5 bg-white rounded-full" />
+                    <span className="block w-5 h-0.5 bg-white rounded-full" />
+                </div>
+            </button>
+
+            {/* Overlay oscuro detrás del drawer */}
+            {mobileOpen && (
+                <div
+                    className="md:hidden fixed inset-0 bg-black/40 z-[65]"
+                    onClick={() => setMobileOpen(false)}
+                />
+            )}
+
+            {/* Drawer deslizante mobile */}
+            <div
+                className={`md:hidden fixed top-0 left-0 h-full w-72 max-w-[80vw] z-[70] bg-gradient-to-b from-[#8fe29a] to-[#0e5836] shadow-2xl flex flex-col transition-transform duration-300 ease-in-out
+                    ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+                `}
+            >
+                <div className="flex items-center justify-between px-5 pt-6 pb-4">
+                    <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-3">
+                        <img src="/TOWER_ICON.svg" width={48} height={48} alt="LOGO TOWER" />
+                        <span className="font-black text-white tracking-wider text-sm">MANIFESTOWER</span>
+                    </Link>
+                    <button onClick={() => setMobileOpen(false)} className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 text-white" aria-label="Cerrar menú">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div className="flex flex-col flex-1 min-h-0 px-4 pb-4">
+                    <NavLinks expanded={true} onNavigate={() => setMobileOpen(false)} />
+                </div>
+            </div>
+
+            {/* ===== DESKTOP/TABLET: sidebar hover original (solo md+) ===== */}
+            <div
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className={`hidden md:flex left-0 top-0 z-50 flex-col items-center min-h-screen bg-gradient-to-b from-[#8fe29a] to-[#0e5836] shadow-gray-300 transition-all duration-300 ease-in-out
+                    ${isHovered ? 'w-64 shadow-[6px_0_20px_rgba(14,88,54,0.3)]' : 'w-20 shadow-[4px_0_8px_rgba(128,128,128,0.15)]'}
+                `}
+            >
+                <Link to="/" className={`w-full flex items-center h-18 my-10 transition-all duration-300 ease-in-out ${isHovered ? 'pl-6 justify-start' : 'justify-center'}`}>
+                    <div className="shrink-0">
+                        <img src="/TOWER_ICON.svg" width={66} height={66} alt="LOGO TOWER" className="transition-transform duration-300 hover:scale-105" />
+                    </div>
+                    <span className={`font-black text-white tracking-wider text-sm transition-all duration-300 ${isHovered ? 'ml-3 opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 pointer-events-none hidden'}`}>
+                        MANIFESTOWER
+                    </span>
+                </Link>
+
+                <div className="w-full flex flex-col items-center space-y-4" style={{ scrollBehavior: "smooth", overflowY: "auto", height: "55vh", scrollbarWidth: "none" }}>
+                    {userOptions.length > 0 && userOptions[0].module !== "" ? (
+                        userOptions.map((options, index) => (
+                            <Link key={index} to={options.path}
+                                className={`h-14 flex items-center border border-gray-200 shadow-md shadow-emerald-950/20 bg-gradient-to-tr from-white to-gray-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden no-underline ${isHovered ? 'w-[85%]' : 'w-14'}`}
+                                title={options.module}>
+                                <div className="w-14 h-full flex items-center justify-center shrink-0">
+                                    <img src={`/${options.module}.svg`} alt="icon" width={32} height={32} className="transition-transform duration-300 group-hover:scale-110" />
+                                </div>
+                                <span className={`font-bold text-sm text-emerald-900 tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto ml-2' : 'opacity-0 -translate-x-10 w-0 ml-0 pointer-events-none'}`}>
+                                    {options.module}
+                                </span>
+                            </Link>
+                        ))
+                    ) : null}
+                </div>
+
+                <div className="mt-auto w-full flex flex-col items-center space-y-3 pb-6 shrink-0 border-t border-emerald-400/20 pt-4">
+                    <Link to="/perfil" className={`h-14 flex items-center border border-emerald-300/30 bg-white/10 text-white rounded-full transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'w-[85%]' : 'w-14'}`} title={`${activeRole} - ${ruc}`}>
+                        <div className="w-14 h-full flex items-center justify-center shrink-0">{ICONS.empresa}</div>
+                        <div className={`flex flex-col min-w-0 transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
+                            <span className="text-xs font-bold tracking-wide truncate pr-1">{activeRole}</span>
+                            <span className="text-[10px] text-emerald-200 font-medium tracking-wider">{ruc}</span>
+                        </div>
+                    </Link>
+                    <Link to="/notificaciones" className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline ${isHovered ? 'w-[85%]' : 'w-14'}`} title="Notificaciones">
+                        <div className="w-14 h-full flex items-center justify-center shrink-0">
+                            <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5 relative">
+                                {unreadCount > 0 && (
+                                    <div className="absolute -right-1.5 top-0.5 flex justify-center items-center w-5 h-5 bg-red-400 rounded-full text-white text-[10px] font-bold">{unreadCount}</div>
+                                )}
+                                <span className="pi pi-bell text-[24px]!"></span>
+                            </div>
+                        </div>
+                        <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
+                            Notificaciones
+                        </span>
+                    </Link>
+                    <Link to="/configuracion" className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline ${isHovered ? 'w-[85%]' : 'w-14'}`} title="Configuración">
+                        <div className="w-14 h-full flex items-center justify-center shrink-0">
+                            <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5">
+                                <span className="pi pi-cog !text-[24px]"></span>
+                            </div>
+                        </div>
+                        <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
+                            Configuración
+                        </span>
+                    </Link>
+                    <button onClick={logout} className={`h-14 flex items-center bg-red-950/20 hover:bg-red-500/20 text-red-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden border border-transparent hover:border-red-400/30 ${isHovered ? 'w-[85%]' : 'w-14'}`} title="Cerrar Sesión">
+                        <div className="w-14 h-full flex items-center justify-center shrink-0">
+                            <div className="transition-transform duration-300 group-hover:translate-x-0.5">{ICONS.logout}</div>
+                        </div>
+                        <span className={`font-bold text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
+                            Cerrar Sesión
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </>
     );
 };
 
