@@ -5,6 +5,7 @@ import ResumenManifiestos from "./Manifiestos";
 import NotificacionesWidget from "./NotificacionesDash";
 import { useDashboard } from "../../context/useDashboard";
 import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router";
 
 const Dashboard = () => {
     const { data, loading, error } = useDashboard();
@@ -26,12 +27,18 @@ const Dashboard = () => {
     if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
     if (!data) return null;
 
+    // 🔹 Extraemos los estados desde el objeto que devuelve el backend
+    const estados = data.estados || {};
+    // Dentro de Dashboard.jsx, reemplaza la sección donde construyes 'stats'
     const stats = {
-        total: data.totalManifiestos,
-        generadores: data.totalGeneradores || 0,
-        transportistas: data.totalTransportistas || 0,
-        vinculaciones: data.vinculacionesActivas || 0,
-        aprobados: data.totalAprobados || 0,
+        total: data.totalManifiestos || 0,
+        observados: data.estados?.OBSERVADO || 0,
+        pendientes: data.estados?.PENDIENTE || 0,
+        aprobados: data.estados?.APROBADO || 0,
+        // ⬇️ IMPORTANTE: pasar los nuevos campos al componente
+        tendencias: data.tendencias || {},
+        historiales: data.historiales || {},
+        historialTotal: data.historialTotal || [],
     };
 
     const pieData = {
@@ -45,11 +52,8 @@ const Dashboard = () => {
     };
 
     return (
-        // CLAVE: h-full (no h-dvh) -> llena al padre (<main>), no al viewport.
-        // En mobile: h-auto y sin overflow-hidden, para que scrollee normal.
         <div className="w-full h-auto md:h-full p-2 flex flex-col md:overflow-hidden gap-4 md:gap-[clamp(0.75rem,1.5vw,1.5rem)]">
 
-            {/* Header: tamaño fluido con clamp, nunca se estira ni se rompe */}
             <div className="flex-none flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                 <div>
                     <h1 className="text-[clamp(1.375rem,1.1vw+1rem,1.875rem)] font-extrabold bg-gradient-to-r from-[#285598] to-blue-400 bg-clip-text text-transparent tracking-tight leading-tight">
@@ -58,31 +62,29 @@ const Dashboard = () => {
                     <p className="text-[clamp(0.75rem,0.4vw+0.6rem,0.875rem)] text-gray-500">Gestión operativa de manifiestos</p>
                 </div>
                 {activeRole === "TRANSPORTISTA" && (
-                    <button className="bg-[#285598] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition-all flex items-center gap-2 self-start shrink-0">
+                    <Link
+                        to="/manifiestos?select=Crear"
+                        className="bg-[#285598] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition-all flex items-center gap-2 self-start shrink-0"
+                    >
                         <i className="pi pi-plus"></i> Nuevo Manifiesto
-                    </button>
+                    </Link>
                 )}
             </div>
 
-            {/* Cuerpo: ocupa TODO el resto del alto disponible */}
             <div className="flex-1 min-h-0 grid grid-cols-12 gap-4 md:gap-[clamp(0.75rem,1.5vw,1.5rem)]">
 
-                {/* Columna izquierda */}
                 <div className="col-span-12 lg:col-span-9 flex flex-col min-h-0 gap-4 md:gap-[clamp(0.75rem,1.5vw,1.5rem)]">
 
                     <div className="flex-none">
                         <ResumenManifiestos data={stats} />
                     </div>
 
-                    {/* Fila de gráficos: proporción 3:1 en laptop/tablet, 5:3 en monitores grandes */}
                     <div className="flex-1 min-h-0 grid grid-cols-1 xl:grid-cols-[3fr_1fr] 2xl:grid-cols-[5fr_3fr] gap-4 md:gap-[clamp(0.75rem,1.5vw,1.5rem)]">
 
-                        {/* Gráfico de barras */}
                         <div className="bg-white shadow-sm border border-gray-100 rounded-2xl p-[clamp(0.75rem,1.2vw,1.5rem)] flex flex-col min-h-0 overflow-hidden">
                             <h2 className="text-[clamp(0.65rem,0.35vw+0.5rem,0.8125rem)] font-bold text-gray-400 uppercase tracking-wider mb-2 flex-none">
                                 Manifiestos por mes
                             </h2>
-                            {/* Contenedor estable: SIN absolute, con overflow-hidden como red de seguridad */}
                             <div className="flex-1 min-h-[8rem] overflow-hidden">
                                 <Chart
                                     type="bar"
@@ -96,7 +98,6 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                        {/* Dona: vertical por defecto, horizontal en 2xl+ */}
                         <div className="bg-white shadow-sm border border-gray-100 rounded-2xl p-[clamp(0.75rem,1.2vw,1.5rem)] flex flex-col min-h-0 overflow-hidden">
                             <h3 className="text-[clamp(0.65rem,0.35vw+0.5rem,0.8125rem)] font-bold text-gray-400 uppercase tracking-wider mb-2 flex-none">
                                 Estado de manifiestos
@@ -104,7 +105,6 @@ const Dashboard = () => {
 
                             <div className="flex-1 min-h-0 flex flex-col 2xl:flex-row items-center gap-3 2xl:gap-5 overflow-hidden">
 
-                                {/* Wrapper de la dona: tamaño ESTABLE, sin absolute, sin conflictos w/h */}
                                 <div className="shrink-0 2xl:h-full 2xl:flex-1 2xl:flex 2xl:items-center 2xl:justify-center">
                                     <div className="mx-auto w-[clamp(5rem,25vw,10rem)] h-[clamp(5rem,25vw,10rem)] 2xl:w-full 2xl:h-[85%] 2xl:max-w-[min(85%,14rem)] overflow-hidden">
                                         <Chart
@@ -116,7 +116,6 @@ const Dashboard = () => {
                                     </div>
                                 </div>
 
-                                {/* Leyenda */}
                                 <div className="w-full 2xl:flex-1 flex-1 min-h-0 2xl:h-full flex flex-col justify-center gap-[clamp(0.25rem,0.4vw,0.5rem)] overflow-y-auto">
                                     {estadosOrdenados.map((estado) => {
                                         const valor = data.estados[estado] || 0;
@@ -146,7 +145,6 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    {/* Tabla: SOLO aparece si hay espacio ancho de sobra (2xl+), y nunca causa overflow */}
                     <div className="hidden 2xl:flex flex-1 min-h-0 bg-white border border-gray-100 shadow-sm rounded-2xl p-[clamp(0.75rem,1.2vw,1.5rem)] flex-col">
                         <h2 className="text-[clamp(0.65rem,0.35vw+0.5rem,0.75rem)] font-bold text-gray-400 uppercase tracking-wider mb-3 flex-none">
                             Últimos manifiestos
@@ -183,7 +181,6 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Columna derecha: notificaciones, a tope, altura completa siempre */}
                 <div className="hidden lg:block lg:col-span-3 min-h-0">
                     <NotificacionesWidget />
                 </div>

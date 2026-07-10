@@ -18,10 +18,8 @@ import GeneradoresTransportistas from "./transportista/Generadores";
 import Conductores from "./transportista/Conductores";
 import ButtonOk from "../../ui/Buttons/Buttons";
 import { Link } from "react-router";
-import { useAuth } from "../../context/AuthContext";
 
 const Register = () => {
-  const { isLoading } = useAuth();
   const [errorValidacion, setErrorValidacion] = useState("");
 
   // Control del flujo de pasos y tipo de perfil
@@ -149,7 +147,7 @@ const Register = () => {
   // VISTA PANEL DE INDICACIONES DE CREDENCIALES POST-REGISTRO
   if (mostrarExito) {
     return (
-      <div className="w-full h-[92vh] max-h-screen flex flex-col justify-center items-center px-4 animate-fade-in duration-500">
+      <div className="register-success w-full h-full min-h-0 flex flex-col justify-center items-center px-4 animate-fade-in duration-500">
         <div className="w-full max-w-lg bg-white rounded-xl shadow-2xl border border-gray-100 p-8 text-center flex flex-col items-center">
           <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mb-4 animate-bounce">
             ✓
@@ -201,8 +199,8 @@ const Register = () => {
   }
 
   return (
-    <div className="w-full h-[92vh] max-h-screen flex flex-col justify-center items-center relative animate-fade-in duration-500">
-      <div className="w-full max-h-[800px] max-w-4xl bg-white rounded-xl shadow-xl border border-gray-100 p-6 pb-2! md:p-10 transition-all duration-300 flex flex-col">
+    <div className="register-content w-full h-full min-h-0 flex flex-col justify-center items-center relative animate-fade-in duration-500">
+      <div className="register-card w-full h-full min-h-0 bg-white rounded-xl border border-gray-100 p-6 pb-2! md:p-8 transition-all duration-300 flex flex-col">
 
         {/* INDICADOR DE PROGRESO VISUAL */}
         {step > 0 && (
@@ -263,13 +261,13 @@ const Register = () => {
         {tipoUsuario === "GENERADOR" && (
           <div className="flex-1 flex flex-col min-h-0">
             {step === 1 && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Datos Básicos del Generador</h3>
                 <DatosBasicosGenerador form={formGenerador} setForm={setFormGenerador} />
               </div>
             )}
             {step === 2 && (
-              <div className="animate-fade-in overflow-y-auto max-h-[550px] pr-1 custom-scrollbar">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Directorio de Plantas Autorizadas</h3>
                 <Directorio
                   ItemComponent={DatosPlanta}
@@ -281,7 +279,7 @@ const Register = () => {
               </div>
             )}
             {step === 3 && (
-              <div className="animate-fade-in overflow-y-auto h-[550px] pr-1 custom-scrollbar">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Responsables Técnicos asignados</h3>
                 <Directorio
                   ItemComponent={ResponsableGenerador}
@@ -299,25 +297,25 @@ const Register = () => {
         {tipoUsuario === "TRANSPORTISTA" && (
           <div className="flex-1 flex flex-col min-h-0">
             {step === 1 && (
-              <div className="animate-fade-in overflow-y-auto max-h-[550px] pr-1 custom-scrollbar">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Datos Operativos de la Empresa</h3>
                 <DatosBasicosTransportista formData={formTransportista} setFormData={setFormTransportista} />
               </div>
             )}
             {step === 2 && (
-              <div className="animate-fade-in overflow-y-auto max-h-[550px] pr-1 custom-scrollbar">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Representación Legal y Técnica</h3>
                 <RepresentanteYResponsable formData={formTransportista} setFormData={setFormTransportista} />
               </div>
             )}
             {step === 3 && (
-              <div className="animate-fade-in overflow-y-auto max-h-[550px] pr-1 custom-scrollbar">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Planes de Control de Contingencias</h3>
                 <Contingencias formData={formTransportista} setFormData={setFormTransportista} />
               </div>
             )}
             {step === 4 && (
-              <div className="animate-fade-in overflow-y-auto max-h-[550px] pr-1 custom-scrollbar">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Listado de Responsables</h3>
                 <Directorio
                   estilos="flex justify-center items-center"
@@ -329,7 +327,7 @@ const Register = () => {
               </div>
             )}
             {step === 5 && (
-              <div className="animate-fade-in overflow-y-auto max-h-[550px] pr-1 custom-scrollbar">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Generadores Vinculados
                   <span className="text-blue-400 text-lg"> (omitir si aún no se ha registrado)</span>
                 </h3>
@@ -343,7 +341,7 @@ const Register = () => {
               </div>
             )}
             {step === 6 && (
-              <div className="animate-fade-in overflow-y-auto max-h-[550px] pr-1 custom-scrollbar">
+              <div className="animate-fade-in overflow-y-auto h-full pr-1 custom-scrollbar">
                 <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Conductores de Unidades</h3>
                 <Directorio
                   estilos="flex justify-center items-center"
