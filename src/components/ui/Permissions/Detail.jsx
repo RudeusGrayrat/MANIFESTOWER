@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
-const Details = ({ setShowDetail, children }) => {
+const Details = ({ setShowDetail, title = "Detalle", children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const containerRef = useRef(null);
@@ -53,12 +53,15 @@ const Details = ({ setShowDetail, children }) => {
   ` : "";
 
     return (
-        <div className="w-screen pl-20 h-screen fixed top-0 right-0 z-40 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-            <div ref={containerRef} className="relative min-w-[80%] max-w-[90%]  max-h-[90%] min-h-[50%] flex flex-col overflow-hidden">
-
-                {/* SVG DINÁMICO (Capa de fondo) */}
-                <div className="absolute inset-0 -z-10">
-                    <svg width="100%" height="100%" className="">
+        <div className="w-screen h-[100dvh] fixed inset-0 z-40 flex items-center justify-center bg-black/30 p-3 sm:pl-20 sm:pr-6 backdrop-blur-sm">
+           <div 
+        ref={containerRef} 
+        className="relative w-full max-w-[90%] max-h-[94dvh] min-h-0 flex flex-col overflow-hidden 
+                   bg-slate-50 rounded-2xl 
+                   sm:bg-transparent sm:rounded-none sm:min-w-[80%] sm:max-h-[90%] sm:min-h-[50%]"
+    >
+                <div className="absolute inset-0 -z-10 hidden sm:block">
+                    <svg width="100%" height="100%" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="modalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stopColor="#f9fafb" />
@@ -77,16 +80,18 @@ const Details = ({ setShowDetail, children }) => {
                 </div>
 
                 {/* BOTÓN X - Siempre calza en el hueco de 140px */}
-                <div className="absolute top-1 right-1  flex items-center justify-center z-50">
+                <div className="absolute top-3 right-3 sm:top-1 sm:right-1 flex items-center justify-center z-50">
                     <button
                         onClick={handleCloseDetail}
-                        className="h-24 w-24 text-3xl text-white rounded-full bg-gradient-to-tr from-[#2b5993] to-[#418fda] shadow-xl hover:scale-90 transition-transform"
+                        aria-label="Cerrar detalle"
+                        className="h-11 w-11 text-lg sm:h-24 sm:w-24 sm:text-3xl text-white rounded-full bg-gradient-to-tr from-[#2b5993] to-[#418fda] shadow-xl hover:scale-90 transition-transform"
                     >
-                        X
+                        <span className="sm:hidden">×</span><span className="hidden sm:inline">X</span>
                     </button>
                 </div>
 
-                <div className="p-10 grid gap-8 pr-40 overflow-hidden w-full h-full" >
+                <div className="detail-content p-4 pt-16 sm:p-10 sm:pr-40 grid gap-5 sm:gap-8 overflow-y-auto w-full h-full" >
+                    <h2 className="pr-12 text-lg font-bold text-slate-800 sm:hidden">{title}</h2>
                     {children}
                 </div>
             </div>

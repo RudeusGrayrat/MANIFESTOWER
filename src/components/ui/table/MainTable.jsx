@@ -27,6 +27,8 @@ const ListPrincipal = ({
     onSearch,
     actionBody,
     fetchData,
+    mobileFields = [],
+    mobileTitle,
     ...OtheProps
 }) => {
     const dt = useRef(null);
@@ -170,15 +172,15 @@ const ListPrincipal = ({
     const isSearchingActive = localSearch !== searchTerm || subtleLoading;
 
     const header = (
-        <div className="flex flex-wrap pr-20 justify-end gap-2 ">
-            <IconField iconPosition="left">
+        <div className="table-toolbar flex flex-wrap justify-end gap-2">
+            <IconField iconPosition="left" className="table-search-field">
                 <InputIcon className={`${isSearchingActive ? "pi pi-spin pi-spinner text-indigo-500" : "pi pi-search"} pl-2`} />
                 <InputText
                     type="search"
                     value={localSearch}
                     onChange={(e) => setLocalSearch(e.target.value)} // Escritura fluida e instantánea
                     placeholder="Buscar..."
-                    className="p-2 rounded-xl! pl-11! border-gray-100! focus:shadow-inner focus:translate-x-[1px]! ease-in-out shadow-lg bg-gradient-to-r! from-gray-50 to-gray-100 "
+                    className="w-full p-2 rounded-xl! pl-11! border-gray-100! focus:shadow-inner focus:translate-x-[1px]! ease-in-out shadow-lg bg-gradient-to-r! from-gray-50 to-gray-100 "
                 />
             </IconField>
             {fetchData ? (
@@ -191,8 +193,15 @@ const ListPrincipal = ({
         </div>
     );
 
+    const getMobileValue = (field, row) => {
+        const value = typeof field.value === "function"
+            ? field.value(row)
+            : field.field?.split(".").reduce((current, key) => current?.[key], row);
+        return value ?? "—";
+    };
+
     return (
-        <div className="flex justify-center items-center">
+        <div className="responsive-table flex justify-center items-center">
             {showDetail && DetailItem && <DetailItem setShowDetail={setShowDetail} selected={selected} />}
             {showSend && EnviarItem && <EnviarItem setShowSend={setShowSend} selected={selected} reload={() => loadLazyData(pagina, limite, searchTerm, true)} />}
             {showApprove && ApproveItem && <ApproveItem setShowApprove={setShowApprove} selected={selected} reload={() => loadLazyData(pagina, limite, searchTerm, true)} />}
@@ -200,7 +209,7 @@ const ListPrincipal = ({
             {showEdit && EditItem && <EditItem setShowEdit={setShowEdit} selected={selected} reload={() => loadLazyData(pagina, limite, searchTerm, true)} />}
             {showDelete && DeleteItem && <DeleteItem setShowDelete={setShowDelete} selected={selected} reload={() => loadLazyData(pagina, limite, searchTerm, true)} />}
 
-            <div className="w-full  mt-0 border-t border-gray-100 rounded-xl! shadow-lg bg-white">
+            <div className="responsive-table__desktop w-full mt-0 border-t border-gray-100 rounded-xl! shadow-lg bg-white">
                 <DataTable
                     ref={dt}
                     value={content}
@@ -228,6 +237,29 @@ const ListPrincipal = ({
                     {children}
                     <Column body={actionBodyTemplate} exportable={false}></Column>
                 </DataTable>
+            </div>
+            <div className="responsive-table__mobile w-full">
+                <div className="responsive-table__mobile-header">{header}</div>
+                {loading ? <div className="p-6 text-center text-slate-500">Cargando registros...</div> : content.length === 0 ? <div className="p-6 text-center text-slate-500">No hay registros para mostrar.</div> : (
+                    <div className="space-y-3">
+                        {content.map((row) => <article key={row._id} className="responsive-table-card" onClick={() => rowClick?.({ data: row })}>
+                            <div className="responsive-table-card__heading">
+                                <strong>{typeof mobileTitle === "function" ? mobileTitle(row) : row.razonSocial || row.numeroManifiesto || "Registro"}</strong>
+                                <div className="responsive-table-card__actions">{actionBodyTemplate(row)}</div>
+                            </div>
+                            <div className="responsive-table-card__fields">
+                                {mobileFields.map((field) => <div key={field.label} className="responsive-table-card__field">
+                                    <span>{field.label}</span><div>{getMobileValue(field, row)}</div>
+                                </div>)}
+                            </div>
+                        </article>)}
+                    </div>
+                )}
+                {totalRecords > limite && <div className="responsive-table-pagination">
+                    <Button label="Anterior" icon="pi pi-angle-left" disabled={pagina === 0} onClick={() => setPagina((current) => Math.max(0, current - 1))} />
+                    <span>Página {pagina + 1} de {Math.ceil(totalRecords / limite)}</span>
+                    <Button label="Siguiente" iconPos="right" icon="pi pi-angle-right" disabled={(pagina + 1) * limite >= totalRecords} onClick={() => setPagina((current) => current + 1)} />
+                </div>}
             </div>
         </div>
     );

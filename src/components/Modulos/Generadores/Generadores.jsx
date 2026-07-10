@@ -86,6 +86,13 @@ const Generadores = () => {
                 permissionDelete={true} // 🌟 Habilitamos el botón de eliminación en las acciones
                 DeleteItem={DesvincularModalWrapper} // 🌟 Pasamos nuestro puente del modal
                 DetailItem={DetailGenerador || (() => <div>Detalle no disponible</div>)}
+                mobileTitle={(row) => row.razonSocial || "Generador"}
+                mobileFields={[
+                    { label: "RUC", field: "ruc" },
+                    { label: "Representante", field: "representanteLegal" },
+                    { label: "Correo", field: "correoElectronico" },
+                    { label: "Estado", value: (row) => row.estado || "ACTIVO" },
+                ]}
             >
                 <Column field="ruc" header="RUC / Identificación" />
                 <Column field="razonSocial" header="Razón Social" />

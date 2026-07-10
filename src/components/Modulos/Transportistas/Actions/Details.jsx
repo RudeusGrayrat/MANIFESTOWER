@@ -35,12 +35,12 @@ const DetailTransportista = ({ setShowDetail, selected }) => {
     console.log("generadores:", generadores);
 
     return (
-        <Details setShowDetail={setShowDetail} title={`Manifiesto ${selected?.numeroManifiesto || ''}`}>
+        <Details setShowDetail={setShowDetail} title={`Transportista: ${razonSocial || "Detalle"}`}>
             {/* 🌟 CAMBIO PRINCIPAL: Grid responsivo (1 col en móvil, 2 en tablet, 3 en pantallas grandes) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10 w-full auto-rows-max">
 
                 {/* COLUMNA 1: DATOS DEL TRANSPORTISTA */}
-                <div className="flex w-full flex-col gap-6 bg-white p-6 rounded-lg shadow-md border border-slate-100">
+                <div className="flex w-full min-w-0 flex-col gap-6 bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-100">
                     <div className="flex flex-col gap-2">
                         {/* Ajuste de tamaño de texto para que no rompa en columnas estrechas */}
                         <h3 className="text-xl md:text-2xl font-bold text-[#026DCC] tracking-tight mb-2">
@@ -69,7 +69,7 @@ const DetailTransportista = ({ setShowDetail, selected }) => {
                 </div>
 
                 {/* COLUMNA 2: CONTINGENCIAS Y UBICACIÓN */}
-                <div className="flex w-full flex-col gap-6 bg-white p-6 rounded-lg shadow-md border border-slate-100">
+                <div className="flex w-full min-w-0 flex-col gap-6 bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-100">
                     <div className="flex flex-col gap-2">
                         <h3 className="text-xl md:text-2xl font-bold text-[#026DCC] tracking-tight mb-2">
                             CONTINGENCIAS
@@ -104,7 +104,7 @@ const DetailTransportista = ({ setShowDetail, selected }) => {
 
                 {/* COLUMNA 3: CONDUCTORES ASOCIADOS */}
                 {/* 🌟 OPCIONAL: Si hay demasiados conductores, aquí sí agregamos un max-h y overflow-y-auto funcional */}
-                <div className="flex w-full flex-col gap-4 bg-white p-6 rounded-lg shadow-md border border-slate-100 md:col-span-2 lg:col-span-1">
+                <div className="flex w-full min-w-0 flex-col gap-4 bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-100 md:col-span-2 lg:col-span-1">
                     <h3 className="text-xl md:text-2xl font-bold text-[#026DCC] tracking-tight mb-2">
                         CONDUCTORES ASOCIADOS
                     </h3>

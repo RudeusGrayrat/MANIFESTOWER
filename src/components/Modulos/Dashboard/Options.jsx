@@ -100,11 +100,11 @@ const OptionGlobal = ({
     };
 
     return (
-        <div className="w-full flex flex-col h-full">
-            <div className="p-2 flex w-full items-center justify-between">
+        <div className="w-full flex flex-col h-full min-w-0">
+            <div className="p-2 flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-col gap-2 my-1">
                     {/* Breadcrumbs (Ruta de navegación) */}
-                    <nav className="flex items-center gap-2 text-xl font-medium text-gray-700">
+                    <nav className="flex flex-wrap items-center gap-2 text-base sm:text-xl font-medium text-gray-700">
                         <Link to="/" className="flex items-center gap-1 hover:text-slate-700 cursor-pointer">
                             <i className="pi pi-home text-[20px]! mr-1.5"></i> Inicio
                         </Link>
@@ -115,7 +115,7 @@ const OptionGlobal = ({
                     </nav>
                 </div>
 
-                <div className="bg-white flex items-center gap-3 my-1 rounded-xl">
+                <div className="bg-white flex flex-wrap items-center gap-2 sm:gap-3 my-1 rounded-xl">
                     {/* Botón de Solicitudes (Aparece al lado de Nuevo o Reporte) */}
                     {currentView === "Listar" && ItemSolicitudes && (
                         <button
@@ -153,7 +153,7 @@ const OptionGlobal = ({
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 transition-all">
+            <div className="flex-1 min-w-0 overflow-y-auto p-2 transition-all">
                 {renderChildren()}
             </div>
         </div>

@@ -144,6 +144,13 @@ const Transportistas = () => {
                 permissionDelete={true}
                 DeleteItem={DesvincularModalWrapper}
                 DetailItem={DetailTransportista}
+                mobileTitle={(row) => row.razonSocial || "Transportista"}
+                mobileFields={[
+                    { label: "RUC", field: "ruc" },
+                    { label: "Registro EORS", field: "registroEors" },
+                    { label: "Dirección", field: "direccion" },
+                    { label: "Estado", value: (row) => row.estado || "ACTIVO" },
+                ]}
             >
                 <Column field="ruc" header="RUC / Identificación" className="font-mono text-sm text-slate-600" />
                 <Column field="razonSocial" header="Razón Social" className="font-semibold text-slate-800" />

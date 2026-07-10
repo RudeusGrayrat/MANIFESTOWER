@@ -195,9 +195,9 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
     };
 
     return (
-        <div className="w-full p-4">
+        <div className="manifest-register w-full p-2 sm:p-4">
             {/* Barra de progreso */}
-            <div className="mb-4 mx-4">
+            <div className="mb-4 mx-0 sm:mx-4">
                 <ProgressBar
                     style={{ borderRadius: "20px" }}
                     value={parseFloat(((pasoActual / pasos.length) * 100).toFixed(0))}
@@ -224,14 +224,14 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
             </CardPlegable>
 
             {/* Botones de navegación */}
-            <div className="flex justify-between mt-6">
+            <div className="manifest-register__actions flex flex-col gap-2 sm:flex-row sm:justify-between sm:gap-0 mt-6">
                 <ButtonOk
                     children="Anterior"
                     classe="!w-32"
                     onClick={() => setPasoActual(prev => Math.max(1, prev - 1))}
                     disabled={pasoActual === 1 || deshabilitar}
                 />
-                <div className="flex space-x-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:space-x-4 sm:gap-0">
                     <ButtonOk
                         children="Cancelar"
                         classe="!w-32"

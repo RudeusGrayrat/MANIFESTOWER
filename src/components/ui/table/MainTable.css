@@ -69,3 +69,20 @@
     outline: none !important;
     box-shadow: none !important;
 }
+
+.responsive-table__mobile { display: none; }
+.table-search-field { width: min(100%, 320px); }
+
+@media (max-width: 767px) {
+    .responsive-table__desktop { display: none; }
+    .responsive-table__mobile { display: block; }
+    .responsive-table__mobile-header { margin-bottom: 14px; padding: 12px; border-radius: 12px; background: #fff; box-shadow: 0 4px 14px rgba(15, 23, 42, .08); }
+    .table-toolbar { padding: 0; justify-content: stretch; }
+    .table-toolbar > * { flex: 1; }
+    .table-toolbar .p-button { flex: 0 0 auto; padding-inline: 14px !important; }
+    .responsive-table-card { padding: 14px; border: 1px solid #e2e8f0; border-radius: 14px; background: #fff; box-shadow: 0 3px 12px rgba(15, 23, 42, .06); }
+    .responsive-table-card__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; color: #1e293b; font-size: .94rem; }
+    .responsive-table-card__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; }.responsive-table-card__actions .p-button { margin: 0 !important; width: 30px; height: 30px; }
+    .responsive-table-card__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }.responsive-table-card__field { min-width: 0; }.responsive-table-card__field > span { display: block; margin-bottom: 3px; color: #64748b; font-size: .67rem; font-weight: 700; text-transform: uppercase; letter-spacing: .035em; }.responsive-table-card__field > div { overflow: hidden; color: #334155; font-size: .8rem; text-overflow: ellipsis; white-space: nowrap; }
+    .responsive-table-pagination { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; color: #64748b; font-size: .76rem; }.responsive-table-pagination .p-button { padding: 7px 10px; font-size: .76rem; }
+}

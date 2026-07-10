@@ -17,8 +17,17 @@ const SolicitudesVinculacion = () => {
     const esGenerador = !!user?.generadorId;
 
     const obtenerContraparte = (rowData) => {
-        const esMiIdGenerador = user?.generadorId === (rowData.generadorId?._id || rowData.generadorId);
-        return esMiIdGenerador ? rowData.transportistaId : rowData.generadorId;
+        const miGeneradorId = user?.generadorId?._id || user?.generadorId;
+        const generadorIdSolicitud = rowData.generadorId?._id || rowData.generadorId;
+        const soyGeneradorDeLaSolicitud = miGeneradorId && String(miGeneradorId) === String(generadorIdSolicitud);
+        return soyGeneradorDeLaSolicitud ? rowData.transportistaId : rowData.generadorId;
+    };
+
+    const tipoContraparte = (rowData) => {
+        const contraparte = obtenerContraparte(rowData);
+        const transportistaId = rowData.transportistaId?._id || rowData.transportistaId;
+        const contraparteId = contraparte?._id || contraparte;
+        return String(transportistaId) === String(contraparteId) ? "TRANSPORTISTA" : "GENERADOR";
     };
 
     const fetchSolicitudesData = async (page, limit, search) => {
@@ -29,6 +38,7 @@ const SolicitudesVinculacion = () => {
             if (user.transportistaId) params.transportistaId = user.transportistaId;
 
             const response = await axios.get("/manifesTower/getSolicitudesVinculacion", { params });
+            console.log("Solicitudes obtenidas:", response.data?.data);
             return {
                 data: response.data?.data || [],
                 total: response.data?.data?.length || 0
@@ -55,7 +65,7 @@ const SolicitudesVinculacion = () => {
 
     const empresaTemplate = (rowData) => {
         const contraparte = obtenerContraparte(rowData);
-        const esContraparteTransportista = rowData.transportistaId?._id === contraparte?._id;
+        const esContraparteTransportista = tipoContraparte(rowData) === "TRANSPORTISTA";
         return (
             <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg text-slate-600 ${esContraparteTransportista ? "bg-blue-50 text-blue-600" : "bg-purple-50 text-purple-600"}`}>
@@ -218,7 +228,7 @@ const SolicitudesVinculacion = () => {
     };
 
     return (
-        <div className="p-6 bg-white rounded-xl border border-slate-100 shadow-xs">
+        <div className="p-4 sm:p-6 bg-white rounded-xl border border-slate-100 shadow-xs">
             <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4">
                 <div>
                     <h3 className="text-lg font-bold text-slate-800 tracking-tight">Centro de Vinculaciones B2B</h3>
@@ -253,11 +263,18 @@ const SolicitudesVinculacion = () => {
                 permissionDisapprove={activeTab === "RECIBIDAS"}
                 ApproveItem={ApproveModal}
                 DisapproveItem={DisapproveModal}
+                mobileTitle={(row) => obtenerContraparte(row)?.razonSocial || "Empresa no especificada"}
+                mobileFields={[
+                    { label: "RUC", value: (row) => obtenerContraparte(row)?.ruc || "—" },
+                    { label: "Tipo", value: (row) => tipoContraparte(row) },
+                    { label: "Solicitud", value: () => activeTab === "RECIBIDAS" ? "Recibida" : "Enviada" },
+                    { label: "Fecha", value: (row) => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—" },
+                    { label: "Estado", value: (row) => row.fechaDesvinculacion || row.desvinculadoPor ? "DESVINCULADO" : row.status || "PENDIENTE" },
+                ]}
             >
                 <Column header="Empresa Asociada" body={empresaTemplate} style={{ minWidth: "240px" }} />
                 <Column header="Tipo Contraparte" body={(row) => {
-                    const contraparte = obtenerContraparte(row);
-                    const esContraparteTransportista = row.transportistaId?._id === contraparte?._id;
+                    const esContraparteTransportista = tipoContraparte(row) === "TRANSPORTISTA";
                     return (
                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${esContraparteTransportista ? "bg-blue-50 text-blue-700" : "bg-purple-50 text-purple-700"}`}>
                             {esContraparteTransportista ? "TRANSPORTISTA" : "GENERADOR"}

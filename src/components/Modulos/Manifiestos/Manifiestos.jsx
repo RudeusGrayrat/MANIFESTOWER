@@ -51,6 +51,13 @@ const Manifiestos = () => {
                     DetailItem={DetailManifiesto}
                     EditItem={EditManifiesto}
                     EnviarItem={SendManifiesto}
+                    mobileTitle={(row) => `Manifiesto ${row.numeroManifiesto || "sin número"}`}
+                    mobileFields={[
+                        { label: "Generador", value: (row) => row.generadorId?.razonSocial || "N/A" },
+                        { label: "Residuo", field: "residuo.descripcion" },
+                        { label: "Recepción", value: (row) => row.transporte?.fechaRecepcion ? new Date(row.transporte.fechaRecepcion).toLocaleDateString() : "—" },
+                        { label: "Estado", field: "estado" },
+                    ]}
                     // 🌟 BOTÓN DINÁMICO EXCLUSIVO MEDIANTE ACTIONBODY
                     actionBody={(rowData) => {
                         if (activeRole === "GENERADOR" && rowData.estado === "PENDIENTE") {
