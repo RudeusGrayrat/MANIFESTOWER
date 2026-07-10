@@ -8,3 +8,12 @@
 .submit { height: 48px; border: 0; border-radius: 8px; background: linear-gradient(105deg, #006d36, #078447); color: #fff; font-weight: 700; font-size: .94rem; box-shadow: 0 7px 14px rgba(0,105,53,.19); transition: transform .2s, filter .2s; }.submit:hover:not(:disabled) { filter: brightness(1.06); transform: translateY(-1px); }.submit:disabled { background: #94a3b8; cursor: not-allowed; }
 .register { margin: 2px 0 0; text-align: center; color: #64748b; font-size: .8rem; }.register a { color: #08783f; font-weight: 700; text-decoration: none; }.register a:hover { text-decoration: underline; }
 @media (max-width: 640px) { .form { gap: 14px; }.input, .select, .submit { height: 43px; } }
+@media (min-width: 1024px) and (max-height: 760px) {
+  .form { gap: 8px; }
+  .title { font-size: 1.6rem; }
+  .subtitle { font-size: .78rem; margin-top: -5px; }
+  .field { gap: 4px; }
+  .input, .select, .submit { height: 40px; }
+  .label, .remember, .register { font-size: .74rem; }
+}
+@media (min-width: 1024px) and (max-height: 680px) { .register { display: none; } }

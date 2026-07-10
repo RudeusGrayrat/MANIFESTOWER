@@ -204,7 +204,7 @@ const Register = () => {
 
         {/* INDICADOR DE PROGRESO VISUAL */}
         {step > 0 && (
-          <div className="w-full mb-6">
+          <div className="register-progress w-full mb-6">
             <div className="flex justify-between items-center text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
               <span>Perfil: {tipoUsuario}</span>
               <span>Paso {step} de {totalPasos}</span>
@@ -235,7 +235,7 @@ const Register = () => {
               Selecciona tu tipo de actividad para comenzar el formulario guiado.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl ">
+            <div className="register-role-grid grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl ">
               <button
                 type="button"
                 onClick={() => { setTipoUsuario("GENERADOR"); setStep(1); }}
@@ -357,7 +357,7 @@ const Register = () => {
 
         {/* BOTONERA DE CONTROL Y NAVEGACIÓN */}
         {step > 0 && (
-          <div className="flex justify-between items-center mt-auto border-t border-gray-200 pt-4">
+          <div className="register-navigation flex justify-between items-center mt-auto border-t border-gray-200 pt-4">
             <ButtonOk
               children="Atrás"
               onClick={handleAtras}
@@ -382,7 +382,7 @@ const Register = () => {
         )}
 
       </div>
-      <div className="text-center mt-4">
+      <div className="register-login-link text-center mt-4">
         <Link
           to="/login"
           className="text-sm text-gray-600 hover:text-black transition-colors underline-offset-4 hover:underline"

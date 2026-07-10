@@ -27,7 +27,7 @@ const AuthLayout = () => {
                 <div className={`auth-logo ${isRegister ? "auth-logo--hidden" : ""}`}>
                     <img src="/TOWER_LOGO.svg" alt="Tower and Tower" className="h-full w-auto" />
                 </div>
-                <div key={location.pathname} className="auth-content__body animate-auth-fade h-full max-h-screen flex-1 flex flex-col justify-start min-h-0">
+                <div key={location.pathname} className="auth-content__body animate-auth-fade justify-center h-full max-h-screen flex-1 flex flex-col min-h-0">
                     <Outlet />
                 </div>
                 <footer className="auth-benefits">
