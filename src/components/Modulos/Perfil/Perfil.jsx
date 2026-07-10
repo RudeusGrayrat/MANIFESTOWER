@@ -30,6 +30,8 @@ const Perfil = () => {
     useEffect(() => {
         const fetchPerfil = async () => {
             try {
+                if (!user) return;
+                console.log("Fetching perfil for user:", user, "with role:", activeRole);
                 let endpoint = "";
                 if (activeRole === "GENERADOR") {
                     endpoint = `/certificaciones/getGeneradorById/${user.generadorId}`;
@@ -41,6 +43,7 @@ const Perfil = () => {
                 }
                 const response = await axios.get(endpoint);
                 const data = response.data;
+
                 setPerfil(data);
                 setFormData(data);
                 // Inicializar arrays
@@ -241,12 +244,14 @@ const Perfil = () => {
         }
         setLoading(true);
         try {
-            const endpoint = "/auth/changePassword"; // Asume que tienes este endpoint
-            await axios.patch(endpoint, {
+            const endpoint = "/manifesTower/patchUserExternal"; // Asume que tienes este endpoint
+            const response = await axios.patch(endpoint, {
                 userId: user._id,
                 newPassword: formData.newPassword,
             });
-            showSuccess("Contraseña actualizada");
+            if (response.data) {
+                showSuccess(response.data.message || "Contraseña cambiada correctamente");
+            }
             setFormData((prev) => ({ ...prev, newPassword: "" }));
         } catch (error) {
             showError(error.response?.data?.message || "Error al cambiar contraseña");

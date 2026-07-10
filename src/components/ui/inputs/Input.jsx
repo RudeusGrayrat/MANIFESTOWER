@@ -39,11 +39,11 @@ const Input = ({
     const styleError = "border-red-500 animate-shake";
     const styleNormal = "border-gray-300";
     const styleConstant =
-        "mt-1 w-full min-w-0 px-3 py-2 border !text-base rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white";
+        "mt-1 px-3 py-2 max-md:w-full! border min-w-56 !text-base rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-white";
 
     const estilo = `${styleConstant} ${ancho} ${animation ? styleError : styleNormal
         } ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`;
-    const clase = `border !mt-1 !px-1 !py-0 rounded-lg w-full min-w-0 ${estilo} ${ancho || ""} `;
+    const clase = `border !mt-1 !px-1 !py-0 rounded-lg min-w-[250px] ${estilo} ${ancho} `;
 
     const handleAnimation = () => {
         setAnimation(true);
@@ -386,7 +386,7 @@ const Input = ({
     }
 
     return (
-        <div className={`responsive-input flex w-full min-w-0 flex-col h-auto min-h-20 mx-0 sm:mx-3 sm:flex-1 ${ancho === "w-full" ? "sm:basis-full" : "sm:basis-[240px]"} ${className || ""}`} title={OtherProps.title || ""}>
+        <div className={`flex flex-col mx-3 max-md:w-full h-20 ${className || ""}`} title={OtherProps.title || ""}>
             <label
                 className={`text-base font-medium ${error ? "text-red-500" : "text-gray-700"
                     }`}

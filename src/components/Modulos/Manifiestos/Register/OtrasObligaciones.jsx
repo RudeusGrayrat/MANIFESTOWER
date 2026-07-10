@@ -58,7 +58,7 @@ const Paso6_OtrasObligaciones = ({ formData, setFormData }) => {
         }));
     }, [devolucionForm]);
     return (
-        <div className="w-full mt-4 border-t pt-4">
+        <div className="w-full max-md:px-3">
             <h3 className="text-lg font-medium text-gray-700 mb-3">Sección 4.2 - Devolución del Manifiesto</h3>
 
             <div className="grid">
@@ -86,6 +86,7 @@ const Paso6_OtrasObligaciones = ({ formData, setFormData }) => {
 
                     <Input
                         label="Firma del representante EO-RS"
+                        placeholder="La firma se registrará automáticamente"
                         value={devolucionForm.representanteEors?.firmaResponsable || ""}
                         ancho="w-full"
                         disabled
@@ -115,6 +116,7 @@ const Paso6_OtrasObligaciones = ({ formData, setFormData }) => {
                     />
                     <Input
                         label="Firma del responsable generador"
+                        placeholder="La firma se registrará automáticamente"
                         value={devolucionForm.generadorResponsableManejo?.firmaResponsable || ""}
                         disabled
                     />

@@ -140,7 +140,7 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
     }, [formReferendo.generadorResponsableManejo, formReferendo.responsableEors, formReferendo.fechaRecepcion]);
 
     return (
-        <div className="gap-4">
+        <div className="gap-2 max-md:px-8">
             <div className="flex flex-wrap">
                 <Input
                     label="EO-RS Transportista *"

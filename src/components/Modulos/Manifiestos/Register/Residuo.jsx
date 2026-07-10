@@ -21,14 +21,15 @@ const Paso2_Residuo = ({ formData, setFormData }) => {
     };
 
     return (
-        <div className="flex flex-wrap">
+        // El flex-wrap ya está aquí, perfecto.
+        <div className="flex flex-wrap gap-2 max-md:px-8">
             <Input
                 label="Descripción del residuo *"
                 value={formData.residuo?.descripcion || ""}
                 onChange={(e) => handleResiduoChange('descripcion', e.target.value.toUpperCase())}
                 placeholder="Describa el residuo peligroso"
-                ancho="w-full"
             />
+
             <Input
                 label="Cantidad total (toneladas) *"
                 type="number"
@@ -50,7 +51,7 @@ const Paso2_Residuo = ({ formData, setFormData }) => {
                 label="Tipo de recipiente"
                 value={formData.residuo?.tipoRecipiente || ""}
                 onChange={(e) => handleResiduoChange('tipoRecipiente', e.target.value.toUpperCase())}
-                placeholder="Ej: CILINDRO, SACO, TANQUE"
+                placeholder="Ej: CILINDRO, SACO"
             />
 
             <Input
@@ -62,7 +63,7 @@ const Paso2_Residuo = ({ formData, setFormData }) => {
 
             <Input
                 label="N° de recipientes"
-                type="text"
+                type="number" // Cambiado a number para mejorar la UX en móvil
                 value={formData.residuo?.numeroRecipientes || ""}
                 onChange={(e) => handleResiduoChange('numeroRecipientes', e.target.value)}
             />
@@ -89,9 +90,7 @@ const Paso2_Residuo = ({ formData, setFormData }) => {
                 value={formData.residuo?.informacionAdicional || ""}
                 onChange={(e) => handleResiduoChange('informacionAdicional', e.target.value)}
                 placeholder="Información complementaria"
-                ancho="w-full"
             />
-
         </div>
     );
 };

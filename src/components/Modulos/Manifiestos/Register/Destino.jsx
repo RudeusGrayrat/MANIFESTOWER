@@ -170,7 +170,7 @@ const Paso5_Destino = ({ formData, setFormData }) => {
         } : null);
 
     return (
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap max-md:px-2">
             <Input
                 label="EO-RS Destino Final *"
                 type="autocomplete"

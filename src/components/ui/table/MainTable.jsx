@@ -142,7 +142,7 @@ const ListPrincipal = ({
         const isApproved = rowData.state === "APROBADO" || rowData.estado === "APROBADO" || rowData.status === "ACEPTADA" || rowData.status === "RECHAZADA";
         const isRejected = rowData.state === "RECHAZADO" || rowData.estado === "RECHAZADO" || rowData.status === "RECHAZADA" || rowData.status === "ACEPTADA";
         const isSend = isRejected || isApproved || rowData.state === "ENVIADO" || rowData.estado === "ENVIADO" || rowData.status === "ENVIADA";
-
+        const isPendiente = rowData.state === "PENDIENTE" || rowData.estado === "PENDIENTE" || rowData.status === "PENDIENTE";
         return (
             <React.Fragment>
                 {permissionRead && (
@@ -158,7 +158,7 @@ const ListPrincipal = ({
                     <Button icon={"pi pi-times"} rounded title="Anular o Rechazar" outlined className={`text-orange-500! border-none! rounded-full ${(isRejected && !isActivated) ? "cursor-not-allowed opacity-30" : ""} mx-1!  bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showDisapprove ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowDisapprove(rowData)} disabled={isRejected && !isActivated} />
                 )}
                 {permissionEdit && (
-                    <Button icon="pi pi-pencil" title="Editar" rounded outlined className={`text-blue-500! rounded-full ${isApproved || isRejected ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showEdit ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowEdit(rowData)} disabled={isApproved || isRejected} />
+                    <Button icon="pi pi-pencil" title="Editar" rounded outlined className={`text-blue-500! rounded-full ${!isPendiente ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showEdit ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowEdit(rowData)} disabled={!isPendiente} />
                 )}
                 {permissionDelete && (
                     <Button icon="pi pi-trash" title="Eliminar" rounded outlined className={`text-red-600 rounded-full ${isApproved ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showDelete ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} severity="danger" onClick={() => handleShowDelete(rowData)} disabled={isApproved} />

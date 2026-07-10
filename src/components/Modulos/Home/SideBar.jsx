@@ -109,14 +109,6 @@ const SideBar = ({ user, activeRole, mobileOpen, setMobileOpen }) => {
                         </div>
                         <span className="font-medium text-sm tracking-wide">Notificaciones</span>
                     </Link>
-
-                    <Link to="/configuracion" onClick={() => setMobileOpen(false)} className="h-12 w-[85%] flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer overflow-hidden no-underline">
-                        <div className="w-14 h-full flex items-center justify-center shrink-0">
-                            <span className="pi pi-cog !text-[22px]"></span>
-                        </div>
-                        <span className="font-medium text-sm tracking-wide">Configuración</span>
-                    </Link>
-
                     <button onClick={logout} className="h-14 w-[85%] flex items-center bg-red-950/20 hover:bg-red-500/20 text-red-100 rounded-full cursor-pointer overflow-hidden border border-transparent hover:border-red-400/30">
                         <div className="w-14 h-full flex items-center justify-center shrink-0">{ICONS.logout}</div>
                         <span className="font-bold text-sm tracking-wide">Cerrar Sesión</span>
@@ -175,16 +167,6 @@ const SideBar = ({ user, activeRole, mobileOpen, setMobileOpen }) => {
                         </div>
                         <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
                             Notificaciones
-                        </span>
-                    </Link>
-                    <Link to="/configuracion" className={`h-12 flex items-center bg-emerald-900/20 hover:bg-white/10 text-emerald-100 rounded-full cursor-pointer transition-all duration-300 ease-in-out group overflow-hidden no-underline ${isHovered ? 'w-[85%]' : 'w-14'}`} title="Configuración">
-                        <div className="w-14 h-full flex items-center justify-center shrink-0">
-                            <div className="transition-transform duration-300 h-full flex items-center group-hover:translate-x-0.5">
-                                <span className="pi pi-cog !text-[24px]"></span>
-                            </div>
-                        </div>
-                        <span className={`font-medium text-sm tracking-wide whitespace-nowrap transition-all duration-300 ease-in-out overflow-hidden ${isHovered ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-10 w-0 pointer-events-none'}`}>
-                            Configuración
                         </span>
                     </Link>
                     <button onClick={logout} className={`h-14 flex items-center bg-red-950/20 hover:bg-red-500/20 text-red-100 rounded-full cursor-pointer active:shadow-inner transition-all duration-300 ease-in-out group overflow-hidden border border-transparent hover:border-red-400/30 ${isHovered ? 'w-[85%]' : 'w-14'}`} title="Cerrar Sesión">

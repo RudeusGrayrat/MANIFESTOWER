@@ -8,7 +8,6 @@ import AuthLayout from "./components/auth/Auth";
 import LoadingOverlay from "./components/ui/cards/LoadingOverlay";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register/Register";
-import Configuracion from "./components/Modulos/Configuracion/Configuracion";
 import Perfil from "./components/Modulos/Perfil/Perfil";
 import Notificaciones from "./components/notificaciones/Notificaciones";
 import { NotificacionesProvider } from "./components/context/NotificacionesContext";
@@ -63,10 +62,6 @@ const router = createBrowserRouter([
       {
         path: "perfil",
         element: <Suspense fallback={<LoadingOverlay />}><Perfil /></Suspense>
-      },
-      {
-        path: "configuracion",
-        element: <Suspense fallback={<LoadingOverlay />}><Configuracion /></Suspense>
       },
       {
         path: "notificaciones",

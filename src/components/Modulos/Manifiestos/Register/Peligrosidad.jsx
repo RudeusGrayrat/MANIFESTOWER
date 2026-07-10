@@ -40,7 +40,7 @@ const Paso3_Peligrosidad = ({ formData, setFormData }) => {
     };
 
     return (
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap max-md:px-8">
             <div className="w-full mb-4">
                 <h3 className="text-lg font-medium text-gray-700 mb-3">
                     Características de peligrosidad (marque todas las que correspondan)

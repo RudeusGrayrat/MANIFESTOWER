@@ -13,10 +13,10 @@ const InputNormal = (props) => {
     }
   };
   return (
-    <div className={`responsive-input flex w-full min-w-0 flex-col h-auto min-h-20 mx-0 sm:mx-3 sm:flex-1 ${ancho === "w-full" ? "sm:basis-full" : "sm:basis-[240px]"}`}>
+    <div className="flex flex-col mx-3 max-md:w-full h-20">
       <label className="text-base font-medium text-gray-700">{label}</label>
       <input
-        className={`mt-1 w-full min-w-0 px-3 bg-white py-2 border border-gray-300 !text-base rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${ancho || ""}`}
+        className={`mt-1 px-3 bg-white py-2 border border-gray-300 min-w-56 !text-base rounded-md shadow-sm sm:text-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 ${ancho}`}
         placeholder={label}
         name={name}
         value={value}

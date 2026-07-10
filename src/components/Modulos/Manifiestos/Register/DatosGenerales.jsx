@@ -49,8 +49,9 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
         setPlantaOptions(plantasDisponibles);
     }, [formData.generadorId]);
 
+    // En Paso1_DatosGenerales.jsx
     return (
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-2 max-md:px-8">
             <Input
                 label="EO-RS Transportista *"
                 disabled
@@ -64,36 +65,36 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
                 type="select"
                 name="generadorId"
                 editable={false}
-                ancho="!w-80"
+                // Eliminamos ancho="!w-80"
                 dataKey="_id"
                 value={formData.generadorId}
                 setForm={setFormData}
                 options={generadorOptions}
                 optionLabel="razonSocial"
-                placeholder="Buscar generador por RUC o razón social"
+                placeholder="Buscar generador..."
                 disabled={!formData.transportistaId}
             />
             <Input
-                label="Dirección de planta / Fuente de generación"
+                label="Dirección de planta"
                 type="select"
                 name="planta"
-                ancho="!w-80"
+                // Eliminamos ancho="!w-80"
                 value={formData.planta}
                 setForm={setFormData}
                 options={plantaOptions}
                 optionLabel="direccion"
-                placeholder={formData.generadorId ? "Seleccionar planta" : "Primero seleccione un generador"}
+                placeholder="Seleccionar planta"
                 disabled={!formData.generadorId}
             />
             <Input
-                label="Responsable de gestion"
+                label="Responsable de gestión"
                 type="select"
                 name="responsableGestion"
                 value={formData.responsableGestion}
                 options={formData.generadorId?.responsablesTecnicos || []}
                 setForm={setFormData}
                 optionLabel="nombreResponsable"
-                placeholder="Seleccionar responsable de gestión"
+                placeholder="Seleccionar responsable"
                 disabled={!formData.planta}
             />
         </div>
