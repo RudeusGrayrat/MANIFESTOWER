@@ -382,7 +382,7 @@ const Register = () => {
         )}
 
       </div>
-      <div className="register-login-link text-center mt-4">
+      <div className="register-login-link text-center my-4">
         <Link
           to="/login"
           className="text-sm text-gray-600 hover:text-black transition-colors underline-offset-4 hover:underline"

@@ -58,7 +58,9 @@ const Login = () => {
                     <div className={`${styles.control} ${styles.select}`}>
                         <i className={`pi pi-user ${styles.icon}`} aria-hidden="true" />
                         <Controller name="typeUser" control={control} rules={{ required: "Seleccione un tipo de usuario" }} render={({ field }) => (
-                            <Dropdown {...field} options={["GENERADOR", "TRANSPORTISTA"]} placeholder="Selecciona una opción" className="w-full h-full bg-transparent! border-none! focus:ring-0!" pt={{ root: { className: "border-none! bg-transparent! shadow-none!" }, input: { className: "pl-10! bg-transparent! text-gray-800! placeholder:text-gray-500! text-sm!" }, trigger: { className: "text-gray-500" } }} />
+                            <Dropdown {...field}
+                             options={["GENERADOR", "TRANSPORTISTA"]} placeholder="Selecciona una opción" className="w-full h-full bg-transparent! border-none! focus:ring-0!" pt={{ root: { className: "border-none! bg-transparent! shadow-none!" },
+                             input: { className: "pl-10! mt-1! bg-transparent! text-gray-800! placeholder:text-gray-500! text-sm!" }, trigger: { className: "text-gray-500" } }} />
                         )} />
                     </div>
                     {errors.typeUser && <p className={styles.error}>{errors.typeUser.message}</p>}
