@@ -362,7 +362,6 @@ const Input = ({
             );
             break;
 
-        // ✅ ELIMINAMOS EL case "number" → usamos el default
 
         default:
             let displayValue = value ?? "";
