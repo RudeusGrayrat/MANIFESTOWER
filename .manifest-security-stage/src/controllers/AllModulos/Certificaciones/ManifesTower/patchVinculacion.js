@@ -1,0 +1,171 @@
+// controllers/manifesTower/patchVinculacion.js
+const Vinculacion = require("../../../../models/ManifesTower/Vinculacion");
+const UserExternal = require("../../../../models/ManifesTower/UserExternal");
+const NotificationService = require("../../../Herramientas/Notification/CreateNotification");
+const Transportista = require("../../../../models/AllModulos/Certificacion/Transportistas");
+
+const patchVinculacion = async (req, res) => {
+    try {
+        const { id } = req.params; // Puede ser id de Vinculacion O id de Transportista (según la acción)
+        const { accion, usuarioId, rolActivo, tienePermisoLlenado, generadorId } = req.query;
+        const io = req.app.get("io");
+
+        console.log("🚀 ~ patchVinculacion ~ req.query:", req.query);
+
+        if (!usuarioId) {
+            return res.status(400).json({ message: 'El ID del usuario que responde es requerido.', type: 'Alerta' });
+        }
+
+        const accionesValidas = ['ACEPTAR', 'RECHAZAR', 'CANCELAR', 'TOGGLE_PERMISO'];
+        if (!accionesValidas.includes(accion)) {
+            return res.status(400).json({ message: 'Acción no válida.', type: 'Alerta' });
+        }
+
+        const queryStatus = ['CANCELAR', 'TOGGLE_PERMISO'].includes(accion) ? 'ACEPTADA' : 'PENDIENTE';
+
+        // 🔍 BÚSQUEDA INTELIGENTE DEL DOCUMENTO DE VINCULACIÓN
+        let vinculacion;
+        if (accion === 'TOGGLE_PERMISO') {
+            // Desde la vista de Transportistas, 'id' de la URL es el del transportista.
+            // Buscamos la relación usando el par transportistaId + generadorId
+            const gId = generadorId;
+            if (!gId) {
+                return res.status(400).json({ message: 'El generadorId es requerido para cambiar permisos.', type: 'Alerta' });
+            }
+            vinculacion = await Vinculacion.findOne({ transportistaId: id, generadorId: gId, status: queryStatus });
+        } else {
+            // Desde la vista de Solicitudes, 'id' de la URL es el ID directo de la Vinculacion
+            vinculacion = await Vinculacion.findOne({ _id: id, status: queryStatus });
+        }
+
+        if (!vinculacion) {
+            return res.status(404).json({ message: 'Vínculo comercial no encontrado o no se encuentra activo.', type: 'Alerta' });
+        }
+
+        const permisoBool = tienePermisoLlenado === 'true' || tienePermisoLlenado === true;
+
+        if (accion === 'ACEPTAR') {
+            vinculacion.status = 'ACEPTADA';
+            vinculacion.fechaRespuesta = new Date();
+            vinculacion.respondidoPor = usuarioId;
+
+            const esGeneradorRespondiendo = vinculacion.iniciadoPor === 'TRANSPORTISTA';
+            const permisoFinal = esGeneradorRespondiendo ? permisoBool : false;
+
+            vinculacion.tienePermisoLlenado = permisoFinal;
+            await vinculacion.save();
+
+            await Transportista.findByIdAndUpdate(vinculacion.transportistaId, {
+                $addToSet: {
+                    generadores: {
+                        generadorId: vinculacion.generadorId,
+                        tienePermisoLlenado: permisoFinal
+                    }
+                }
+            });
+
+        } else if (accion === 'RECHAZAR') {
+            vinculacion.status = 'RECHAZADA';
+            vinculacion.fechaRespuesta = new Date();
+            vinculacion.respondidoPor = usuarioId;
+            await vinculacion.save();
+
+        } else if (accion === 'CANCELAR') {
+            vinculacion.status = 'RECHAZADA';
+            vinculacion.fechaRespuesta = new Date();
+            vinculacion.respondidoPor = usuarioId;
+            await vinculacion.save();
+
+            await Transportista.findByIdAndUpdate(vinculacion.transportistaId, {
+                $pull: {
+                    generadores: { generadorId: vinculacion.generadorId }
+                }
+            });
+
+        } else if (accion === 'TOGGLE_PERMISO') {
+            if (rolActivo !== "GENERADOR") {
+                return res.status(403).json({
+                    message: 'Acceso Denegado. Solo el cliente Generador posee la potestad de autorizar o revocar el uso de sus datos fiscales.',
+                    type: 'Alerta'
+                });
+            }
+
+            // Actualizamos el flag en la tabla de relaciones intermedias (Vinculacion)
+            vinculacion.tienePermisoLlenado = permisoBool;
+            await vinculacion.save();
+
+            // Sincronizamos el arreglo embebido en la colección del Transportista
+            await Transportista.updateOne(
+                { _id: vinculacion.transportistaId, "generadores.generadorId": vinculacion.generadorId },
+                { $set: { "generadores.$.tienePermisoLlenado": permisoBool } }
+            );
+        }
+
+        // --- Bloque de Notificaciones ---
+        try {
+            const usuarioRespondedor = await UserExternal.findById(usuarioId)
+                .populate("generadorId", "razonSocial ruc")
+                .populate("transportistaId", "razonSocial ruc");
+
+            if (usuarioRespondedor) {
+                const razonRespondedor = rolActivo === "GENERADOR"
+                    ? usuarioRespondedor.generadorId?.razonSocial
+                    : usuarioRespondedor.transportistaId?.razonSocial;
+
+                const rucRespondedor = rolActivo === "GENERADOR"
+                    ? usuarioRespondedor.generadorId?.ruc
+                    : usuarioRespondedor.transportistaId?.ruc;
+
+                const queryDestino = rolActivo === "GENERADOR"
+                    ? { transportistaId: vinculacion.transportistaId, roles: "TRANSPORTISTA" }
+                    : { generadorId: vinculacion.generadorId, roles: "GENERADOR" };
+
+                const usuarioDestino = await UserExternal.findOne(queryDestino);
+
+                if (usuarioDestino) {
+                    let title = "";
+                    let message = "";
+
+                    if (accion === 'ACEPTAR') {
+                        title = "Solicitud de Vinculación Aceptada";
+                        message = `Tu solicitud de vinculación de operaciones fue aceptada por la empresa: ${razonRespondedor} - RUC: ${rucRespondedor}. Ya pueden operar juntos.`;
+                    } else if (accion === 'RECHAZAR') {
+                        title = "Solicitud de Vinculación Rechazada";
+                        message = `Tu solicitud de vinculación de operaciones fue rechazada por la empresa: ${razonRespondedor} - RUC: ${rucRespondedor}.`;
+                    } else if (accion === 'CANCELAR') {
+                        title = "Vinculación Operativa Finalizada";
+                        message = `La empresa ${razonRespondedor} (RUC: ${rucRespondedor}) ha cancelado la vinculación operacional que mantenían activa.`;
+                    } else if (accion === 'TOGGLE_PERMISO') {
+                        title = "Modificación de Permisos de Llenado";
+                        message = `La empresa ${razonRespondedor} ha ${permisoBool ? 'CONCEDIDO' : 'REVOCADO'} el permiso para que gestiones de forma directa el llenado de Manifiestos con sus datos fiscales.`;
+                    }
+
+                    if (title && message) {
+                        await NotificationService.send(io, {
+                            type: "INDIVIDUAL",
+                            title,
+                            message,
+                            creator: { id: usuarioId, model: "UserExternal" },
+                            scope: { receiverModel: "UserExternal", receiverId: usuarioDestino._id },
+                            entity: { id: vinculacion._id, model: "Vinculacion" }
+                        });
+                    }
+                }
+            }
+        } catch (notifError) {
+            console.error("⚠️ Error silencioso al despachar notificación en patchVinculacion:", notifError);
+        }
+
+        return res.status(200).json({
+            message: `Operación (${accion}) completada con éxito.`,
+            type: 'Correcto',
+            data: vinculacion
+        });
+
+    } catch (error) {
+        console.error('Error al responder vinculación:', error);
+        return res.status(500).json({ message: 'Error interno del servidor.', type: 'Error' });
+    }
+};
+
+module.exports = patchVinculacion;

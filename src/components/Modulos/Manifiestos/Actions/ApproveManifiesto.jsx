@@ -12,6 +12,11 @@ const ApproveManifiestoModal = ({ visible, onHide, selected, reload }) => {
     const { showSuccess, showError } = useToast();
     const [loading, setLoading] = useState(false);
     const [otorgarPermiso, setOtorgarPermiso] = useState(false);
+    const responsables = selected?.generadorId?.responsablesTecnicos || [];
+    const nombreSeleccionado = selected?.referendoEntrega?.generadorResponsableManejo;
+    const responsableFirmante = nombreSeleccionado
+        ? responsables.find((responsable) => responsable.nombreResponsable === nombreSeleccionado && responsable.firmaResponsable)
+        : responsables.find((responsable) => responsable.firmaResponsable);
 
     const handleConfirmApprove = async () => {
         setLoading(false);
@@ -51,10 +56,13 @@ const ApproveManifiestoModal = ({ visible, onHide, selected, reload }) => {
         >
             <div className="text-sm text-slate-600 leading-relaxed flex flex-col gap-4">
                 <p>
-                    ¿Estás seguro de que deseas firmar digitalmente y autorizar el **Manifiesto N° {selected?.numeroManifiesto}**?
+                    ¿Deseas autorizar el manifiesto N° {selected?.numeroManifiesto} con la firma registrada de tu responsable?
                 </p>
                 <p className="text-xs text-slate-400">
-                    Al confirmar, tus firmas fiscales autorizadas se estamparán en el documento y el estado cambiará a <span className="font-semibold text-blue-600">ENVIADO</span>, permitiendo que el destino tome el control operativo del registro.
+                    Al confirmar, se registrará la imagen de firma del responsable y el manifiesto pasará a <span className="font-semibold text-blue-600">ENVIADO</span>. Esta imagen no es una firma digital criptográfica.
+                </p>
+                <p className="text-xs text-slate-600">
+                    Responsable: <strong>{responsableFirmante?.nombreResponsable || nombreSeleccionado || "Sin firma disponible"}</strong>.
                 </p>
 
                 {/* Card de sugerencia para evitar flujos manuales repetitivos */}
@@ -64,7 +72,7 @@ const ApproveManifiestoModal = ({ visible, onHide, selected, reload }) => {
                         <InputSwitch checked={otorgarPermiso} onChange={(e) => setOtorgarPermiso(e.value)} />
                     </div>
                     <p className="text-xs text-slate-500 leading-normal">
-                        Activa esta opción si prefieres **conceder el permiso de llenado automático** a <span className="font-semibold text-slate-700">{selected?.transportistaId?.razonSocial || "este transportista"}</span> para evitar tener que aprobar de forma manual cada uno de tus manifiestos en el futuro.
+                        Autoriza a <span className="font-semibold text-slate-700">{selected?.transportistaId?.razonSocial || "este transportista"}</span> a utilizar tus datos para llenar manifiestos. Este permiso no autoriza el uso automático de tu firma: por ahora deberás revisar cada manifiesto.
                     </p>
                     {otorgarPermiso && (
                         <div className="p-2.5 rounded-lg border border-amber-100 bg-amber-50 text-[11px] text-amber-700 leading-relaxed flex gap-2 items-start">

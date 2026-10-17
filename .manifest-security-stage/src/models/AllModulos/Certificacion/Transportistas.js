@@ -1,0 +1,98 @@
+const mongoose = require("mongoose");
+
+const transportistaSchema = mongoose.Schema(
+    {
+        razonSocial: {
+            type: String,
+            required: true,
+        },
+        ruc: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        registroEors: {
+            type: String,
+            required: true,
+        },
+        autorizacionMunicipal: {
+            type: String,
+        },
+        documentoRuta: {
+            type: String,
+        },
+        direccion: {
+            type: String,
+            required: true,
+        },
+        ubigeoId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Ubigeo',
+            required: true,
+        },
+        correoElectronico: {
+            type: String,
+            required: true,
+        },
+        telefono: {
+            type: String,
+            required: true,
+        },
+        representanteLegal: {
+            nombre: { type: String },
+            dni: { type: String },
+        },
+        responsableTecnico: {
+            nombre: { type: String },
+            numeroColegiatura: { type: String },
+        },
+        contingencias: {
+            derrame: { type: String },
+            infiltracion: { type: String },
+            incendio: { type: String },
+            explosion: { type: String },
+            otros: { type: String },
+        },
+        responsables: [
+            {
+                nombre: { type: String },
+                dni: { type: String },
+                cargo: { type: String },
+                firmaResponsable: { type: String },
+            }
+        ],
+        // Dentro de transportistaSchema
+        generadores: [
+            {
+                generadorId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Generador',
+                    required: true
+                },
+                tienePermisoLlenado: {
+                    type: Boolean,
+                    default: false // Por defecto no tiene permiso (Caso más común/sin confianza)
+                }
+            }
+        ],
+        conductores: [
+            {
+                nombre: { type: String },
+                licencia: { type: String },
+            }
+        ],
+        usuarioManifestower: {
+            type: Boolean,
+            default: false
+        },
+        estado: {
+            type: String,
+            enum: ['ACTIVO', 'INACTIVO', 'SUSPENDIDO'],
+            default: 'ACTIVO',
+        },
+    },
+    { timestamps: true }
+);
+
+const Transportista = mongoose.model("Transportista", transportistaSchema);
+module.exports = Transportista;

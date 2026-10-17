@@ -5,6 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { useAuth } from '../../../context/AuthContext';
+import SolicitudGenerador from './SolicitudGenerador';
 
 const AddGenerador = () => {
     const { user, activeRole: rolActivo } = useAuth();
@@ -12,6 +13,7 @@ const AddGenerador = () => {
     const [selectedGenerador, setSelectedGenerador] = useState(null);
     const [loading, setLoading] = useState(false);
     const [localSearch, setLocalSearch] = useState('');
+    const [mostrarSolicitud, setMostrarSolicitud] = useState(false);
     const { showSuccess, showError } = useToast();
 
     useEffect(() => {
@@ -58,6 +60,8 @@ const AddGenerador = () => {
         }
     };
 
+    if (mostrarSolicitud) return <SolicitudGenerador onBack={() => setMostrarSolicitud(false)} />;
+
     return (
         <div className="w-full mx-auto p-4 sm:p-6 bg-white rounded-xl shadow-lg border border-slate-100">
             <div className="mb-6 flex w-full flex-col sm:flex-row border-b border-gray-200 justify-between sm:items-center gap-4 pb-4">
@@ -66,6 +70,9 @@ const AddGenerador = () => {
                     <p className="text-sm text-slate-500 mt-1">
                         Busca empresas generadoras de residuos por RUC o Razón Social para proponerles una vinculación operativa.
                     </p>
+                    <button type="button" onClick={() => setMostrarSolicitud(true)} className="mt-3 text-sm font-semibold text-blue-700 underline">
+                        ¿No está registrado? Crear solicitud provisional
+                    </button>
                 </div>
                 <IconField iconPosition="left" className="w-full sm:w-auto">
                     <InputIcon className={"pi pi-search pl-2"} />

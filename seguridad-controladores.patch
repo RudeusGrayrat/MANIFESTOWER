@@ -1,0 +1,133 @@
+*** Begin Patch
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/getSolicitudesVinculación.js
+@@
+-        const { transportistaId, generadorId, tipo } = req.query;
++        const { tipo } = req.query;
++        const transportistaId = req.externalRole === "TRANSPORTISTA" ? req.externalUser.transportistaId : undefined;
++        const generadorId = req.externalRole === "GENERADOR" ? req.externalUser.generadorId : undefined;
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/dashboard.js
+@@
+-        const { usuarioId, rolActivo } = req.query;
++        const usuarioId = req.externalUser._id;
++        const rolActivo = req.externalRole;
+@@
+             if (user?.generadorId) {
+                 matchCond.generadorId = user.generadorId;
++                matchCond.estado = { $ne: "BORRADOR" };
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/patchVinculacion.js
+@@
+-        const { accion, usuarioId, rolActivo, tienePermisoLlenado, generadorId } = req.query;
++        const { accion, tienePermisoLlenado, generadorId } = req.query;
++        const usuarioId = req.externalUser._id;
++        const rolActivo = req.externalRole;
+@@
+         if (!vinculacion) {
+             return res.status(404).json({ message: 'Vínculo comercial no encontrado o no se encuentra activo.', type: 'Alerta' });
+         }
++        const empresaPropia = rolActivo === "GENERADOR" ? req.externalUser.generadorId : req.externalUser.transportistaId;
++        const empresaVinculo = rolActivo === "GENERADOR" ? vinculacion.generadorId : vinculacion.transportistaId;
++        if (String(empresaPropia) !== String(empresaVinculo)) return res.status(403).json({ message: "No tienes acceso a esta vinculación." });
++        if (["ACEPTAR", "RECHAZAR"].includes(accion) && vinculacion.iniciadoPor === rolActivo) return res.status(403).json({ message: "Solo la contraparte puede responder la solicitud." });
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/postVinculacion.js
+@@
+-        const { transportistaId, generadorId, usuarioId, rolActivo } = req.query;
++        const { transportistaId, generadorId } = req.query;
++        const usuarioId = req.externalUser._id;
++        const rolActivo = req.externalRole;
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/desvinculation.js
+@@
+-        const { transportistaId, generadorId, usuarioId, rolActivo } = req.query;
++        const { transportistaId, generadorId } = req.query;
++        const usuarioId = req.externalUser._id;
++        const rolActivo = req.externalRole;
+@@
+         if (!transportistaId || !generadorId || !usuarioId || !rolActivo) {
+@@
+         }
++        const propio = rolActivo === "GENERADOR" ? String(req.externalUser.generadorId) === String(generadorId) : String(req.externalUser.transportistaId) === String(transportistaId);
++        if (!propio) return res.status(403).json({ message: "No tienes acceso a esta vinculación." });
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/envioManifiesto.js
+@@
+-        const usuarioTransportistaId = req.user?._id || req.body?.usuarioId;
++        const usuarioTransportistaId = req.externalUser._id;
+@@
+-            identidadVerificada: false,
++            identidadVerificada: true,
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/approveFirma.js
+@@
+-        const { usuarioId, otorgarPermisoLlenado } = req.query;
++        const { otorgarPermisoLlenado } = req.query;
++        const usuarioId = req.externalUser._id;
+@@
+-            identidadVerificada: false,
++            identidadVerificada: true,
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/observarManifiestoGenerador.js
+@@
+-        const { usuarioId } = req.body;
++        const usuarioId = req.externalUser._id;
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/Manifiestos/verificarManifiesto.js
+@@
+-    const { estado, observaciones, usuarioId } = req.body;
++    const { estado, observaciones } = req.body;
++    const usuarioId = req.user._id;
+@@
+-                identidadVerificada: false,
++                identidadVerificada: true,
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/Manifiestos/getManifiestosPaginacion.js
+@@
+-            usuario = "",
+-            rolActivo = "" // Recibimos el rol desde el Frontend ("GENERADOR" o "TRANSPORTISTA")
++            usuario = "",
++            rolActivo = ""
+@@
+-        if (usuario) {
+-            console.log("Usuario recibido:", usuario, "Rol activo:", rolActivo);
+-            const findUser = await UserExternal.findById(usuario).lean();
+-            console.log("Usuario encontrado:", findUser);
++        if (req.externalUser) {
++            const findUser = req.externalUser;
+@@
+-            if (rolActivo === "GENERADOR") {
++            if (req.externalRole === "GENERADOR") {
+@@
+-                console.log("Generador ID del usuario:", findUser.generadorId);
+@@
+-            else if (rolActivo === "TRANSPORTISTA") {
++            else if (req.externalRole === "TRANSPORTISTA") {
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/Manifiestos/postManifiesto.js
+@@
+ const NotificationService = require("../../../Herramientas/Notification/CreateNotification");
++const Vinculacion = require("../../../../models/ManifesTower/Vinculacion");
+@@
+         if (!transportista) return res.status(404).json({ message: "Transportista no encontrado", type: "Error" });
+         if (!destinoPredeterminado) return res.status(404).json({ message: "No existe un destino final configurado", type: "Error" });
++        if (req.externalUser) {
++            if (req.externalRole !== "TRANSPORTISTA" || String(req.externalUser.transportistaId) !== String(transportistaId)) return res.status(403).json({ message: "Solo el transportista de tu sesión puede crear este manifiesto." });
++            if (!await Vinculacion.exists({ generadorId, transportistaId, status: "ACEPTADA", fechaDesvinculacion: null })) return res.status(403).json({ message: "Se requiere una vinculación activa con el generador." });
++        }
+@@
+-            referendoEntrega: referendoEntrega || { referendo: false },
+-            referendoRecepcion: referendoRecepcion || { referendo: false },
+-            otrasObligaciones: otrasObligaciones || {},
+-            estado: estado || "BORRADOR",
+-            creadoPor: creadoPor || req.user?.id
++            referendoEntrega: { referendo: false, generadorResponsableManejo: referendoEntrega?.generadorResponsableManejo, responsableEors: referendoEntrega?.responsableEors },
++            referendoRecepcion: { referendo: false },
++            otrasObligaciones: {},
++            estado: "BORRADOR",
++            creadoPor: req.externalUser?._id || req.user?._id
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/Manifiestos/patchManifiesto.js
+@@
+ const Manifiesto = require("../../../../models/AllModulos/Certificacion/Manifiestos");
++const Vinculacion = require("../../../../models/ManifesTower/Vinculacion");
+@@
+         if (!findManifiesto) return res.status(404).json({ message: "Manifiesto no encontrado", type: "Error" });
++        if (req.externalUser) {
++            if (req.externalRole !== "TRANSPORTISTA" || String(findManifiesto.transportistaId) !== String(req.externalUser.transportistaId) || (transportistaId && String(transportistaId) !== String(req.externalUser.transportistaId))) return res.status(403).json({ message: "Solo el transportista propietario puede modificar el manifiesto." });
++            const generadorFinal = generadorId || findManifiesto.generadorId;
++            if (!await Vinculacion.exists({ generadorId: generadorFinal, transportistaId: req.externalUser.transportistaId, status: "ACEPTADA", fechaDesvinculacion: null })) return res.status(403).json({ message: "Se requiere una vinculación activa con el generador." });
++        }
+@@
+-        if (modificadoPor) findManifiesto.modificadoPor = modificadoPor;
++        findManifiesto.modificadoPor = req.externalUser?._id || req.user?._id;
+*** End Patch

@@ -8,6 +8,8 @@ import AuthLayout from "./components/auth/Auth";
 import LoadingOverlay from "./components/ui/cards/LoadingOverlay";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register/Register";
+import InvitacionGenerador from "./components/auth/Register/InvitacionGenerador";
+import RecuperarCodigoGenerador from "./components/auth/Register/RecuperarCodigoGenerador";
 import Perfil from "./components/Modulos/Perfil/Perfil";
 import Notificaciones from "./components/notificaciones/Notificaciones";
 import { NotificacionesProvider } from "./components/context/NotificacionesContext";
@@ -25,6 +27,8 @@ const router = createBrowserRouter([
     children: [
       { path: "login", element: <Login /> },
       { path: "registrar", element: <Register /> },
+      { path: "invitacion-generador", element: <InvitacionGenerador /> },
+      { path: "recuperar-codigo-generador", element: <RecuperarCodigoGenerador /> },
     ],
   },
   {

@@ -19,7 +19,6 @@ const getTransportistaPayload = (data) => ({
     representanteLegal: data.representanteLegal,
     responsableTecnico: data.responsableTecnico,
     contingencias: data.contingencias,
-    usuarioManifestower: data.usuarioManifestower,
 });
 
 const Perfil = () => {
@@ -53,14 +52,14 @@ const Perfil = () => {
                 console.log("Fetching perfil for user:", user, "with role:", activeRole);
                 let endpoint = "";
                 if (activeRole === "GENERADOR") {
-                    endpoint = `/certificaciones/getGeneradorById/${user.generadorId?._id || user.generadorId}`;
+                    endpoint = "/manifesTower/mi-generador";
                 } else if (activeRole === "TRANSPORTISTA") {
                     endpoint = `/certificaciones/getTransportistaById/${user.transportistaId?._id || user.transportistaId}`;
                 } else {
                     showError("Rol no reconocido");
                     return;
                 }
-                const response = await axios.get(endpoint);
+                const response = await axios.get(endpoint, activeRole === "GENERADOR" ? { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } } : undefined);
                 const data = response.data;
 
                 setPerfil(data);
@@ -104,14 +103,16 @@ const Perfil = () => {
             const payload = activeRole === "GENERADOR" ? { ...formData } : getTransportistaPayload(formData);
             // Si no se modificó la contraseña, no la enviamos
             delete payload.password;
+            if (activeRole === "GENERADOR") delete payload.usuarioManifestower;
             await axios.patch(endpoint, payload);
             showSuccess("Datos actualizados correctamente");
             setEditando(false);
             // Recargar perfil
             const updated = await axios.get(
                 activeRole === "GENERADOR"
-                    ? `/certificaciones/getGeneradorById/${perfil._id}`
-                    : `/certificaciones/getTransportistaById/${perfil._id}`
+                    ? "/manifesTower/mi-generador"
+                    : `/certificaciones/getTransportistaById/${perfil._id}`,
+                activeRole === "GENERADOR" ? { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } } : undefined
             );
             setPerfil(updated.data);
             setFormData(updated.data);
@@ -124,8 +125,8 @@ const Perfil = () => {
 
     // ========== MANEJO DE RESPONSABLES ==========
     const handleAddResponsable = async () => {
-        if (!nuevoResponsable.nombre) {
-            showInfo("Debe ingresar al menos el nombre");
+        if (!nuevoResponsable.nombre || (activeRole === "GENERADOR" && (!nuevoResponsable.dni || !nuevoResponsable.cargo))) {
+            showInfo(activeRole === "GENERADOR" ? "Complete el nombre, DNI y cargo del responsable" : "Debe ingresar al menos el nombre");
             return;
         }
         setLoading(true);
@@ -136,18 +137,24 @@ const Perfil = () => {
                 firmaResponsable: nuevoResponsable.firmaBase64 || nuevoResponsable.firmaResponsable || "",
             };
             delete nuevo.firmaBase64;
+            if (activeRole === "GENERADOR") {
+                nuevo.nombreResponsable = nuevo.nombre || nuevo.nombreResponsable;
+                nuevo.dniResponsable = nuevo.dni || nuevo.dniResponsable;
+                nuevo.cargoResponsable = nuevo.cargo || nuevo.cargoResponsable;
+                delete nuevo.nombre; delete nuevo.dni; delete nuevo.cargo;
+            }
             // Actualizar array en el perfil
             const updatedArray = editandoResponsableIndex === null
                 ? [...responsables, nuevo]
                 : responsables.map((responsable, index) => index === editandoResponsableIndex ? nuevo : responsable);
-            await updatePerfilArray(activeRole === "GENERADOR" ? "responsablesTecnicos" : "responsables", updatedArray);
-            setResponsables(updatedArray);
+            const guardados = await updatePerfilArray(activeRole === "GENERADOR" ? "responsablesTecnicos" : "responsables", updatedArray);
+            setResponsables(guardados);
             setNuevoResponsable({});
             setEditandoResponsableIndex(null);
             setShowFormResponsable(false);
             showSuccess(editandoResponsableIndex === null ? "Responsable agregado" : "Responsable actualizado");
         } catch (error) {
-            showError("Error al agregar responsable");
+            showError(error.response?.data?.message || "Error al guardar responsable");
         } finally {
             setLoading(false);
         }
@@ -174,9 +181,11 @@ const Perfil = () => {
             activeRole === "GENERADOR"
                 ? `/certificaciones/editGenerador/${perfil._id}`
                 : `/certificaciones/editTransportista/${perfil._id}`;
-        await axios.patch(endpoint, { [arrayField]: newArray });
+        const response = await axios.patch(endpoint, { [arrayField]: newArray });
+        const guardados = response.data?.data?.[arrayField] || newArray;
         // Actualizar perfil local
-        setPerfil((prev) => ({ ...prev, [arrayField]: newArray }));
+        setPerfil((prev) => ({ ...prev, [arrayField]: guardados }));
+        return guardados;
     };
 
     // ========== MANEJO DE PLANTAS (solo GENERADOR) ==========
@@ -262,21 +271,21 @@ const Perfil = () => {
 
     // ========== CAMBIO DE CONTRASEÑA ==========
     const handleChangePassword = async () => {
-        if (!formData.newPassword || formData.newPassword.length < 6) {
-            showInfo("La contraseña debe tener al menos 6 caracteres");
+        if (!formData.currentPassword || !formData.newPassword || formData.newPassword.length < 12 || new TextEncoder().encode(formData.newPassword).length > 72) {
+            showInfo("Ingresa tu contraseña actual y una nueva de al menos 12 caracteres y máximo 72 bytes.");
             return;
         }
         setLoading(true);
         try {
             const endpoint = "/manifesTower/patchUserExternal"; // Asume que tienes este endpoint
             const response = await axios.patch(endpoint, {
-                userId: user._id,
+                currentPassword: formData.currentPassword,
                 newPassword: formData.newPassword,
             });
             if (response.data) {
                 showSuccess(response.data.message || "Contraseña cambiada correctamente");
             }
-            setFormData((prev) => ({ ...prev, newPassword: "" }));
+            setFormData((prev) => ({ ...prev, currentPassword: "", newPassword: "" }));
         } catch (error) {
             showError(error.response?.data?.message || "Error al cambiar contraseña");
         } finally {
@@ -457,7 +466,7 @@ const Perfil = () => {
                                     <td className="px-4 py-2 text-center">
                                         <button
                                             onClick={() => {
-                                                setNuevoResponsable(resp);
+                                                setNuevoResponsable({ ...resp, nombre: resp.nombre || resp.nombreResponsable, dni: resp.dni || resp.dniResponsable, cargo: resp.cargo || resp.cargoResponsable });
                                                 setEditandoResponsableIndex(index);
                                                 setShowFormResponsable(true);
                                             }}
@@ -695,6 +704,10 @@ const Perfil = () => {
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">Cambiar Contraseña</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
+                        <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">Contraseña actual</label>
+                        <input id="currentPassword" name="currentPassword" value={formData.currentPassword || ""} onChange={handleInputChange} type="password" autoComplete="current-password" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                    </div>
+                    <div>
                         <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">Nueva Contraseña</label>
                         <div className="flex items-center border border-gray-300 rounded-lg bg-white px-3 py-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
                             <i className="pi pi-lock text-gray-400 mr-2" aria-hidden="true" />
@@ -704,7 +717,8 @@ const Perfil = () => {
                                 value={formData.newPassword || ""}
                                 onChange={handleInputChange}
                                 type={showPassword ? "text" : "password"}
-                                placeholder="Mínimo 6 caracteres"
+                                placeholder="Mínimo 12 caracteres"
+                                autoComplete="new-password"
                                 className="w-full outline-none bg-transparent text-sm text-gray-700"
                             />
                             <button

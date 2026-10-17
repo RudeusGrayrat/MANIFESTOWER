@@ -11,7 +11,7 @@ const benefits = [
 const AuthLayout = () => {
     const location = useLocation();
     const { loading } = useAuth();
-    const isRegister = location.pathname === "/registrar";
+    const isRegister = location.pathname === "/registrar" || location.pathname === "/invitacion-generador";
 
     return (
         <main className="auth-page">

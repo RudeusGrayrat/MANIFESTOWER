@@ -171,12 +171,17 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
             }
 
             // La devolución se completa desde Gestower al aprobar/liberar el documento.
-            const { otrasObligaciones, ...datosBase } = formData;
+            const { otrasObligaciones, referendoRecepcion, ...datosBase } = formData;
             const datosEnvio = {
                 ...datosBase,
                 generadorId: formData.generadorId?._id || formData.generadorId,
                 transportistaId: formData.transportistaId?._id || formData.transportistaId,
                 destinoId: formData.destinoId?._id || formData.destinoId,
+                referendoEntrega: {
+                    referendo: false,
+                    generadorResponsableManejo: formData.referendoEntrega?.generadorResponsableManejo || "",
+                    responsableEors: formData.referendoEntrega?.responsableEors || "",
+                },
                 creadoPor: user._id
             };
             const response = await axios.post("/certificaciones/postManifiesto", datosEnvio);

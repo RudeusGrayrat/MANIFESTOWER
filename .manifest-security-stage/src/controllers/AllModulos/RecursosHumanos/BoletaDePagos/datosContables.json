@@ -1,0 +1,987 @@
+[
+    {
+        "codigoPlame": "0100",
+        "concepto": "INGRESOS",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0101",
+        "concepto": "ALIMENTACIÓN PRINCIPAL EN DINERO",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0102",
+        "concepto": "ALIMENTACIÓN PRINCIPAL EN ESPECIE",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0103",
+        "concepto": "COMISIONES O DESTAJO",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0104",
+        "concepto": "COMISIONES EVENTUALES A TRABAJADORES",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0105",
+        "concepto": "TRABAJO EN SOBRETIEMPO (HORAS EXTRAS) 25%",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0106",
+        "concepto": "TRABAJO EN SOBRETIEMPO (HORAS EXTRAS) 35%",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0107",
+        "concepto": "TRABAJO EN DÍA FERIADO O DÍA DE DESCANSO",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0108",
+        "concepto": "INCREMENTO EN SNP 3.3 %",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0109",
+        "concepto": "INCREMENTO POR AFILIACIÓN A AFP 10.23%",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0110",
+        "concepto": "INCREMENTO POR AFILIACIÓN A AFP 3.00%",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0111",
+        "concepto": "PREMIOS POR VENTAS",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0112",
+        "concepto": "PRESTACIONES ALIMENTARIAS - SUMINISTROS DIRECTOS",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0113",
+        "concepto": "PRESTACIONES ALIMENTARIAS - SUMINISTROS INDIRECTOS",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0114",
+        "concepto": "VACACIONES TRUNCAS",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0115",
+        "concepto": "REMUNERACIÓN DÍA DE DESCANSO Y FERIADOS (INCLUIDA LA DEL 1° DE MAYO)",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0116",
+        "concepto": "REMUNERACIÓN EN ESPECIE",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0117",
+        "concepto": "COMPENSACIÓN VACACIONAL",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0118",
+        "concepto": "REMUNERACIÓN VACACIONAL",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0119",
+        "concepto": "REMUNERACIONES DEVENGADAS",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0120",
+        "concepto": "SUBVENCIÓN ECONÓMICA MENSUAL (PRACTICANTE SENATI)",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0121",
+        "concepto": "REMUNERACIÓN O JORNAL BÁSICO",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0122",
+        "concepto": "REMUNERACIÓN PERMANENTE",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0123",
+        "concepto": "REMUNERACIÓN DE LOS SOCIOS DE COOPERATIVAS",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0124",
+        "concepto": "REMUNERACIÓN POR LA HORA DE PERMISO POR LACTANCIA",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0125",
+        "concepto": "REMUNERACIÓN INTEGRAL ANUAL - CUOTA",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0126",
+        "concepto": "INGRESOS DEL CONDUCTOR DE LA MICROEMPRESA AFILIADO AL SIS",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0127",
+        "concepto": "INGRESOS DEL CONDUCTOR DE LA MICROEMPRESA - SEGURO REGULAR",
+        "tipo": "INGRESOS"
+    },
+    {
+        "codigoPlame": "0200",
+        "concepto": "INGRESOS: ASIGNACIONES",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0201",
+        "concepto": "ASIGNACIÓN FAMILIAR",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0202",
+        "concepto": "ASIGNACIÓN O BONIFICACIÓN POR EDUCACIÓN (1)",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0203",
+        "concepto": "ASIGNACIÓN POR CUMPLEAÑOS",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0204",
+        "concepto": "ASIGNACIÓN POR MATRIMONIO",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0205",
+        "concepto": "ASIGNACIÓN  POR NACIMIENTO DE HIJOS",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0206",
+        "concepto": "ASIGNACIÓN POR FALLECIMIENTO DE FAMILIARES",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0207",
+        "concepto": "ASIGNACIÓN POR OTROS MOTIVOS PERSONALES (2)",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0208",
+        "concepto": "ASIGNACIÓN POR FESTIVIDAD",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0209",
+        "concepto": "ASIGNACIÓN PROVISIONAL POR DEMANDA DE TRABAJADOR DESPEDIDO",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0210",
+        "concepto": "ASIGNACIÓN VACACIONAL",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0211",
+        "concepto": "ASIGNACIÓN POR ESCOLARIDAD 30 JORNALES BASICOS/AÑO",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0212",
+        "concepto": "ASIGNACIONES OTORGADAS POR ÚNICA VEZ CON MOTIVO DE CIERTAS CONTINGENCIAS",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0213",
+        "concepto": "ASIGNACIONES OTORGADAS REGULARMENTE",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0214",
+        "concepto": "ASIGNACIÓN POR FALLECIMIENTO 1 UIT",
+        "tipo": "ASIGNACIONES"
+    },
+    {
+        "codigoPlame": "0300",
+        "concepto": "INGRESOS: BONIFICACIONES",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0301",
+        "concepto": "BONIFICACIÓN POR 25 Y 30 AÑOS DE SERVICIOS",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0302",
+        "concepto": "BONIFICACIÓN POR CIERRE DE PLIEGO",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0303",
+        "concepto": "BONIFICACIÓN POR PRODUCCIÓN, ALTURA, TURNO, ETC.",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0304",
+        "concepto": "BONIFICACIÓN POR RIESGO DE CAJA",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0305",
+        "concepto": "BONIFICACIONES POR TIEMPO DE SERVICIOS",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0306",
+        "concepto": "BONIFICACIONES REGULARES",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0307",
+        "concepto": "BONIFICACIONES CAFAE (3)",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0308",
+        "concepto": "COMPENSACIÓN POR TRABAJOS EN DÍAS DE DESCANSO Y EN FERIADOS",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0309",
+        "concepto": "BONIFICACIÓN POR TURNO NOCTURNO 20% JORNAL BASICO",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0310",
+        "concepto": "BONIFICACIÓN CONTACTO DIRECTO CON AGUA 20% JORNAL BÁSICO",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0311",
+        "concepto": "BONIFICACION UNIFICADA DE CONSTRUCCIÓN",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0312",
+        "concepto": "BONIFICACIÓN EXTRAORDINARIA TEMPORAL – LEY 29351",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0313",
+        "concepto": "BONIFICACIÓN EXTRAORDINARIA PROPORCIONAL – LEY 29351",
+        "tipo": "BONIFICACIONES"
+    },
+    {
+        "codigoPlame": "0400",
+        "concepto": "INGRESOS: GRATIFICACIONES / AGUINALDOS",
+        "tipo": "GRATIFICACIONES / AGUINALDOS"
+    },
+    {
+        "codigoPlame": "0401",
+        "concepto": "GRATIFICACIONES DE FIESTAS PATRIAS Y NAVIDAD",
+        "tipo": "GRATIFICACIONES / AGUINALDOS"
+    },
+    {
+        "codigoPlame": "0402",
+        "concepto": "OTRAS GRATIFICACIONES ORDINARIAS",
+        "tipo": "GRATIFICACIONES / AGUINALDOS"
+    },
+    {
+        "codigoPlame": "0403",
+        "concepto": "GRATIFICACIONES EXTRAORDINARIAS",
+        "tipo": "GRATIFICACIONES / AGUINALDOS"
+    },
+    {
+        "codigoPlame": "0404",
+        "concepto": "AGUINALDOS DE JULIO Y DICIEMBRE",
+        "tipo": "GRATIFICACIONES / AGUINALDOS"
+    },
+    {
+        "codigoPlame": "0405",
+        "concepto": "GRATIFICACIONES PROPORCIONAL",
+        "tipo": "GRATIFICACIONES / AGUINALDOS"
+    },
+    {
+        "codigoPlame": "0406",
+        "concepto": "GRATIFICACIONES DE FIESTAS PATRIAS Y NAVIDAD – LEY 29351",
+        "tipo": "GRATIFICACIONES / AGUINALDOS"
+    },
+    {
+        "codigoPlame": "0407",
+        "concepto": "GRATIFICACIONES PROPORCIONAL – LEY 29351",
+        "tipo": "GRATIFICACIONES / AGUINALDOS"
+    },
+    {
+        "codigoPlame": "0500",
+        "concepto": "INGRESOS: INDEMNIZACIONES",
+        "tipo": "INDEMNIZACIONES"
+    },
+    {
+        "codigoPlame": "0501",
+        "concepto": "INDEMNIZACIÓN POR DESPIDO INJUSTIFICADO U HOSTILIDAD",
+        "tipo": "INDEMNIZACIONES"
+    },
+    {
+        "codigoPlame": "0502",
+        "concepto": "INDEMNIZACIÓN POR MUERTE O INCAPACIDAD",
+        "tipo": "INDEMNIZACIONES"
+    },
+    {
+        "codigoPlame": "0503",
+        "concepto": "INDEMNIZACIÓN POR RESOLUCIÓN DE CONTRATO SUJETO A MODALIDAD",
+        "tipo": "INDEMNIZACIONES"
+    },
+    {
+        "codigoPlame": "0504",
+        "concepto": "INDEMNIZACIÓN POR VACACIONES NO GOZADAS",
+        "tipo": "INDEMNIZACIONES"
+    },
+    {
+        "codigoPlame": "0505",
+        "concepto": "INDEMNIZACIÓN POR RETENCIÓN INDEBIDA DE CTS ART. 52 D.S Nº 001-97-TR",
+        "tipo": "INDEMNIZACIONES"
+    },
+    {
+        "codigoPlame": "0506",
+        "concepto": "INDEMNIZACIÓN POR NO REINCORPORAR A UN TRABAJADOR CESADO EN UN PROCEDIMIENTO DE CESE COLECTIVO - DS 001-96-TR",
+        "tipo": "INDEMNIZACIONES"
+    },
+    {
+        "codigoPlame": "0507",
+        "concepto": "INDEMNIZACIÓN POR REALIZAR HORAS EXTRAS IMPUESTAS POR EL EMPLEADOR",
+        "tipo": "INDEMNIZACIONES"
+    },
+    {
+        "codigoPlame": "0600",
+        "concepto": "APORTACIONES DEL TRABAJADOR / PENSIONISTA",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0601",
+        "concepto": "SISTEMA PRIVADO DE PENSIONES - COMISIÓN PORCENTUAL",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0602",
+        "concepto": "CONAFOVICER",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0603",
+        "concepto": "CONTRIBUCIÓN SOLIDARIA PARA LA ASISTENCIA PREVISIONAL",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0604",
+        "concepto": "ESSALUD +VIDA",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0605",
+        "concepto": "RENTA QUINTA CATEGORÍA RETENCIONES",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0606",
+        "concepto": "SISTEMA PRIVADO DE PENSIONES - PRIMA DE SEGURO",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0607",
+        "concepto": "SISTEMA NACIONAL DE PENSIONES - D.L.19990",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0608",
+        "concepto": "SISTEMA PRIVADO DE PENSIONES - APORTACIÓN OBLIGATORIA",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0609",
+        "concepto": "SISTEMA PRIVADO DE PENSIONES - APORTACIÓN VOLUNTARIA",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0610",
+        "concepto": "ESSALUD - SEGURO REGULAR - PENSIONISTA",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0611",
+        "concepto": "OTROS APORTACIONES DEL TRABAJADOR / PENSIONISTA",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0612",
+        "concepto": "SISTEMA NACIONAL DE PENSIONES - ASEGURA TU PENSIÓN",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0613",
+        "concepto": "RÉGIMEN PENSIONARIO - D.L. 20530",
+        "tipo": "APORTACIONES DEL TRABJADORES / PENSIONISTA"
+    },
+    {
+        "codigoPlame": "0700",
+        "concepto": "DESCUENTOS AL TRABAJADOR",
+        "tipo": "DESCUENTOS AL TRABAJADOR"
+    },
+    {
+        "codigoPlame": "0701",
+        "concepto": "ADELANTO",
+        "tipo": "DESCUENTOS AL TRABAJADOR"
+    },
+    {
+        "codigoPlame": "0702",
+        "concepto": "CUOTA SINDICAL",
+        "tipo": "DESCUENTOS AL TRABAJADOR"
+    },
+    {
+        "codigoPlame": "0703",
+        "concepto": "DESCUENTO AUTORIZADO U ORDENADO POR MANDATO JUDICIAL",
+        "tipo": "DESCUENTOS AL TRABAJADOR"
+    },
+    {
+        "codigoPlame": "0704",
+        "concepto": "TARDANZAS",
+        "tipo": "DESCUENTOS AL TRABAJADOR"
+    },
+    {
+        "codigoPlame": "0705",
+        "concepto": "INASISTENCIAS",
+        "tipo": "DESCUENTOS AL TRABAJADOR"
+    },
+    {
+        "codigoPlame": "0706",
+        "concepto": "OTROS DESCUENTOS NO DEDUCIBLES DE LA BASE IMPONIBLE ",
+        "tipo": "DESCUENTOS AL TRABAJADOR"
+    },
+    {
+        "codigoPlame": "0707",
+        "concepto": "OTROS DESCUENTOS DEDUCIBLES DE LA BASE IMPONIBLE ",
+        "tipo": "DESCUENTOS AL TRABAJADOR"
+    },
+    {
+        "codigoPlame": "0800",
+        "concepto": "APORTACIONES DE CARGO DEL EMPLEADOR",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0801",
+        "concepto": "SISTEMA PRIVADO DE PENSIONES - APORTACIÓN VOLUNTARIA",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0802",
+        "concepto": "FONDO DE DERECHOS SOCIALES DEL ARTISTA",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0803",
+        "concepto": "PÓLIZA DE SEGURO - D. LEG. 688",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0804",
+        "concepto": "ESSALUD (SEGURO REGULAR, CBBSP, AGRARIO/ACUICULTOR) - TRABAJADOR",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0805",
+        "concepto": "PENSIONES – SEGURO COMPLEMENTARIO DE TRABAJO DE RIESGO",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0806",
+        "concepto": "ESSALUD – SEGURO COMPLEMENTARIO DE TRABAJO DE RIESGO",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0807",
+        "concepto": "SENATI",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0808",
+        "concepto": "IMPUESTO EXTRAORDINARIO DE SOLIDARIDAD",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0809",
+        "concepto": "OTRAS APORTACIONES DE CARGO DEL EMPLEADOR",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0810",
+        "concepto": "EPS - SEGURO COMPLEMENTARIO DE TRABAJO DE RIESGO",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0811",
+        "concepto": "SEGURO INTEGRAL DE SALUD - SIS",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0814",
+        "concepto": "COMPAÑÍA SEGURO - SCTR",
+        "tipo": "APORTACIONES DE CARGO DEL EMPLEADOR"
+    },
+    {
+        "codigoPlame": "0900",
+        "concepto": "CONCEPTOS VARIOS",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0901",
+        "concepto": "BIENES DE LA PROPIA EMPRESA OTORGADOS PARA EL CONSUMO DEL TRABAJADOR",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0902",
+        "concepto": "BONO DE PRODUCTIVIDAD",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0903",
+        "concepto": "CANASTA DE NAVIDAD O SIMILARES",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0904",
+        "concepto": "COMPENSACIÓN POR TIEMPO DE SERVICIOS",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0905",
+        "concepto": "GASTOS DE REPRESENTACIÓN (MOVILIDAD, VESTUARIO, VIÁTICOS Y SIMILARES) - LIBRE DISPONIBILIDAD",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0906",
+        "concepto": "INCENTIVO POR CESE DEL TRABAJADOR (4)",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0907",
+        "concepto": "LICENCIA CON GOCE DE HABER",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0908",
+        "concepto": "MOVILIDAD DE LIBRE DISPOSICIÓN",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0909",
+        "concepto": "MOVILIDAD SUPEDITADA A ASISTENCIA Y QUE CUBRE SÓLO EL TRASLADO",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0910",
+        "concepto": "PARTICIPACIÓN EN LAS UTILIDADES - PAGADAS ANTES DE LA DECLARACIÓN ANUAL DEL IMPUESTO A LA RENTA",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0911",
+        "concepto": "PARTICIPACIÓN EN LAS UTILIDADES - PAGADAS DESPUES DE LA DECLARACIÓN ANUAL DEL IMPUESTO A LA RENTA",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0912",
+        "concepto": "PENSIONES DE JUBILACIÓN O CESANTÍA, MONTEPÍO O INVALIDEZ",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0913",
+        "concepto": "RECARGO AL CONSUMO",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0914",
+        "concepto": "REFRIGERIO QUE NO ES ALIMENTACIÓN PRINCIPAL",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0915",
+        "concepto": "SUBSIDIOS POR MATERNIDAD",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0916",
+        "concepto": "SUBSIDIOS DE  INCAPACIDAD POR ENFERMEDAD",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0917",
+        "concepto": "CONDICIONES DE TRABAJO",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0918",
+        "concepto": "IMPUESTO A LA RENTA DE QUINTA CATEGORÍA ASUMIDO",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0919",
+        "concepto": "SISTEMA NACIONAL DE PENSIONES ASUMIDO",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0920",
+        "concepto": "SISTEMA PRIVADO DE PENSIONES ASUMIDO",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0921",
+        "concepto": "PENSIONES DE JUBILACIÓN O CESANTÍA, MONTEPÍO O INVALIDEZ PENDIENTES POR LIQUIDAR",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0922",
+        "concepto": "SUMAS O BIENES QUE NO SON DE LIBRE DISPOSICIÓN",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0923",
+        "concepto": "INGRESOS DE CUARTA CATEGORIA QUE SON CONSIDERADOS DE QUNTA CATEGORIA",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0924",
+        "concepto": "INGRESOS CUARTA-QUINTA SIN RELACIÓN DE DEPENDENCIA ",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "0925",
+        "concepto": "INGRESO DEL PESCADOR Y PROCESADOR ARTESANAL INDEPENDIENTE - BASE DE CALCULO APORTE ESSALUD - LEY 27177",
+        "tipo": "CONCEPTOS VARIOS"
+    },
+    {
+        "codigoPlame": "1000",
+        "concepto": "OTROS CONCEPTOS",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1001",
+        "concepto": "OTROS CONCEPTOS 1",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1002",
+        "concepto": "OTROS CONCEPTOS 2",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1003",
+        "concepto": "OTROS CONCEPTOS 3",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1004",
+        "concepto": "OTROS CONCEPTOS 4",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1005",
+        "concepto": "OTROS CONCEPTOS 5",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1006",
+        "concepto": "OTROS CONCEPTOS 6",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1007",
+        "concepto": "OTROS CONCEPTOS 7",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1008",
+        "concepto": "OTROS CONCEPTOS 8",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1009",
+        "concepto": "OTROS CONCEPTOS 9",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1010",
+        "concepto": "OTROS CONCEPTOS 10",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1011",
+        "concepto": "OTROS CONCEPTOS 11",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1012",
+        "concepto": "OTROS CONCEPTOS 12",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1013",
+        "concepto": "OTROS CONCEPTOS 13",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1014",
+        "concepto": "OTROS CONCEPTOS 14",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1015",
+        "concepto": "OTROS CONCEPTOS 15",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1016",
+        "concepto": "OTROS CONCEPTOS 16",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1017",
+        "concepto": "OTROS CONCEPTOS 17",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1018",
+        "concepto": "OTROS CONCEPTOS 18",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1019",
+        "concepto": "OTROS CONCEPTOS 19",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "1020",
+        "concepto": "OTROS CONCEPTOS 20",
+        "tipo": "OTROS CONCEPTOS"
+    },
+    {
+        "codigoPlame": "2000",
+        "concepto": "RÉGIMEN LABORAL PÚBLICO",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2001",
+        "concepto": "REMUNERACIÓN",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2002",
+        "concepto": "SALARIO OBREROS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2003",
+        "concepto": "BONIFICACIÓN PERSONAL - QUINQUENIO",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2004",
+        "concepto": "BONIFICACIÓN FAMILIAR",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2005",
+        "concepto": "BONIFICACIÓN DIFERENCIAL",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2006",
+        "concepto": "AGUINALDOS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2007",
+        "concepto": "REMUNERACIÓN VACACIONAL",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2008",
+        "concepto": "ASIGNACIÓN POR AÑOS DE SERVICIOS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2009",
+        "concepto": "BONIFICACIÓN POR ESCOLARIDAD",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2010",
+        "concepto": "COMPENSACIÓN POR TIEMPO DE SERVICIOS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2011",
+        "concepto": "ALIMENTACIÓN - CAFAE (3)",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2012",
+        "concepto": "MOVILIDAD - CAFAE (3)",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2013",
+        "concepto": "RACIONAMIENTO - CAFAE",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2014",
+        "concepto": "INCENTIVOS LABORALES - CAFAE (3)",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2015",
+        "concepto": "BONO JURISDICCIONAL/ BONO FISCAL",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2016",
+        "concepto": "GASTOS OPERATIVOS DE MAGISTRADOS Y FISCALES",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2017",
+        "concepto": "ASIGNACIÓN POR SERVICIO EXTERIOR",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2018",
+        "concepto": "BONIFICACIÓN CONSULAR",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2019",
+        "concepto": "ASIGNACIÓN ESPECIAL PARA DOCENTES UNIVERSITARIOS ",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2020",
+        "concepto": "HOMOLOGACIÓN  DE DOCENTES UNIVERSITARIOS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2021",
+        "concepto": "ASIGNACIÓN ESPECIAL POR LABOR PEDAGÓGICA EFECTIVA",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2022",
+        "concepto": "ASIGNACIÓN EXTRAORDINARIA POR TRABAJO ASISTENCIAL",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2023",
+        "concepto": "SERVICIOS EXTRAORDINARIOS PNP",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2024",
+        "concepto": "ASIGNACIONES FFAA Y PNP",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2025",
+        "concepto": "COMBUSTIBLE FFAA Y PNP ",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2026",
+        "concepto": "OTROS INGRESOS REMUNERATIVOS PERSONAL ADMINISTRATIVO",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2027",
+        "concepto": "OTROS INGRESOS NO REMUNERATIVOS PERSONAL ADMINISTRATIVO",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2028",
+        "concepto": "OTROS INGRESOS REMUNERATIVOS MAGISTRADOS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2029",
+        "concepto": "OTROS INGRESOS NO REMUNERATIVOS MAGISTRADOS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2030",
+        "concepto": "OTROS INGRESOS REMUNERATIVOS DOCENTES UNIVERSITARIOS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2031",
+        "concepto": "OTROS INGRESOS NO REMUNERATIVOS DOCENTES UNIVERSITARIOS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2032",
+        "concepto": "OTROS INGRESOS REMUNERATIVOS PROFESORADO",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2033",
+        "concepto": "OTROS INGRESOS NO REMUNERATIVOS PROFESORADO",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2034",
+        "concepto": "OTROS INGRESOS REMUNERATIVOS PROFESIONALES DE LA SALUD",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2035",
+        "concepto": "OTROS INGRESOS NO REMUNERATIVOS PROFESIONALES DE LA SALUD",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2036",
+        "concepto": "OTROS INGRESOS REMUNERATIVOS FFAA Y PNP",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2037",
+        "concepto": "OTROS INGRESOS NO REMUNERATIVOS FFAA Y PNP",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2038",
+        "concepto": "ASIGNACIÓN ESPECIAL - D.U. 126-2001",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2039",
+        "concepto": "INGRESOS D.LEG. 1057 - CAS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2040",
+        "concepto": "REMUNERACIÓN POR DÍAS CON RELACIÓN LABORAL EN EL PERÍODO  DE UN CAS",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    },
+    {
+        "codigoPlame": "2041",
+        "concepto": "AGUINALDOS DE JULIO Y DICIEMBRE – LEY 29351",
+        "tipo": "RÉGIMEN LABORAL PÚBLICO"
+    }
+]

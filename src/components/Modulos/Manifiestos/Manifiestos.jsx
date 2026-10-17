@@ -12,6 +12,7 @@ import { useAuth } from "../../context/AuthContext";
 import EditManifiesto from "./Actions/Edit";
 import SendManifiesto from "./Actions/SendManifiesto";
 import ApproveManifiestoModal from "./Actions/ApproveManifiesto"
+import ObserveManifiesto from "./Actions/ObserveManifiesto";
 
 const Manifiestos = () => {
     const { showError } = useToast();
@@ -40,6 +41,7 @@ const Manifiestos = () => {
     // Sub-componente interno para la Lista
     const ManifiestosListWrapper = (props) => {
         const [showApproveModal, setShowApproveModal] = useState(false);
+        const [showObserveModal, setShowObserveModal] = useState(false);
         const [selectedItem, setSelectedItem] = useState(null);
 
         return (
@@ -51,6 +53,8 @@ const Manifiestos = () => {
                     DetailItem={DetailManifiesto}
                     EditItem={EditManifiesto}
                     EnviarItem={SendManifiesto}
+                    canEditRow={(row) => activeRole === "TRANSPORTISTA" && ["BORRADOR", "OBSERVADO"].includes(row.estado)}
+                    canSendRow={(row) => activeRole === "TRANSPORTISTA" && ["BORRADOR", "OBSERVADO"].includes(row.estado)}
                     mobileTitle={(row) => `Manifiesto ${row.numeroManifiesto || "sin número"}`}
                     mobileFields={[
                         { label: "Generador", value: (row) => row.generadorId?.razonSocial || "N/A" },
@@ -62,7 +66,7 @@ const Manifiestos = () => {
                     actionBody={(rowData) => {
                         if (activeRole === "GENERADOR" && rowData.estado === "PENDIENTE") {
                             return (
-                                <Button
+                                <><Button
                                     icon="pi pi-check"
                                     title="Firmar y Aprobar Manifiesto"
                                     rounded
@@ -72,7 +76,9 @@ const Manifiestos = () => {
                                         setSelectedItem(rowData);
                                         setShowApproveModal(true);
                                     }}
-                                />
+                                /><Button icon="pi pi-comment" title="Solicitar corrección" rounded outlined
+                                    className="text-orange-600! border-orange-600! mx-1!"
+                                    onClick={() => { setSelectedItem(rowData); setShowObserveModal(true); }} /></>
                             );
                         }
                         return null;
@@ -127,6 +133,7 @@ const Manifiestos = () => {
                         reload={() => setRefreshKey(prev => prev + 1)}
                     />
                 )}
+                {showObserveModal && <ObserveManifiesto selected={selectedItem} onHide={() => setShowObserveModal(false)} reload={() => setRefreshKey((prev) => prev + 1)} />}
             </>
         );
     };

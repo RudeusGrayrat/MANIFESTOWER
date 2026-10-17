@@ -22,9 +22,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await axios.post("/manifesTower/login", userData);
             const data = response.data;
-            console.log("Respuesta del servidor en signin:", data);
             if (data.token) {
-                console.log("Token recibido:", data.token);
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("token_expiry", Date.now() + 24 * 60 * 60 * 1000);
                 setUser(data.user);

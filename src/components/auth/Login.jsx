@@ -88,6 +88,7 @@ const Login = () => {
                 <label className={styles.remember}><input type="checkbox" {...register("remember")} /> Recordar datos</label>
                 <button type="submit" disabled={authLoading} className={styles.submit}>{authLoading ? "Cargando..." : "Ingresar"}</button>
                 <p className={styles.register}>¿No tienes una cuenta? <Link to="/registrar">Regístrate</Link></p>
+                <p className={styles.register}><Link to="/recuperar-codigo-generador">Recuperar código de verificación de generador</Link></p>
             </form>
         </div>
     );

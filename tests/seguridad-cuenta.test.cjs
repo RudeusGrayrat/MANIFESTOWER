@@ -1,0 +1,36 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const path = require("node:path");
+const backend = path.resolve(__dirname, "../../GESTOWER_backend");
+const jwt = require(path.join(backend, "node_modules/jsonwebtoken"));
+const bcrypt = require(path.join(backend, "node_modules/bcrypt"));
+const Usuario = require(path.join(backend, "src/models/ManifesTower/UserExternal"));
+const autenticar = require(path.join(backend, "src/controllers/AllModulos/Certificaciones/ManifesTower/authExterno"));
+const cambiar = require(path.join(backend, "src/controllers/AllModulos/Certificaciones/ManifesTower/patchUser"));
+const respuesta = () => ({ statusCode: 200, status(n) { this.statusCode = n; return this; }, json(body) { this.body = body; return this; } });
+const id = "1123456789abcdef01234567";
+test("la sesión externa debe tener token válido, cuenta activa y empresa del rol", async (t) => {
+    const secret = process.env.JWT_SECRET; process.env.JWT_SECRET = "secreto-de-prueba-no-productivo";
+    t.after(() => { if (secret === undefined) delete process.env.JWT_SECRET; else process.env.JWT_SECRET = secret; });
+    let user = { _id: id, estado: "ACTIVO", roles: ["GENERADOR"], generadorId: id };
+    t.mock.method(Usuario, "findById", async () => user);
+    const token = jwt.sign({ _id: id, role: "EXTERNAL", activeRole: "GENERADOR" }, process.env.JWT_SECRET);
+    const request = { headers: { authorization: `Bearer ${token}` } }; let called = false;
+    await autenticar(request, respuesta(), () => { called = true; }); assert.equal(called, true); assert.equal(request.externalUser._id, id);
+    const absent = respuesta(); await autenticar({ headers: {} }, absent, () => assert.fail()); assert.equal(absent.statusCode, 401);
+    const fake = respuesta(); await autenticar({ headers: { authorization: "Bearer falso" } }, fake, () => assert.fail()); assert.equal(fake.statusCode, 401);
+    user = { ...user, estado: "INACTIVO" }; const inactive = respuesta(); await autenticar({ headers: { authorization: `Bearer ${token}` } }, inactive, () => assert.fail()); assert.equal(inactive.statusCode, 403);
+    user = { ...user, estado: "ACTIVO", roles: ["TRANSPORTISTA"] }; const wrongRole = respuesta(); await autenticar({ headers: { authorization: `Bearer ${token}` } }, wrongRole, () => assert.fail()); assert.equal(wrongRole.statusCode, 403);
+});
+test("cambiar contraseña verifica la actual y usa la cuenta de la sesión", async (t) => {
+    const hash = await bcrypt.hash("contraseña actual segura", 10);
+    const user = { _id: id, estado: "ACTIVO", password: hash };
+    let update;
+    t.mock.method(Usuario, "findById", async (requested) => { assert.equal(requested, id); return user; });
+    t.mock.method(Usuario, "updateOne", async (filter, changes) => { update = { filter, changes }; return { matchedCount: 1 }; });
+    const req = { externalUser: { _id: id }, body: { userId: "aaaaaaaaaaaaaaaaaaaaaaaa", currentPassword: "incorrecta", newPassword: "nueva contraseña segura" } };
+    const denied = respuesta(); await cambiar(req, denied); assert.equal(denied.statusCode, 403); assert.equal(update, undefined);
+    req.body.currentPassword = "contraseña actual segura"; const ok = respuesta(); await cambiar(req, ok); assert.equal(ok.statusCode, 200);
+    assert.equal(update.filter._id, id); assert.equal(update.filter.password, hash); assert.ok(await bcrypt.compare(req.body.newPassword, update.changes.$set.password));
+    req.body.newPassword = "pequeña"; const short = respuesta(); await cambiar(req, short); assert.equal(short.statusCode, 400);
+});

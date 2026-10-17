@@ -6,7 +6,6 @@ import axios from "../../../api/axios";
 const Paso5_Destino = ({ formData, setFormData }) => {
     const [destinoOptions, setDestinoOptions] = useState([]);
     const tipoManejoOptions = ["TRATAMIENTO", "DISPOSICIÓN FINAL", "VALORIZACIÓN"];
-    const [responsableOptions, setResponsableOptions] = useState([]);
 
     // Mientras Tower sea el único destino operativo, se carga y bloquea aquí.
     // El backend aplica la misma regla para impedir que un cliente la altere.
@@ -46,31 +45,6 @@ const Paso5_Destino = ({ formData, setFormData }) => {
         }));
     };
 
-    const handleReferendoChange = (campo, valor) => {
-        setFormData(prev => ({
-            ...prev,
-            referendoRecepcion: {
-                ...prev.referendoRecepcion,
-                [campo]: valor
-            }
-        }));
-    };
-
-    const handleResponsableSelectChange = (e) => {
-        // Obtenemos el objeto completo seleccionado (compatible con PrimeReact Dropdown)
-        const seleccionado = e.value || e.target?.value;
-        setFormData(prev => ({
-            ...prev,
-            referendoRecepcion: {
-                ...prev.referendoRecepcion,
-                responsableEorsDestino: seleccionado?.nombre || "",
-                dniResponsableEorsDestino: seleccionado?.dni || "",
-                cargoResponsableEorsDestino: seleccionado?.cargo || "",
-                firmaGenerador: seleccionado?.firma || ""
-            }
-        }));
-    };
-
     const handleOtrosManejosChange = (campo, valor) => {
         setFormData(prev => ({
             ...prev,
@@ -80,33 +54,6 @@ const Paso5_Destino = ({ formData, setFormData }) => {
             }
         }));
     };
-
-    // Si el referendo se desactiva por completo, limpiamos la sección en el formData principal
-    useEffect(() => {
-        if (!formData.referendoRecepcion?.referendo) {
-            setFormData(prev => ({
-                ...prev,
-                referendoRecepcion: {
-                    referendo: false,
-                    responsableEorsDestino: "",
-                    dniResponsableEorsDestino: "",
-                    cargoResponsableEorsDestino: "",
-                    firmaGenerador: "",
-                    fechaReferendo: "",
-                    horaReferendo: ""
-                }
-            }));
-        }
-    }, [formData.referendoRecepcion?.referendo]);
-
-    // Cargar los responsables disponibles basados en el destino seleccionado
-    useEffect(() => {
-        if (formData.referendoRecepcion?.referendo && formData.destinoId) {
-            setResponsableOptions(formData.destinoId.responsables || []);
-        } else {
-            setResponsableOptions([]);
-        }
-    }, [formData.referendoRecepcion?.referendo, formData.destinoId]);
 
     const clearOtrosManejosFields = () => ({
         razonSocialReceptor: "",
@@ -178,15 +125,6 @@ const Paso5_Destino = ({ formData, setFormData }) => {
         }
     }, [formData.destinoId]);
 
-    // Reconstruimos el objeto del responsable actual para mantener seleccionado el Dropdown de PrimeReact
-    const nombreResponsableActual = formData.referendoRecepcion?.responsableEorsDestino || "";
-    const responsableSeleccionado = responsableOptions.find(r => r.nombre === nombreResponsableActual) ||
-        (nombreResponsableActual ? {
-            nombre: nombreResponsableActual,
-            dni: formData.referendoRecepcion?.dniResponsableEorsDestino,
-            cargo: formData.referendoRecepcion?.cargoResponsableEorsDestino
-        } : null);
-
     return (
         <div className="flex flex-wrap max-md:px-2">
             <Input
@@ -231,72 +169,8 @@ const Paso5_Destino = ({ formData, setFormData }) => {
                 ancho="w-full"
             />
 
-            <div className="flex flex-col items-start ml-5 gap-1">
-                <span className="text-md text-gray-600">Referendo</span>
-                <input
-                    type="checkbox"
-                    checked={formData.referendoRecepcion?.referendo || false}
-                    onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        referendoRecepcion: {
-                            ...prev.referendoRecepcion,
-                            referendo: e.target.checked
-                        }
-                    }))}
-                    className="h-6 w-10 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
-                />
-            </div>
-
             <div className="w-full">
-                {formData.referendoRecepcion?.referendo && (
-                    <div className="flex flex-col mt-4 pt-4 border-t border-gray-300 gap-4">
-                        <div className="flex flex-wrap">
-                            <Input
-                                label="Responsable EO-RS del destino final"
-                                type="select"
-                                name="responsableEorsDestino"
-                                options={responsableOptions}
-                                optionLabel="nombre"
-                                value={responsableSeleccionado}
-                                onChange={handleResponsableSelectChange}
-                                placeholder="Nombre del responsable EO-RS del destino final"
-                                ancho="w-full"
-                            />
-                            <Input
-                                label="DNI"
-                                name="dniResponsableEorsDestino"
-                                value={formData.referendoRecepcion?.dniResponsableEorsDestino || ""}
-                                placeholder="DNI del responsable"
-                                disabled // Bloqueado porque depende de la selección del responsable
-                            />
-                            <Input
-                                label="Cargo"
-                                name="cargoResponsableEorsDestino"
-                                value={formData.referendoRecepcion?.cargoResponsableEorsDestino || ""}
-                                placeholder="Cargo del responsable"
-                                disabled // Bloqueado porque depende de la selección del responsable
-                            />
-                            <Input
-                                label="Fecha"
-                                type="date"
-                                ancho="!min-w-40"
-                                name="fechaReferendo"
-                                value={formData.referendoRecepcion?.fechaReferendo || ""}
-                                onChange={(e) => handleReferendoChange('fechaReferendo', e.target.value)}
-                                placeholder="Fecha"
-                            />
-                            <InputNormal
-                                label="Hora"
-                                type="time"
-                                ancho="!min-w-40"
-                                name="horaReferendo"
-                                value={formData.referendoRecepcion?.horaReferendo || ""}
-                                onChange={(e) => handleReferendoChange('horaReferendo', e.target.value)}
-                                placeholder="Hora"
-                            />
-                        </div>
-                    </div>
-                )}
+                <p className="mx-5 mt-3 text-sm text-slate-600">El referendo de recepción se completa automáticamente cuando el destino aprueba el manifiesto.</p>
 
                 <div className="w-full mt-4 border-t border-gray-300 pt-4">
                     <span className="text-lg font-semibold">Otros Manejos</span>

@@ -1,0 +1,114 @@
+*** Begin Patch
+*** Add File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/accesoSeguro.js
++const jwt = require("jsonwebtoken");
++const UserExternal = require("../../../../models/ManifesTower/UserExternal");
++const Manifiesto = require("../../../../models/AllModulos/Certificacion/Manifiestos");
++const tokenVerify = require("../../../auth/midellware");
++
++const autenticarExterno = async (req, res, next) => {
++    try {
++        const token = req.headers.authorization?.match(/^Bearer\s+(.+)$/i)?.[1];
++        const payload = token && jwt.verify(token, process.env.JWT_SECRET);
++        if (!payload || payload.role !== "EXTERNAL" || !["GENERADOR", "TRANSPORTISTA"].includes(payload.activeRole)) return res.status(401).json({ message: "Inicia sesión nuevamente." });
++        const user = await UserExternal.findById(payload._id);
++        const empresa = payload.activeRole === "GENERADOR" ? user?.generadorId : user?.transportistaId;
++        if (!user || user.estado !== "ACTIVO" || !user.roles.includes(payload.activeRole) || !empresa) return res.status(403).json({ message: "La cuenta no está habilitada para este rol." });
++        req.externalUser = user;
++        req.externalRole = payload.activeRole;
++        next();
++    } catch (_) { return res.status(401).json({ message: "La sesión no es válida o ha expirado." }); }
++};
++const autenticarMixto = (req, res, next) => {
++    const token = req.headers.authorization?.match(/^Bearer\s+(.+)$/i)?.[1];
++    let payload;
++    try { if (token) payload = jwt.verify(token, process.env.JWT_SECRET); } catch (_) { /* tokenVerify responde para tokens internos inválidos */ }
++    return payload?.role === "EXTERNAL" ? autenticarExterno(req, res, next) : tokenVerify(req, res, next);
++};
++const permisoInterno = (permiso) => (req, res, next) => {
++    if (req.externalUser) return next();
++    if (!req.user?._id || req.user.state !== "ACTIVO") return res.status(403).json({ message: "Se requiere un empleado activo identificado." });
++    const permitido = (req.user.modules || []).some((m) => m.submodule?.name?.toUpperCase() === "MANIFIESTOS" && (m.submodule.permissions || []).includes(permiso));
++    if (!permitido) return res.status(403).json({ message: `Se requiere el permiso ${permiso} de MANIFIESTOS.` });
++    next();
++};
++const requiereRol = (rol) => (req, res, next) => req.externalRole === rol ? next() : res.status(403).json({ message: `Se requiere una sesión de ${rol.toLowerCase()}.` });
++const accesoDocumento = (idParam = "id") => async (req, res, next) => {
++    if (!req.externalUser) return next();
++    try {
++        const doc = await Manifiesto.findById(req.params[idParam]).select("generadorId transportistaId estado").lean();
++        if (!doc) return res.status(404).json({ message: "Manifiesto no encontrado." });
++        const propio = req.externalRole === "GENERADOR" ? String(doc.generadorId) === String(req.externalUser.generadorId) && doc.estado !== "BORRADOR" : String(doc.transportistaId) === String(req.externalUser.transportistaId);
++        if (!propio) return res.status(403).json({ message: "No tienes acceso a este manifiesto." });
++        next();
++    } catch (_) { return res.status(400).json({ message: "Identificador de manifiesto inválido." }); }
++};
++module.exports = { autenticarExterno, autenticarMixto, permisoInterno, requiereRol, accesoDocumento };
+*** Update File: ../GESTOWER_backend/src/routes/Modulos/ManifesTower.js
+@@
+ const tokenVerify = require("../../controllers/auth/midellware");
++const acceso = require("../../controllers/AllModulos/Certificaciones/ManifesTower/accesoSeguro");
+@@
+-manifesTower.get("/getSolicitudesVinculacion", getSolicitudesVinculacion);
+-manifesTower.get("/dashboardStats", dashboardStats);
++manifesTower.get("/getSolicitudesVinculacion", acceso.autenticarExterno, getSolicitudesVinculacion);
++manifesTower.get("/dashboardStats", acceso.autenticarExterno, dashboardStats);
+@@
+-manifesTower.patch("/patchVinculacion/:id", patchVinculacion);
+-manifesTower.patch("/desvinculacion", desvinculation);
+-manifesTower.patch("/aprobarManifiestoGenerador/:id", aprobarManifiestoGenerador);
+-manifesTower.patch("/observarManifiestoGenerador/:id", observarManifiestoGenerador);
+-manifesTower.patch("/patchUserExternal", patchUserExternal)
++manifesTower.patch("/patchVinculacion/:id", acceso.autenticarExterno, patchVinculacion);
++manifesTower.patch("/desvinculacion", acceso.autenticarExterno, desvinculation);
++manifesTower.patch("/aprobarManifiestoGenerador/:id", acceso.autenticarExterno, acceso.requiereRol("GENERADOR"), acceso.accesoDocumento(), aprobarManifiestoGenerador);
++manifesTower.patch("/observarManifiestoGenerador/:id", acceso.autenticarExterno, acceso.requiereRol("GENERADOR"), acceso.accesoDocumento(), observarManifiestoGenerador);
++manifesTower.patch("/patchUserExternal", acceso.autenticarExterno, patchUserExternal)
+@@
+-manifesTower.post("/postVinculacion", postVinvulacion)
+-manifesTower.post("/enviarManifiesto/:id", enviarManifiesto)
++manifesTower.post("/postVinculacion", acceso.autenticarExterno, postVinvulacion)
++manifesTower.post("/enviarManifiesto/:id", acceso.autenticarExterno, acceso.requiereRol("TRANSPORTISTA"), acceso.accesoDocumento(), enviarManifiesto)
+*** Update File: ../GESTOWER_backend/src/routes/Modulos/Certificacion.js
+@@
+ const verificarManifiesto = require("../../controllers/AllModulos/Certificaciones/Manifiestos/verificarManifiesto");
++const acceso = require("../../controllers/AllModulos/Certificaciones/ManifesTower/accesoSeguro");
+@@
+-certificacionesRouter.get("/getManifiestosPaginacion", getManifiestosPaginacion);
++certificacionesRouter.get("/getManifiestosPaginacion", acceso.autenticarMixto, acceso.permisoInterno("VER"), getManifiestosPaginacion);
+@@
+-certificacionesRouter.get("/getpdfManifiesto/:id", generarPDFManifiesto);
++certificacionesRouter.get("/getpdfManifiesto/:id", acceso.autenticarMixto, acceso.permisoInterno("VER"), acceso.accesoDocumento(), generarPDFManifiesto);
+@@
+-certificacionesRouter.post("/postManifiesto", postManifiesto);
++certificacionesRouter.post("/postManifiesto", acceso.autenticarMixto, acceso.permisoInterno("CREAR"), postManifiesto);
+@@
+-certificacionesRouter.patch("/patchManifiesto/:manifiestoId", patchManifiesto)
+-certificacionesRouter.patch("/verificarManifiesto/:id", verificarManifiesto)
++certificacionesRouter.patch("/patchManifiesto/:manifiestoId", acceso.autenticarMixto, acceso.permisoInterno("EDITAR"), acceso.accesoDocumento("manifiestoId"), patchManifiesto)
++certificacionesRouter.patch("/verificarManifiesto/:id", acceso.autenticarMixto, acceso.permisoInterno("APROBAR"), (req, res, next) => req.externalUser ? res.status(403).json({ message: "Solo Tower puede revisar el manifiesto." }) : next(), verificarManifiesto)
+*** Update File: ../GESTOWER_backend/src/controllers/AllModulos/Certificaciones/ManifesTower/patchUser.js
+@@
+-        const { userId, newPassword } = req.body;
++        const { currentPassword, newPassword } = req.body;
+@@
+-        if (!newPassword || newPassword.length < 6) {
+-            return res.status(400).json({ message: "La nueva contraseña debe tener al menos 6 caracteres" });
++        if (typeof currentPassword !== "string" || !currentPassword || Buffer.byteLength(currentPassword, "utf8") > 72 || typeof newPassword !== "string" || newPassword.length < 12 || Buffer.byteLength(newPassword, "utf8") > 72) {
++            return res.status(400).json({ message: "Ingresa la contraseña actual y una nueva de al menos 12 caracteres y máximo 72 bytes." });
+@@
+-        const findUser = await UserExternal.findById(userId);
++        const findUser = await UserExternal.findById(req.externalUser._id);
+@@
+         if (!findUser) {
+@@
+         }
++        if (!await bcrypt.compare(currentPassword, findUser.password)) return res.status(403).json({ message: "La contraseña actual no es correcta." });
+@@
+-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+-        findUser.password = hashedPassword;
+-
+-        await findUser.save();
++        const hashedPassword = await bcrypt.hash(newPassword, 12);
++        const cambio = await UserExternal.updateOne({ _id: findUser._id, password: findUser.password, estado: "ACTIVO" }, { $set: { password: hashedPassword } });
++        if (!cambio.matchedCount) return res.status(409).json({ message: "La contraseña cambió; vuelve a iniciar sesión." });
+*** End Patch

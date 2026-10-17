@@ -1,0 +1,145 @@
+const mongoose = require("mongoose");
+
+const boletaDePagosSchema = mongoose.Schema(
+  {
+    correlativa: {
+      type: Number,
+      required: true,
+      unique: true,
+    },
+    fechaBoletaDePago: {
+      type: String,
+      required: true,
+    },
+    colaborador: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Employee",
+      required: true,
+    },
+    empresaColaborador: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business",
+    },
+    situacionEspecial: {
+      type: String,
+    },
+    tipoTrabajador: {
+      type: String,
+      default: "Empleado",
+    },
+    situacionTrabajador: {
+      type: String,
+    },
+    suspensionesLaborales: [
+      {
+        tipoSuspension: {
+          type: String,
+          default: "NINGUNA",
+        },
+        motivoSuspension: {
+          type: String,
+          default: "NINGUNA",
+        },
+        diasSuspension: {
+          type: String,
+          default: "0",
+        },
+      },
+    ],
+    fechaIngresoColaborador: {
+      type: String,
+    },
+    envio: {
+      type: String,
+    },
+    recepcion: {
+      type: String,
+    },
+    state: {
+      enum: ["APROBADO", "PENDIENTE"],
+      default: "PENDIENTE",
+      type: String,
+      required: true,
+    },
+    diasTrabajados: {
+      type: String,
+      required: true,
+    },
+    diasSubsidiados: {
+      type: String,
+      required: true,
+    },
+    horasTrabajadas: {
+      type: String,
+      required: true,
+    },
+    diasNoLaborales: {
+      type: String,
+      required: true,
+    },
+    remuneraciones: [
+      {
+        datosContables: {
+          type: String,
+          ref: "DatosContables",
+        },
+        concepto: {
+          type: String,
+        },
+        conceptoPersonalizado: {
+          type: Boolean,
+          default: false,
+        },
+        monto: {
+          type: String,
+          required: true,
+          default: "0",
+        },
+      },
+    ],
+    descuentosAlTrabajador: [
+      {
+        datosContables: {
+          type: String,
+          ref: "DatosContables",
+        },
+        concepto: {
+          type: String,
+        },
+        conceptoPersonalizado: {
+          type: Boolean,
+          default: false,
+        },
+        monto: {
+          type: String,
+          required: true,
+          default: "0",
+        },
+      },
+    ],
+    aportacionesDelEmpleador: [
+      {
+        datosContables: {
+          type: String,
+          ref: "DatosContables",
+        },
+        concepto: {
+          type: String,
+        },
+        conceptoPersonalizado: {
+          type: Boolean,
+          default: false,
+        },
+        monto: {
+          type: String,
+          required: true,
+          default: "0",
+        },
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+const BoletaDePagos = mongoose.model("BoletaDePagos", boletaDePagosSchema);
+module.exports = BoletaDePagos;

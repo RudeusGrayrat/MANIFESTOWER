@@ -10,6 +10,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
     const miContexto = useToast();
     const [loading, setLoading] = useState(true);
     const [pdfBlob, setPdfBlob] = useState(null);
+    const [pdfError, setPdfError] = useState(false);
 
     // 🌟 2. Inicializamos el consumidor del Contexto de Toasts
     // Nota: Si en tu contexto lo exportas como un objeto { showToast } o directo como función, mapealo aquí.
@@ -24,6 +25,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
 
             setLoading(true);
             setPdfBlob(null);
+            setPdfError(false);
 
             try {
                 // Hacemos la petición al backend para que genere el PDF con LibreOffice
@@ -39,6 +41,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
                 // 🌟 3. Reemplazo del viejo sendMessage por tu nuevo Toast del contexto.
                 // Ajusta los parámetros al formato exacto de tu función (objeto o parámetros posicionales):
                 showError("Error al generar la vista previa del PDF");
+                setPdfError(true);
                 setLoading(false);
             }
         };
@@ -70,6 +73,16 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
 
     return (
         <Details setShowDetail={setShowDetail} title={`Manifiesto ${selected?.numeroManifiesto || ''}`}>
+            <div className="mx-6 mt-4 text-sm text-slate-700">
+                <p><strong>Estado:</strong> {selected?.estado || "—"}</p>
+                {selected?.observacion && <p className="mt-2 whitespace-pre-wrap"><strong>Observación:</strong> {selected.observacion}</p>}
+                {selected?.historialRevision?.length > 0 && <details className="mt-3">
+                    <summary className="cursor-pointer font-semibold">Historial de revisión</summary>
+                    {selected.historialRevision.map((evento, index) => <p key={evento._id || index} className="mt-2 whitespace-pre-wrap">
+                        {evento.fecha ? new Date(evento.fecha).toLocaleString("es-PE", { timeZone: "America/Lima" }) : ""} — {evento.origen}: {evento.estado}{evento.observacion ? ` — ${evento.observacion}` : ""}
+                    </p>)}
+                </details>}
+            </div>
             {!loading && pdfBlob ? (
                 <div className="flex gap-8 mt-6 ml-10">
                     {/* BOTÓN VISUALIZAR */}
@@ -90,7 +103,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
                         <span className="ml-2 pi pi-download"></span>
                     </div>
                 </div>
-            ) : (
+            ) : pdfError ? <p className="m-6 text-red-600">No se pudo generar el PDF. Vuelve a abrir el detalle para intentarlo nuevamente.</p> : (
                 /* Spinner de carga mientras el i5-14600KF y LibreOffice hacen la magia */
                 <div className="flex flex-col items-center mt-10">
                     <span className="pi pi-spin pi-spinner text-4xl text-blue-500 mb-4"></span>

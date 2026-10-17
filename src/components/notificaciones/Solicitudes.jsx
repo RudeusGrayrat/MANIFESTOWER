@@ -167,11 +167,11 @@ const SolicitudesVinculacion = () => {
                             </div>
                             {showInfoPermiso && (
                                 <div className="p-3 rounded-lg border border-blue-100 bg-blue-50 text-xs text-blue-700 leading-relaxed">
-                                    Este permiso permite que la empresa vinculada use tus datos fiscales y operativos para generar manifiestos de forma automática.
+                                    Este permiso permite utilizar tus datos fiscales y operativos para llenar manifiestos. No autoriza el uso automático de tu firma ni sustituye tu revisión individual.
                                 </div>
                             )}
                             <p className="text-xs text-slate-400">
-                                Si lo activas, esta empresa de transporte podrá utilizar tu información fiscal y operativa para la autogeneración de manifiestos.
+                                Si lo activas, el transportista podrá utilizar tu información para el llenado. Por ahora deberás revisar cada manifiesto.
                             </p>
                         </div>
                     )}

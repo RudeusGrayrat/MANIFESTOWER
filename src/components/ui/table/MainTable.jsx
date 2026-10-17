@@ -26,6 +26,8 @@ const ListPrincipal = ({
     rowClick,
     onSearch,
     actionBody,
+    canEditRow,
+    canSendRow,
     fetchData,
     mobileFields = [],
     mobileTitle,
@@ -143,13 +145,15 @@ const ListPrincipal = ({
         const isRejected = rowData.state === "RECHAZADO" || rowData.estado === "RECHAZADO" || rowData.status === "RECHAZADA" || rowData.status === "ACEPTADA";
         const isSend = isRejected || isApproved || rowData.state === "ENVIADO" || rowData.estado === "ENVIADO" || rowData.status === "ENVIADA";
         const isPendiente = rowData.state === "PENDIENTE" || rowData.estado === "PENDIENTE" || rowData.status === "PENDIENTE";
+        const permitirEdicion = canEditRow ? canEditRow(rowData) : isPendiente;
+        const permitirEnvio = canSendRow ? canSendRow(rowData) : !isSend;
         return (
             <React.Fragment>
                 {permissionRead && (
                     <Button icon="pi pi-eye" title="Ver Detalle" rounded outlined className={`text-black! rounded-full mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showDetail ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowDetail(rowData)} />
                 )}
                 {permissionSend && (
-                    <Button icon="pi pi-send" title="Enviar" rounded outlined className={`text-blue-600! rounded-full ${isSend ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showSend ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowSend(rowData)} disabled={isSend} />
+                    <Button icon="pi pi-send" title="Enviar" rounded outlined className={`text-blue-600! rounded-full ${!permitirEnvio ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showSend ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowSend(rowData)} disabled={!permitirEnvio} />
                 )}
                 {permissionApprove && (
                     <Button icon={"pi pi-check"} title="Aprobar o Activar" rounded outlined className={`text-green-500! rounded-full ${(isApproved || isActivated) ? "cursor-not-allowed opacity-30" : ""} mx-1!  bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showApprove ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowApprove(rowData)} disabled={isApproved || isActivated} />
@@ -158,7 +162,7 @@ const ListPrincipal = ({
                     <Button icon={"pi pi-times"} rounded title="Anular o Rechazar" outlined className={`text-orange-500! border-none! rounded-full ${(isRejected && !isActivated) ? "cursor-not-allowed opacity-30" : ""} mx-1!  bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showDisapprove ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowDisapprove(rowData)} disabled={isRejected && !isActivated} />
                 )}
                 {permissionEdit && (
-                    <Button icon="pi pi-pencil" title="Editar" rounded outlined className={`text-blue-500! rounded-full ${!isPendiente ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showEdit ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowEdit(rowData)} disabled={!isPendiente} />
+                    <Button icon="pi pi-pencil" title="Editar" rounded outlined className={`text-blue-500! rounded-full ${!permitirEdicion ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showEdit ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} onClick={() => handleShowEdit(rowData)} disabled={!permitirEdicion} />
                 )}
                 {permissionDelete && (
                     <Button icon="pi pi-trash" title="Eliminar" rounded outlined className={`text-red-600 rounded-full ${isApproved ? "cursor-not-allowed opacity-30" : ""} mx-1! bg-[#f7f6f6bb] transition-all duration-150 ease-in-out ${selectedRowId === rowData._id && showDelete ? "shadow-inner translate-y-[2px]" : "shadow-xl"}`} severity="danger" onClick={() => handleShowDelete(rowData)} disabled={isApproved} />
