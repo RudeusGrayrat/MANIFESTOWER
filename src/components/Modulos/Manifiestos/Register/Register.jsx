@@ -8,7 +8,6 @@ import { useAuth } from "../../../context/AuthContext";
 import { ProgressBar } from "primereact/progressbar";
 import Paso4_Transporte from "./Transporte";
 import Paso5_Destino from "./Destino";
-import Paso6_OtrasObligaciones from "./OtrasObligaciones";
 import dayjs from "dayjs";
 import ButtonOk from "../../../ui/Buttons/Buttons";
 import { useToast } from "../../../notificaciones/ToastContext";
@@ -97,7 +96,6 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
         { id: 3, nombre: "Características de peligrosidad", componente: Paso3_Peligrosidad },
         { id: 4, nombre: "Transporte", componente: Paso4_Transporte },
         { id: 5, nombre: "Destino final", componente: Paso5_Destino },
-        { id: 6, nombre: "Otras obligaciones", componente: Paso6_OtrasObligaciones },
     ];
 
     const dataEnvioActual = formEdit ? formEdit : formData;
@@ -172,8 +170,10 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
                 return;
             }
 
+            // La devolución se completa desde Gestower al aprobar/liberar el documento.
+            const { otrasObligaciones, ...datosBase } = formData;
             const datosEnvio = {
-                ...formData,
+                ...datosBase,
                 generadorId: formData.generadorId?._id || formData.generadorId,
                 transportistaId: formData.transportistaId?._id || formData.transportistaId,
                 destinoId: formData.destinoId?._id || formData.destinoId,

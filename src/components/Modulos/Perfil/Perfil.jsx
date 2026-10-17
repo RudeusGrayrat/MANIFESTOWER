@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../notificaciones/ToastContext";
 import axios from "../../api/axios";
@@ -6,8 +6,24 @@ import Input from "../../ui/inputs/Input";
 import InputNormal from "../../ui/inputs/Normal";
 import ButtonOk from "../../ui/Buttons/Buttons";
 
+const getTransportistaPayload = (data) => ({
+    razonSocial: data.razonSocial,
+    ruc: data.ruc,
+    registroEors: data.registroEors,
+    autorizacionMunicipal: data.autorizacionMunicipal,
+    documentoRuta: data.documentoRuta,
+    direccion: data.direccion,
+    ubigeoId: data.ubigeoId?._id || data.ubigeoId || undefined,
+    correoElectronico: data.correoElectronico,
+    telefono: data.telefono,
+    representanteLegal: data.representanteLegal,
+    responsableTecnico: data.responsableTecnico,
+    contingencias: data.contingencias,
+    usuarioManifestower: data.usuarioManifestower,
+});
+
 const Perfil = () => {
-    const { user, activeRole, setActiveRole } = useAuth(); // Asumimos que tienes setActiveRole
+    const { user, activeRole } = useAuth();
     const { showSuccess, showError, showInfo } = useToast();
     const [loading, setLoading] = useState(false);
     const [perfil, setPerfil] = useState(null);
@@ -24,8 +40,10 @@ const Perfil = () => {
     const [showFormResponsable, setShowFormResponsable] = useState(false);
     const [showFormPlanta, setShowFormPlanta] = useState(false);
     const [showFormConductor, setShowFormConductor] = useState(false);
+    const [editandoResponsableIndex, setEditandoResponsableIndex] = useState(null);
+    const [editandoConductorIndex, setEditandoConductorIndex] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
-    const fileInputRef = useRef(null);
+    const [ubigeoOptions, setUbigeoOptions] = useState([]);
 
     // Cargar datos del perfil según rol
     useEffect(() => {
@@ -35,9 +53,9 @@ const Perfil = () => {
                 console.log("Fetching perfil for user:", user, "with role:", activeRole);
                 let endpoint = "";
                 if (activeRole === "GENERADOR") {
-                    endpoint = `/certificaciones/getGeneradorById/${user.generadorId}`;
+                    endpoint = `/certificaciones/getGeneradorById/${user.generadorId?._id || user.generadorId}`;
                 } else if (activeRole === "TRANSPORTISTA") {
-                    endpoint = `/certificaciones/getTransportistaById/${user.transportistaId}`;
+                    endpoint = `/certificaciones/getTransportistaById/${user.transportistaId?._id || user.transportistaId}`;
                 } else {
                     showError("Rol no reconocido");
                     return;
@@ -68,15 +86,22 @@ const Perfil = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleNestedInputChange = (section, field, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            [section]: { ...prev[section], [field]: value },
+        }));
+    };
+
     // Guardar cambios generales
     const handleSaveGeneral = async () => {
         setLoading(true);
         try {
             const endpoint =
                 activeRole === "GENERADOR"
-                    ? `/certificaciones/patchGenerador/${perfil._id}`
-                    : `/certificaciones/patchTransportista/${perfil._id}`;
-            const payload = { ...formData };
+                    ? `/certificaciones/editGenerador/${perfil._id}`
+                    : `/certificaciones/editTransportista/${perfil._id}`;
+            const payload = activeRole === "GENERADOR" ? { ...formData } : getTransportistaPayload(formData);
             // Si no se modificó la contraseña, no la enviamos
             delete payload.password;
             await axios.patch(endpoint, payload);
@@ -105,25 +130,22 @@ const Perfil = () => {
         }
         setLoading(true);
         try {
-            // Subir firma si existe
-            let firmaUrl = null;
-            if (nuevoResponsable.firmaBase64) {
-                const formDataImg = new FormData();
-                formDataImg.append("file", nuevoResponsable.firmaBase64);
-                const uploadRes = await axios.post("/upload/firma", formDataImg);
-                firmaUrl = uploadRes.data.url;
-            }
             const nuevo = {
                 ...nuevoResponsable,
-                firmaResponsable: firmaUrl || "",
+                // El backend recibe Base64 y se encarga de subirlo a Cloudinary.
+                firmaResponsable: nuevoResponsable.firmaBase64 || nuevoResponsable.firmaResponsable || "",
             };
+            delete nuevo.firmaBase64;
             // Actualizar array en el perfil
-            const updatedArray = [...responsables, nuevo];
-            await updatePerfilArray("responsablesTecnicos", updatedArray);
+            const updatedArray = editandoResponsableIndex === null
+                ? [...responsables, nuevo]
+                : responsables.map((responsable, index) => index === editandoResponsableIndex ? nuevo : responsable);
+            await updatePerfilArray(activeRole === "GENERADOR" ? "responsablesTecnicos" : "responsables", updatedArray);
             setResponsables(updatedArray);
             setNuevoResponsable({});
+            setEditandoResponsableIndex(null);
             setShowFormResponsable(false);
-            showSuccess("Responsable agregado");
+            showSuccess(editandoResponsableIndex === null ? "Responsable agregado" : "Responsable actualizado");
         } catch (error) {
             showError("Error al agregar responsable");
         } finally {
@@ -136,7 +158,7 @@ const Perfil = () => {
         setLoading(true);
         try {
             const updated = responsables.filter((_, i) => i !== index);
-            await updatePerfilArray("responsablesTecnicos", updated);
+            await updatePerfilArray(activeRole === "GENERADOR" ? "responsablesTecnicos" : "responsables", updated);
             setResponsables(updated);
             showSuccess("Responsable eliminado");
         } catch (error) {
@@ -150,13 +172,11 @@ const Perfil = () => {
     const updatePerfilArray = async (arrayField, newArray) => {
         const endpoint =
             activeRole === "GENERADOR"
-                ? `/certificaciones/patchGenerador/${perfil._id}`
-                : `/certificaciones/patchTransportista/${perfil._id}`;
-        // Si es GENERADOR, el campo es "responsablesTecnicos", si es TRANSPORTISTA es "responsables"
-        const field = activeRole === "GENERADOR" ? "responsablesTecnicos" : "responsables";
-        await axios.patch(endpoint, { [field]: newArray });
+                ? `/certificaciones/editGenerador/${perfil._id}`
+                : `/certificaciones/editTransportista/${perfil._id}`;
+        await axios.patch(endpoint, { [arrayField]: newArray });
         // Actualizar perfil local
-        setPerfil((prev) => ({ ...prev, [field]: newArray }));
+        setPerfil((prev) => ({ ...prev, [arrayField]: newArray }));
     };
 
     // ========== MANEJO DE PLANTAS (solo GENERADOR) ==========
@@ -168,7 +188,7 @@ const Perfil = () => {
         setLoading(true);
         try {
             const updated = [...plantas, nuevaPlanta];
-            await axios.patch(`/certificaciones/patchGenerador/${perfil._id}`, {
+            await axios.patch(`/certificaciones/editGenerador/${perfil._id}`, {
                 plantas: updated,
             });
             setPlantas(updated);
@@ -187,7 +207,7 @@ const Perfil = () => {
         setLoading(true);
         try {
             const updated = plantas.filter((_, i) => i !== index);
-            await axios.patch(`/certificaciones/patchGenerador/${perfil._id}`, {
+            await axios.patch(`/certificaciones/editGenerador/${perfil._id}`, {
                 plantas: updated,
             });
             setPlantas(updated);
@@ -207,14 +227,17 @@ const Perfil = () => {
         }
         setLoading(true);
         try {
-            const updated = [...conductores, nuevoConductor];
-            await axios.patch(`/certificaciones/patchTransportista/${perfil._id}`, {
+            const updated = editandoConductorIndex === null
+                ? [...conductores, nuevoConductor]
+                : conductores.map((conductor, index) => index === editandoConductorIndex ? nuevoConductor : conductor);
+            await axios.patch(`/certificaciones/editTransportista/${perfil._id}`, {
                 conductores: updated,
             });
             setConductores(updated);
             setNuevoConductor({});
+            setEditandoConductorIndex(null);
             setShowFormConductor(false);
-            showSuccess("Conductor agregado");
+            showSuccess(editandoConductorIndex === null ? "Conductor agregado" : "Conductor actualizado");
         } catch (error) {
             showError("Error al agregar conductor");
         } finally {
@@ -227,7 +250,7 @@ const Perfil = () => {
         setLoading(true);
         try {
             const updated = conductores.filter((_, i) => i !== index);
-            await axios.patch(`/certificaciones/patchTransportista/${perfil._id}`, {
+            await axios.patch(`/certificaciones/editTransportista/${perfil._id}`, {
                 conductores: updated,
             });
             setConductores(updated);
@@ -293,6 +316,12 @@ const Perfil = () => {
                             <>
                                 <p><strong>Registro EO-RS:</strong> {perfil.registroEors}</p>
                                 <p><strong>Autorización Municipal:</strong> {perfil.autorizacionMunicipal || "N/A"}</p>
+                                <p><strong>Documento de ruta:</strong> {perfil.documentoRuta || "No registrado"}</p>
+                                <p><strong>Ubigeo:</strong> {perfil.ubigeoId?.codigo || "No registrado"}</p>
+                                <p><strong>Departamento:</strong> {perfil.ubigeoId?.departamento || "No registrado"}</p>
+                                <p><strong>Provincia:</strong> {perfil.ubigeoId?.provincia || "No registrado"}</p>
+                                <p><strong>Distrito:</strong> {perfil.ubigeoId?.distrito || "No registrado"}</p>
+                                <p><strong>Usuario en Manifestower:</strong> {perfil.usuarioManifestower ? "Activo" : "No activo"}</p>
                             </>
                         )}
                     </div>
@@ -307,6 +336,41 @@ const Perfil = () => {
                             <>
                                 <Input label="Registro EO-RS" name="registroEors" value={formData.registroEors} onChange={handleInputChange} />
                                 <Input label="Autorización Municipal" name="autorizacionMunicipal" value={formData.autorizacionMunicipal} onChange={handleInputChange} />
+                                <Input label="Documento que autoriza la ruta" name="documentoRuta" value={formData.documentoRuta || ""} onChange={handleInputChange} />
+                                <Input
+                                    label="Ubigeo"
+                                    type="autocomplete"
+                                    name="ubigeoId"
+                                    value={formData.ubigeoId || ""}
+                                    setForm={setFormData}
+                                    fetchData="/certificaciones/getUbigeoPaginacion"
+                                    setOptions={setUbigeoOptions}
+                                    options={ubigeoOptions}
+                                    field={(option) => `${option.distrito} - ${option.provincia} - ${option.departamento}`}
+                                    placeholder="Distrito - Provincia - Departamento"
+                                    otro={false}
+                                />
+
+                                <div className="col-span-1 md:col-span-2 border-t pt-4 mt-2">
+                                    <h3 className="font-semibold text-gray-700 mb-3">Representante y Responsable Técnico</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <Input label="Nombre del Representante Legal" name="representanteLegalNombre" value={formData.representanteLegal?.nombre || ""} onChange={(e) => handleNestedInputChange("representanteLegal", "nombre", e.target.value)} />
+                                        <Input label="DNI/CE del Representante Legal" name="representanteLegalDni" value={formData.representanteLegal?.dni || ""} onChange={(e) => handleNestedInputChange("representanteLegal", "dni", e.target.value)} />
+                                        <Input label="Nombre del Responsable Técnico" name="responsableTecnicoNombre" value={formData.responsableTecnico?.nombre || ""} onChange={(e) => handleNestedInputChange("responsableTecnico", "nombre", e.target.value)} />
+                                        <Input label="N° de Colegiatura" name="responsableTecnicoColegiatura" value={formData.responsableTecnico?.numeroColegiatura || ""} onChange={(e) => handleNestedInputChange("responsableTecnico", "numeroColegiatura", e.target.value)} />
+                                    </div>
+                                </div>
+
+                                <div className="col-span-1 md:col-span-2 border-t pt-4 mt-2">
+                                    <h3 className="font-semibold text-gray-700 mb-3">Contingencias</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <Input label="Derrame" name="contingenciaDerrame" value={formData.contingencias?.derrame || ""} onChange={(e) => handleNestedInputChange("contingencias", "derrame", e.target.value)} />
+                                        <Input label="Infiltración" name="contingenciaInfiltracion" value={formData.contingencias?.infiltracion || ""} onChange={(e) => handleNestedInputChange("contingencias", "infiltracion", e.target.value)} />
+                                        <Input label="Incendio" name="contingenciaIncendio" value={formData.contingencias?.incendio || ""} onChange={(e) => handleNestedInputChange("contingencias", "incendio", e.target.value)} />
+                                        <Input label="Explosión" name="contingenciaExplosion" value={formData.contingencias?.explosion || ""} onChange={(e) => handleNestedInputChange("contingencias", "explosion", e.target.value)} />
+                                        <Input label="Otros accidentes" name="contingenciaOtros" value={formData.contingencias?.otros || ""} onChange={(e) => handleNestedInputChange("contingencias", "otros", e.target.value)} />
+                                    </div>
+                                </div>
                             </>
                         )}
                         <div className="col-span-1 md:col-span-2 flex justify-end gap-4 mt-4">
@@ -316,6 +380,50 @@ const Perfil = () => {
                     </div>
                 )}
             </div>
+
+            {activeRole === "TRANSPORTISTA" && !editando && (
+                <>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 md:p-6">
+                            <h2 className="text-xl font-semibold text-gray-700 mb-4">Representante Legal</h2>
+                            <p><strong>Nombre:</strong> {perfil.representanteLegal?.nombre || "No registrado"}</p>
+                            <p><strong>DNI/CE:</strong> {perfil.representanteLegal?.dni || "No registrado"}</p>
+                        </div>
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 md:p-6">
+                            <h2 className="text-xl font-semibold text-gray-700 mb-4">Responsable Técnico</h2>
+                            <p><strong>Nombre:</strong> {perfil.responsableTecnico?.nombre || "No registrado"}</p>
+                            <p><strong>N° Colegiatura:</strong> {perfil.responsableTecnico?.numeroColegiatura || "No registrado"}</p>
+                        </div>
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 md:p-6">
+                            <h2 className="text-xl font-semibold text-gray-700 mb-4">Contingencias</h2>
+                            <p><strong>Derrame:</strong> {perfil.contingencias?.derrame || "No registrado"}</p>
+                            <p><strong>Infiltración:</strong> {perfil.contingencias?.infiltracion || "No registrado"}</p>
+                            <p><strong>Incendio:</strong> {perfil.contingencias?.incendio || "No registrado"}</p>
+                            <p><strong>Explosión:</strong> {perfil.contingencias?.explosion || "No registrado"}</p>
+                            <p><strong>Otros:</strong> {perfil.contingencias?.otros || "No registrado"}</p>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 md:p-6 mb-6">
+                        <h2 className="text-xl font-semibold text-gray-700 mb-4">Generadores Asociados</h2>
+                        {perfil.generadores?.length ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                {perfil.generadores.map((relacion, index) => {
+                                    const generador = relacion.generadorId || relacion;
+                                    return (
+                                        <div key={generador?._id || index} className="rounded-lg border border-gray-200 p-4 text-sm">
+                                            <p><strong>Razón social:</strong> {generador?.razonSocial || "No disponible"}</p>
+                                            <p><strong>RUC:</strong> {generador?.ruc || "No disponible"}</p>
+                                            <p><strong>Correo:</strong> {generador?.correoElectronico || "No disponible"}</p>
+                                            <p><strong>Teléfono:</strong> {generador?.telefono || "No disponible"}</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : <p className="text-sm text-gray-400">No hay generadores asociados.</p>}
+                    </div>
+                </>
+            )}
 
             {/* Sección: Gestión de Responsables (común a ambos roles) */}
             <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 md:p-6 mb-6">
@@ -348,6 +456,17 @@ const Perfil = () => {
                                     </td>
                                     <td className="px-4 py-2 text-center">
                                         <button
+                                            onClick={() => {
+                                                setNuevoResponsable(resp);
+                                                setEditandoResponsableIndex(index);
+                                                setShowFormResponsable(true);
+                                            }}
+                                            className="text-blue-500 hover:text-blue-700 text-sm mr-3"
+                                            aria-label="Editar responsable"
+                                        >
+                                            <i className="pi pi-pencil"></i>
+                                        </button>
+                                        <button
                                             onClick={() => handleRemoveResponsable(index)}
                                             className="text-red-500 hover:text-red-700 text-sm"
                                         >
@@ -365,7 +484,13 @@ const Perfil = () => {
 
                 {/* Botón para agregar responsable */}
                 <button
-                    onClick={() => setShowFormResponsable(!showFormResponsable)}
+                    onClick={() => {
+                        setShowFormResponsable(!showFormResponsable);
+                        if (showFormResponsable) {
+                            setNuevoResponsable({});
+                            setEditandoResponsableIndex(null);
+                        }
+                    }}
                     className="mt-4 text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                     {showFormResponsable ? "Cancelar" : "+ Agregar responsable"}
@@ -410,7 +535,7 @@ const Perfil = () => {
                             />
                         </div>
                         <div className="col-span-1 md:col-span-3 flex justify-end gap-4">
-                            <ButtonOk children="Guardar" type="ok" onClick={handleAddResponsable} disabled={loading} />
+                            <ButtonOk children={editandoResponsableIndex === null ? "Guardar" : "Actualizar"} type="ok" onClick={handleAddResponsable} disabled={loading} />
                         </div>
                     </div>
                 )}
@@ -506,6 +631,17 @@ const Perfil = () => {
                                         <td className="px-4 py-2">{cond.licencia}</td>
                                         <td className="px-4 py-2 text-center">
                                             <button
+                                                onClick={() => {
+                                                    setNuevoConductor(cond);
+                                                    setEditandoConductorIndex(index);
+                                                    setShowFormConductor(true);
+                                                }}
+                                                className="text-blue-500 hover:text-blue-700 text-sm mr-3"
+                                                aria-label="Editar conductor"
+                                            >
+                                                <i className="pi pi-pencil"></i>
+                                            </button>
+                                            <button
                                                 onClick={() => handleRemoveConductor(index)}
                                                 className="text-red-500 hover:text-red-700 text-sm"
                                             >
@@ -521,7 +657,13 @@ const Perfil = () => {
                         </table>
                     </div>
                     <button
-                        onClick={() => setShowFormConductor(!showFormConductor)}
+                        onClick={() => {
+                            setShowFormConductor(!showFormConductor);
+                            if (showFormConductor) {
+                                setNuevoConductor({});
+                                setEditandoConductorIndex(null);
+                            }
+                        }}
                         className="mt-4 text-sm text-blue-600 hover:text-blue-800 font-medium"
                     >
                         {showFormConductor ? "Cancelar" : "+ Agregar conductor"}
@@ -541,7 +683,7 @@ const Perfil = () => {
                                 placeholder="Número de licencia"
                             />
                             <div className="col-span-1 md:col-span-2 flex justify-end gap-4">
-                                <ButtonOk children="Guardar" type="ok" onClick={handleAddConductor} disabled={loading} />
+                                <ButtonOk children={editandoConductorIndex === null ? "Guardar" : "Actualizar"} type="ok" onClick={handleAddConductor} disabled={loading} />
                             </div>
                         </div>
                     )}

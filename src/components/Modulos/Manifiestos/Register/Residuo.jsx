@@ -9,6 +9,14 @@ const Paso2_Residuo = ({ formData, setFormData }) => {
         { value: "A3", label: "A3 - Residuos con constituyentes orgánicos" },
         { value: "A4", label: "A4 - Residuos con constituyentes mixtos" }
     ];
+    const subcodigosBasilea = {
+        A1: ["A1010", "A1020", "A1030", "A1040", "A1050", "A1060", "A1070", "A1080", "A1090", "A1100", "A1110", "A1120", "A1130", "A1140", "A1150", "A1160", "A1170", "A1180", "A1190"],
+        A2: ["A2010", "A2020", "A2030", "A2040", "A2050", "A2060"],
+        A3: ["A3010", "A3020", "A3030", "A3040", "A3050", "A3060", "A3070", "A3080", "A3090", "A3100", "A3110", "A3120", "A3130", "A3140", "A3150", "A3160", "A3170", "A3180", "A3190", "A3200", "A3210"],
+        A4: ["A4010", "A4020", "A4030", "A4040", "A4050", "A4060", "A4070", "A4080", "A4090", "A4100", "A4110", "A4120", "A4130", "A4140", "A4150", "A4160", "A4170", "A4180", "A4190", "A4200"],
+    };
+    const codigoBasilea = formData.residuo?.codigoBasilea || "";
+    const opcionesSubcodigo = (subcodigosBasilea[codigoBasilea] || []).map((value) => ({ value, label: value }));
 
     const handleResiduoChange = (campo, valor) => {
         setFormData(prev => ({
@@ -63,16 +71,20 @@ const Paso2_Residuo = ({ formData, setFormData }) => {
 
             <Input
                 label="N° de recipientes"
-                type="number" // Cambiado a number para mejorar la UX en móvil
+                type="text"
                 value={formData.residuo?.numeroRecipientes || ""}
                 onChange={(e) => handleResiduoChange('numeroRecipientes', e.target.value)}
+                placeholder="Ej: 12 BIDONES"
             />
 
             <Input
                 label="Código de clasificación *"
                 type="select"
                 value={formData.residuo?.codigoBasilea || ""}
-                onChange={(e) => handleResiduoChange('codigoBasilea', e.target.value)}
+                onChange={(e) => {
+                    handleResiduoChange('codigoBasilea', e.target.value);
+                    handleResiduoChange('subcodigoBasilea', '');
+                }}
                 options={codigosBasilea}
                 optionLabel="label"
                 optionValue="value"
@@ -80,9 +92,14 @@ const Paso2_Residuo = ({ formData, setFormData }) => {
 
             <Input
                 label="Subcódigo (A-...)"
+                type="select"
                 value={formData.residuo?.subcodigoBasilea || ""}
-                onChange={(e) => handleResiduoChange('subcodigoBasilea', e.target.value.toUpperCase())}
-                placeholder="Ej: A1010"
+                onChange={(e) => handleResiduoChange('subcodigoBasilea', e.target.value)}
+                options={opcionesSubcodigo}
+                optionLabel="label"
+                optionValue="value"
+                placeholder={codigoBasilea ? "Seleccione un subcódigo" : "Seleccione primero el código"}
+                disabled={!codigoBasilea}
             />
 
             <InputNormal

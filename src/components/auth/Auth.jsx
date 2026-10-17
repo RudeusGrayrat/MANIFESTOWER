@@ -19,7 +19,9 @@ const AuthLayout = () => {
             <section className={`auth-shell ${isRegister ? "auth-shell--register" : ""}`}>
             <div
                 className="auth-illustration"
-                style={{ backgroundImage: "url('MANIFIESTO_LOGO.webp')" }}
+                style={{
+                    backgroundImage: "image-set(url('/MANIFIESTO_LOGO.avif') type('image/avif') 1x, url('/MANIFIESTO_LOGO.webp') type('image/webp') 1x)",
+                }}
             />
             <div
                 className="auth-content"

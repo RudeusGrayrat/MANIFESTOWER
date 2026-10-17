@@ -57,7 +57,7 @@ const DetailTransportista = ({ setShowDetail, selected }) => {
                         <PDetail content="ESTADO: " value={estado} />
                     </div>
 
-                    {(responsableTecnico && responsableTecnico?.nombre && generadores?.length > 0) && (
+                    {responsableTecnico?.nombre && (
                         <div className="flex flex-col gap-2 pt-4 border-t border-slate-100">
                             <h3 className="text-xl md:text-2xl font-bold text-[#026DCC] tracking-tight mb-2">
                                 RESPONSABLE TÉCNICO
@@ -91,7 +91,7 @@ const DetailTransportista = ({ setShowDetail, selected }) => {
                         <PDetail content="DISTRITO: " value={ubigeoId?.distrito} />
                     </div>
 
-                    {(representanteLegal && generadores?.length > 0) && (
+                    {representanteLegal?.nombre && (
                         <div className="flex flex-col gap-2 pt-4 border-t border-slate-100">
                             <h3 className="text-xl md:text-2xl font-bold text-[#026DCC] tracking-tight mb-2">
                                 REPRESENTANTE LEGAL
@@ -125,6 +125,31 @@ const DetailTransportista = ({ setShowDetail, selected }) => {
                             </p>
                         )}
                     </div>
+                </div>
+
+                <div className="flex w-full min-w-0 flex-col gap-4 bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-100 md:col-span-2 lg:col-span-3">
+                    <h3 className="text-xl md:text-2xl font-bold text-[#026DCC] tracking-tight mb-2">
+                        GENERADORES ASOCIADOS
+                    </h3>
+                    {generadores?.length ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            {generadores.map((relacion, index) => {
+                                const generador = relacion.generadorId || relacion;
+                                return (
+                                    <div key={generador?._id || index} className="border border-slate-200 p-4 rounded-xl bg-slate-50/50">
+                                        <PDetail content="RAZÓN SOCIAL: " value={generador?.razonSocial || "No disponible"} />
+                                        <PDetail content="RUC: " value={generador?.ruc || "No disponible"} />
+                                        <PDetail content="CORREO: " value={generador?.correoElectronico || "No disponible"} />
+                                        <PDetail content="TELÉFONO: " value={generador?.telefono || "No disponible"} />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-slate-400 italic bg-slate-50 p-4 rounded-lg border border-dashed text-center">
+                            No hay generadores asociados.
+                        </p>
+                    )}
                 </div>
 
             </div>

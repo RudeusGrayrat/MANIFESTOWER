@@ -3,6 +3,7 @@ import Input from "../../../ui/inputs/Input";
 import InputNormal from "../../../ui/inputs/Normal";
 
 const Paso4_Transporte = ({ formData, setFormData }) => {
+    const fechaMinima = new Date().toLocaleDateString("en-CA");
     const [formReferendo, setFormReferendo] = useState(formData.referendoEntrega || {
         generadorResponsableManejo: "",
         responsableEors: "",
@@ -184,6 +185,7 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                     type="date"
                     value={formData.transporte?.fechaRecepcion || ""}
                     onChange={(e) => handleTransporteChange('fechaRecepcion', e.target.value)}
+                    min={fechaMinima}
                 />
 
                 <Input

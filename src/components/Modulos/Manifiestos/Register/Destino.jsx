@@ -1,11 +1,39 @@
 import { useState, useEffect } from "react";
 import Input from "../../../ui/inputs/Input";
 import InputNormal from "../../../ui/inputs/Normal";
+import axios from "../../../api/axios";
 
 const Paso5_Destino = ({ formData, setFormData }) => {
     const [destinoOptions, setDestinoOptions] = useState([]);
     const tipoManejoOptions = ["TRATAMIENTO", "DISPOSICIÓN FINAL", "VALORIZACIÓN"];
     const [responsableOptions, setResponsableOptions] = useState([]);
+
+    // Mientras Tower sea el único destino operativo, se carga y bloquea aquí.
+    // El backend aplica la misma regla para impedir que un cliente la altere.
+    useEffect(() => {
+        let mounted = true;
+
+        const cargarDestinoPredeterminado = async () => {
+            try {
+                const response = await axios.get("/certificaciones/getDestinosPaginacion", {
+                    params: { page: 0, limit: 1 },
+                });
+                const destino = response.data?.data?.[0];
+                if (!mounted || !destino) return;
+
+                setDestinoOptions([destino]);
+                setFormData((prev) => ({
+                    ...prev,
+                    destinoId: prev.destinoId || destino,
+                }));
+            } catch (error) {
+                console.error("No se pudo cargar el destino predeterminado:", error);
+            }
+        };
+
+        cargarDestinoPredeterminado();
+        return () => { mounted = false; };
+    }, [setFormData]);
 
     // Manejadores directos para evitar estados intermedios y desincronizaciones
     const handleDestinoChange = (campo, valor) => {
@@ -70,16 +98,6 @@ const Paso5_Destino = ({ formData, setFormData }) => {
             }));
         }
     }, [formData.referendoRecepcion?.referendo]);
-
-    // Inicializar el destinoId por defecto si existen opciones
-    useEffect(() => {
-        if (destinoOptions.length > 0) {
-            setFormData(prev => ({
-                ...prev,
-                destinoId: prev.destinoId || destinoOptions[0]
-            }));
-        }
-    }, [destinoOptions]);
 
     // Cargar los responsables disponibles basados en el destino seleccionado
     useEffect(() => {
@@ -181,7 +199,9 @@ const Paso5_Destino = ({ formData, setFormData }) => {
                 setOptions={setDestinoOptions}
                 options={destinoOptions}
                 field="razonSocial"
-                placeholder="Buscar destino por RUC o razón social"
+                placeholder="Cargando destino final..."
+                disabled
+                otro={false}
             />
 
             <Input
