@@ -44,6 +44,7 @@ const Perfil = () => {
     const [editandoConductorIndex, setEditandoConductorIndex] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [ubigeoOptions, setUbigeoOptions] = useState([]);
+    const [enlaceAcceso, setEnlaceAcceso] = useState(null);
 
     // Cargar datos del perfil según rol
     useEffect(() => {
@@ -91,6 +92,19 @@ const Perfil = () => {
             ...prev,
             [section]: { ...prev[section], [field]: value },
         }));
+    };
+
+    const generarEnlaceAcceso = async (generador) => {
+        if (!generador?._id || !window.confirm(`Se invalidará cualquier enlace anterior de ${generador.razonSocial}. ¿Generar uno nuevo?`)) return;
+        setLoading(true);
+        try {
+            const { data } = await axios.post(`/manifesTower/generadores/${generador._id}/enlace-acceso`);
+            const enlace = `${window.location.origin}/enlace-acceso-generador#${data.token}`;
+            setEnlaceAcceso({ generadorId: generador._id, enlace });
+            try { await navigator.clipboard.writeText(enlace); showSuccess("Enlace generado y copiado. Vence en 72 horas."); }
+            catch (_) { showInfo("Enlace generado. Cópialo desde el recuadro mostrado."); }
+        } catch (error) { showError(error.response?.data?.message || "No se pudo generar el enlace de acceso."); }
+        finally { setLoading(false); }
     };
 
     // Guardar cambios generales
@@ -467,6 +481,8 @@ const Perfil = () => {
                                             <p><strong>RUC:</strong> {generador?.ruc || "No disponible"}</p>
                                             <p><strong>Correo:</strong> {generador?.correoElectronico || "No disponible"}</p>
                                             <p><strong>Teléfono:</strong> {generador?.telefono || "No disponible"}</p>
+                                            <button type="button" disabled={loading || !generador?._id} onClick={() => generarEnlaceAcceso(generador)} className="mt-3 text-sm text-blue-700 underline disabled:opacity-50">Generar enlace para completar acceso</button>
+                                            {enlaceAcceso?.generadorId === generador?._id && <textarea readOnly value={enlaceAcceso.enlace} rows={3} className="mt-2 w-full rounded border border-slate-300 p-2 text-xs" aria-label="Enlace de acceso del generador" />}
                                         </div>
                                     );
                                 })}

@@ -17,12 +17,20 @@ const SolicitudGenerador = ({ onBack }) => {
     useEffect(() => { cargarSolicitudes(); }, []);
 
     const submit = async (event) => {
-        event.preventDefault(); setError(""); setLoading(true);
+        event.preventDefault(); setError(""); setAdvertencia(""); setCopiado(false); setLoading(true);
         try {
             const { data } = await axios.post("/manifesTower/solicitudes-generador", form, { headers: headers() });
-            setEnlace(`${window.location.origin}/invitacion-generador#${data.token}`);
+            if (data.modo === "VINCULACION") {
+                setEnlace("");
+                setForm({ razonSocial: "", ruc: "", correoElectronico: "", telefono: "" });
+                setAdvertencia(data.notificacionPendiente
+                    ? "El generador ya existía. La solicitud de vínculo se registró, pero no se pudo notificar a su cuenta."
+                    : "El generador ya existía. Se envió la solicitud de vínculo a su cuenta.");
+            } else {
+                setEnlace(`${window.location.origin}/invitacion-generador#${data.token}`);
+                if (data.notificacionPendiente) setAdvertencia("La solicitud se guardó, pero Tower no recibió la notificación; comunícate con su equipo.");
+            }
             await cargarSolicitudes();
-            if (data.notificacionPendiente) setAdvertencia("La solicitud se guardó, pero Tower no recibió la notificación; comunícate con su equipo.");
         } catch (error) { setError(error.response?.data?.message || "No se pudo crear la solicitud."); }
         finally { setLoading(false); }
     };

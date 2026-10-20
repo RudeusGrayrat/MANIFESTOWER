@@ -10,6 +10,7 @@ import Login from "./components/auth/Login";
 import Register from "./components/auth/Register/Register";
 import InvitacionGenerador from "./components/auth/Register/InvitacionGenerador";
 import RecuperarCodigoGenerador from "./components/auth/Register/RecuperarCodigoGenerador";
+import EnlaceAccesoGenerador from "./components/auth/Register/EnlaceAccesoGenerador";
 import Perfil from "./components/Modulos/Perfil/Perfil";
 import Notificaciones from "./components/notificaciones/Notificaciones";
 import { NotificacionesProvider } from "./components/context/NotificacionesContext";
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { path: "registrar", element: <Register /> },
       { path: "invitacion-generador", element: <InvitacionGenerador /> },
       { path: "recuperar-codigo-generador", element: <RecuperarCodigoGenerador /> },
+      { path: "enlace-acceso-generador", element: <EnlaceAccesoGenerador /> },
     ],
   },
   {

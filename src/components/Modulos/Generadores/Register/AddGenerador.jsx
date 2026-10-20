@@ -4,11 +4,9 @@ import axios from '../../../api/axios';
 import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
-import { useAuth } from '../../../context/AuthContext';
 import SolicitudGenerador from './SolicitudGenerador';
 
 const AddGenerador = () => {
-    const { user, activeRole: rolActivo } = useAuth();
     const [generadorOptions, setGeneradorOptions] = useState([]);
     const [selectedGenerador, setSelectedGenerador] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -36,16 +34,7 @@ const AddGenerador = () => {
     const handleSendRequest = async (generador) => {
         setLoading(true);
         try {
-            const params = {
-                transportistaId: user?._id,
-                generadorId: generador._id,
-                usuarioId: user?._id,
-                rolActivo: rolActivo
-            }
-            console.log('🚀 ~ file: AddGenerador.jsx:49 ~ handleSendRequest ~ params:', params);
-            const response = await axios.post('/manifesTower/postVinculacion', null, {
-                params: params
-            });
+            const response = await axios.post('/manifesTower/postVinculacion', { generadorId: generador._id });
 
             setSelectedGenerador(null);
             setLocalSearch('');
