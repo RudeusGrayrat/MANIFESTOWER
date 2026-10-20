@@ -57,7 +57,7 @@ const Dashboard = () => {
             <div className="flex-none flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                 <div>
                     <h1 className="text-[clamp(1.375rem,1.1vw+1rem,1.875rem)] font-extrabold bg-gradient-to-r from-[#285598] to-blue-400 bg-clip-text text-transparent tracking-tight leading-tight">
-                        Hola {activeRole?.charAt(0).toUpperCase() + activeRole?.slice(1).toLowerCase()}
+                        Hola {data.razonSocial || (activeRole ? activeRole.charAt(0).toUpperCase() + activeRole.slice(1).toLowerCase() : "")}
                     </h1>
                     <p className="text-[clamp(0.75rem,0.4vw+0.6rem,0.875rem)] text-gray-500">Gestión operativa de manifiestos</p>
                 </div>

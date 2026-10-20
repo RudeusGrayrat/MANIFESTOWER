@@ -34,6 +34,7 @@ const Perfil = () => {
     const [plantas, setPlantas] = useState([]);
     const [conductores, setConductores] = useState([]);
     const [nuevoResponsable, setNuevoResponsable] = useState({});
+    const [leyendoFirma, setLeyendoFirma] = useState(false);
     const [nuevaPlanta, setNuevaPlanta] = useState({});
     const [nuevoConductor, setNuevoConductor] = useState({});
     const [showFormResponsable, setShowFormResponsable] = useState(false);
@@ -124,7 +125,48 @@ const Perfil = () => {
     };
 
     // ========== MANEJO DE RESPONSABLES ==========
+    const handleFirmaChange = async (event) => {
+        const input = event.target;
+        const file = input.files?.[0];
+        if (!file) return;
+        setLeyendoFirma(true);
+        setNuevoResponsable((prev) => ({ ...prev, firmaBase64: "" }));
+        try {
+            if (!["image/png", "image/jpeg"].includes(file.type)) {
+                throw new Error("Selecciona una firma en formato PNG o JPEG.");
+            }
+            if (!file.size || file.size > 1024 * 1024) {
+                throw new Error("La firma debe pesar como máximo 1 MB y no puede estar vacía.");
+            }
+            const bytes = new Uint8Array(await file.slice(0, 8).arrayBuffer());
+            const png = bytes.length >= 8 && [137, 80, 78, 71, 13, 10, 26, 10].every((value, index) => bytes[index] === value);
+            const jpeg = bytes.length >= 3 && bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255;
+            if ((!png && !jpeg) || (file.type === "image/png" && !png) || (file.type === "image/jpeg" && !jpeg)) {
+                throw new Error("La firma debe ser una imagen PNG o JPEG válida.");
+            }
+            const dataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error("No se pudo leer la imagen de la firma."));
+                reader.readAsDataURL(file);
+            });
+            await new Promise((resolve, reject) => {
+                const imagen = new Image();
+                imagen.onload = resolve;
+                imagen.onerror = () => reject(new Error("La imagen de la firma está dañada o no es válida."));
+                imagen.src = dataUrl;
+            });
+            setNuevoResponsable((prev) => ({ ...prev, firmaBase64: dataUrl }));
+        } catch (error) {
+            input.value = "";
+            showError(error.message || "No se pudo validar la firma.");
+        } finally {
+            setLeyendoFirma(false);
+        }
+    };
+
     const handleAddResponsable = async () => {
+        if (leyendoFirma) return;
         if (!nuevoResponsable.nombre || (activeRole === "GENERADOR" && (!nuevoResponsable.dni || !nuevoResponsable.cargo))) {
             showInfo(activeRole === "GENERADOR" ? "Complete el nombre, DNI y cargo del responsable" : "Debe ingresar al menos el nombre");
             return;
@@ -529,22 +571,15 @@ const Perfil = () => {
                             <label className="block text-sm font-medium text-gray-700">Firma (imagen)</label>
                             <input
                                 type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = (ev) => {
-                                            setNuevoResponsable({ ...nuevoResponsable, firmaBase64: ev.target.result.split(",")[1] });
-                                        };
-                                        reader.readAsDataURL(file);
-                                    }
-                                }}
+                                accept="image/png,image/jpeg,.png,.jpg,.jpeg"
+                                disabled={leyendoFirma}
+                                onChange={handleFirmaChange}
                                 className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                             />
+                            <p className="mt-1 text-xs text-gray-500">PNG o JPEG, máximo 1 MB.</p>
                         </div>
                         <div className="col-span-1 md:col-span-3 flex justify-end gap-4">
-                            <ButtonOk children={editandoResponsableIndex === null ? "Guardar" : "Actualizar"} type="ok" onClick={handleAddResponsable} disabled={loading} />
+                            <ButtonOk children={editandoResponsableIndex === null ? "Guardar" : "Actualizar"} type="ok" onClick={handleAddResponsable} disabled={loading || leyendoFirma} />
                         </div>
                     </div>
                 )}
