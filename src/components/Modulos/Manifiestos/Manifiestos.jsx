@@ -1,7 +1,6 @@
 // components/Modulos/Certificaciones/ManifesTower/Manifiestos.jsx
 import React, { useState } from "react";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button";
 import axios from "../../api/axios";
 import ListPrincipal from "../../ui/table/MainTable";
 import RegisterManifiestos from "./Register/Register";
@@ -11,8 +10,6 @@ import DetailManifiesto from "./Actions/Detail";
 import { useAuth } from "../../context/AuthContext";
 import EditManifiesto from "./Actions/Edit";
 import SendManifiesto from "./Actions/SendManifiesto";
-import ApproveManifiestoModal from "./Actions/ApproveManifiesto"
-import ObserveManifiesto from "./Actions/ObserveManifiesto";
 
 const Manifiestos = () => {
     const { showError } = useToast();
@@ -40,10 +37,6 @@ const Manifiestos = () => {
 
     // Sub-componente interno para la Lista
     const ManifiestosListWrapper = (props) => {
-        const [showApproveModal, setShowApproveModal] = useState(false);
-        const [showObserveModal, setShowObserveModal] = useState(false);
-        const [selectedItem, setSelectedItem] = useState(null);
-
         return (
             <>
                 <ListPrincipal
@@ -62,27 +55,6 @@ const Manifiestos = () => {
                         { label: "Recepción", value: (row) => row.transporte?.fechaRecepcion ? new Date(row.transporte.fechaRecepcion).toLocaleDateString() : "—" },
                         { label: "Estado", field: "estado" },
                     ]}
-                    // 🌟 BOTÓN DINÁMICO EXCLUSIVO MEDIANTE ACTIONBODY
-                    actionBody={(rowData) => {
-                        if (activeRole === "GENERADOR" && rowData.estado === "PENDIENTE") {
-                            return (
-                                <><Button
-                                    icon="pi pi-check"
-                                    title="Firmar y Aprobar Manifiesto"
-                                    rounded
-                                    outlined
-                                    className="text-green-600! border-green-600! rounded-full mx-1! bg-green-50/40 hover:bg-green-50 transition-all duration-150 shadow-md"
-                                    onClick={() => {
-                                        setSelectedItem(rowData);
-                                        setShowApproveModal(true);
-                                    }}
-                                /><Button icon="pi pi-comment" title="Solicitar corrección" rounded outlined
-                                    className="text-orange-600! border-orange-600! mx-1!"
-                                    onClick={() => { setSelectedItem(rowData); setShowObserveModal(true); }} /></>
-                            );
-                        }
-                        return null;
-                    }}
                 >
                     <Column field="numeroManifiesto" header="N° Manifiesto" />
                     <Column
@@ -124,16 +96,6 @@ const Manifiestos = () => {
                     />
                 </ListPrincipal>
 
-                {/* 🔳 MODAL DE APROBACIÓN CON ENTRADA DE PERMISO B2B */}
-                {showApproveModal && (
-                    <ApproveManifiestoModal
-                        visible={showApproveModal}
-                        onHide={() => setShowApproveModal(false)}
-                        selected={selectedItem}
-                        reload={() => setRefreshKey(prev => prev + 1)}
-                    />
-                )}
-                {showObserveModal && <ObserveManifiesto selected={selectedItem} onHide={() => setShowObserveModal(false)} reload={() => setRefreshKey((prev) => prev + 1)} />}
             </>
         );
     };
