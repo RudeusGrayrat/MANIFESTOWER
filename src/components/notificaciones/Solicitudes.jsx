@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { InputSwitch } from "primereact/inputswitch";
 import axios from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "./ToastContext";
@@ -14,7 +13,6 @@ const SolicitudesVinculacion = () => {
     const { showSuccess, showError } = useToast();
     const [activeTab, setActiveTab] = useState("RECIBIDAS");
     const [refreshTrigger, setRefreshTrigger] = useState(0);
-    const esGenerador = !!user?.generadorId;
 
     const obtenerContraparte = (rowData) => {
         const miGeneradorId = user?.generadorId?._id || user?.generadorId;
@@ -100,8 +98,6 @@ const SolicitudesVinculacion = () => {
 
     const ApproveModal = ({ setShowApprove, selected, reload }) => {
         const [submitting, setSubmitting] = useState(false);
-        const [permisoLlenado, setPermisoLlenado] = useState(false);
-        const [showInfoPermiso, setShowInfoPermiso] = useState(false);
         const contraparte = obtenerContraparte(selected);
 
         const handleConfirm = async () => {
@@ -112,8 +108,7 @@ const SolicitudesVinculacion = () => {
                         accion: "ACEPTAR",
                         transportistaId: selected.transportistaId?._id || selected.transportistaId,
                         usuarioId: user?._id,
-                        rolActivo: activeRole,
-                        tienePermisoLlenado: permisoLlenado
+                        rolActivo: activeRole
                     }
                 });
                 showSuccess(response.data?.message || "Vinculación establecida con éxito.");
@@ -147,34 +142,6 @@ const SolicitudesVinculacion = () => {
                         <span className="font-bold text-slate-900">{contraparte?.razonSocial}</span>?
                     </p>
 
-                    {esGenerador && (
-                        <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl mt-2 flex flex-col gap-2">
-                            <div className="flex items-center justify-between">
-                                <span className="font-semibold text-slate-800 text-xs">Autorizar uso de mis datos</span>
-                                <div className="flex items-center gap-2">
-                                    <Button
-                                        type="button"
-                                        icon="pi pi-info-circle"
-                                        rounded
-                                        text
-                                        severity="info"
-                                        className="w-8 h-8 text-[#285598]!"
-                                        onClick={() => setShowInfoPermiso((prev) => !prev)}
-                                        aria-label="Ver información del permiso"
-                                    />
-                                    <InputSwitch checked={permisoLlenado} onChange={(e) => setPermisoLlenado(e.value)} />
-                                </div>
-                            </div>
-                            {showInfoPermiso && (
-                                <div className="p-3 rounded-lg border border-blue-100 bg-blue-50 text-xs text-blue-700 leading-relaxed">
-                                    Este permiso permite utilizar tus datos fiscales y operativos para llenar manifiestos. No autoriza el uso automático de tu firma ni sustituye tu revisión individual.
-                                </div>
-                            )}
-                            <p className="text-xs text-slate-400">
-                                Si lo activas, el transportista podrá utilizar tu información para el llenado. Por ahora deberás revisar cada manifiesto.
-                            </p>
-                        </div>
-                    )}
                 </div>
             </Dialog>
         );
