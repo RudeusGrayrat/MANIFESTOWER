@@ -4,10 +4,8 @@ import axios from '../../../api/axios';
 import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
-import { useAuth } from '../../../context/AuthContext';
 
 const AddTransportista = () => {
-    const { user, activeRole: rolActivo } = useAuth();
     const [form, setForm] = useState({ transportista: '' });
     const [transportistaOptions, setTransportistaOptions] = useState([]);
     const [selectedTransportista, setSelectedTransportista] = useState(null);
@@ -35,17 +33,7 @@ const AddTransportista = () => {
     const handleSendRequest = async (transportista) => {
         setLoading(true);
         try {
-            const params = {
-                transportistaId: transportista._id,
-                usuarioId: user?._id,
-                generadorId: user?._id,
-                rolActivo: rolActivo
-            }
-            console.log('🚀 ~ file: AddTransportista.jsx:58 ~ handleSendRequest ~ params:', params);
-
-            const response = await axios.post('/manifesTower/postVinculacion', null, {
-                params: params
-            });
+            const response = await axios.post('/manifesTower/postVinculacion', { transportistaId: transportista._id });
 
             setSelectedTransportista(null);
             setForm({ transportista: '' });

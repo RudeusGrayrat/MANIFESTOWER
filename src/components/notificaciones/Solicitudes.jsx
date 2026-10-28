@@ -200,7 +200,7 @@ const SolicitudesVinculacion = () => {
                 <div>
                     <h3 className="text-lg font-bold text-slate-800 tracking-tight">Centro de Vinculaciones B2B</h3>
                     <p className="text-sm text-slate-500 mt-0.5">
-                        {esGenerador
+                        {activeRole === "GENERADOR"
                             ? "Gestiona conexiones operativas con tus empresas de transporte aliadas y otorga permisos de datos."
                             : "Administra enlaces con tus clientes generadores de carga para la emisión de manifiestos."
                         }

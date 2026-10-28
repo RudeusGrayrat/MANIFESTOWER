@@ -46,8 +46,8 @@ const Manifiestos = () => {
                     DetailItem={DetailManifiesto}
                     EditItem={EditManifiesto}
                     EnviarItem={SendManifiesto}
-                    canEditRow={(row) => activeRole === "TRANSPORTISTA" && ["BORRADOR", "OBSERVADO"].includes(row.estado)}
-                    canSendRow={(row) => activeRole === "TRANSPORTISTA" && ["BORRADOR", "OBSERVADO"].includes(row.estado)}
+                    canEditRow={(row) => ["GENERADOR", "TRANSPORTISTA"].includes(activeRole) && ["BORRADOR", "OBSERVADO"].includes(row.estado)}
+                    canSendRow={(row) => ["GENERADOR", "TRANSPORTISTA"].includes(activeRole) && ["BORRADOR", "OBSERVADO"].includes(row.estado)}
                     mobileTitle={(row) => `Manifiesto ${row.numeroManifiesto || "sin número"}`}
                     mobileFields={[
                         { label: "Generador", value: (row) => row.generadorId?.razonSocial || "N/A" },

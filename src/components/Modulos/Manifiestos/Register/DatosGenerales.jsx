@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Input from "../../../ui/inputs/Input";
 import axios from "../../../api/axios"; // 🌟 Asegúrate de importar axios
 
-const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
+const Paso1_DatosGenerales = ({ formData, setFormData, user, activeRole }) => {
     const [transportistaOptions, setTransportistaOptions] = useState([]);
     const [generadorOptions, setGeneradorOptions] = useState([]);
     const [plantaOptions, setPlantaOptions] = useState(formData.generadorId?.plantas || []);
@@ -10,6 +10,20 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
         const cargarTransportista = async () => {
             if (formData.generadorId && generadorOptions.length === 0) {
                 setGeneradorOptions([formData.generadorId]);
+            }
+            if (activeRole === "GENERADOR") {
+                try {
+                    const [perfil, enlaces] = await Promise.all([
+                        axios.get("/manifesTower/mi-generador"),
+                        axios.get("/manifesTower/getSolicitudesVinculacion", { params: { generadorId: user?.generadorId, tipo: "RECIBIDAS" } }),
+                    ]);
+                    const generador = perfil.data;
+                    const transportistas = (enlaces.data?.data || []).filter((item) => item.status === "ACEPTADA" && !item.fechaDesvinculacion).map((item) => item.transportistaId).filter(Boolean);
+                    setGeneradorOptions([generador]);
+                    setTransportistaOptions(transportistas);
+                    setFormData((prev) => ({ ...prev, generadorId: prev.generadorId || generador }));
+                } catch (error) { console.error("No se pudieron cargar el perfil o los transportistas vinculados:", error); }
+                return;
             }
             const idTransportista = formData.transportistaId?._id || formData.transportistaId || user?.transportistaId;
 
@@ -38,7 +52,7 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
         };
 
         cargarTransportista();
-    }, [formData.generadorId]);
+    }, [formData.generadorId, activeRole, user?.generadorId, user?.transportistaId, setFormData]);
 
     useEffect(() => {
         if (!formData.generadorId) {
@@ -54,7 +68,7 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
         <div className="flex flex-wrap gap-2 max-md:px-8">
             <Input
                 label="EO-RS Transportista *"
-                disabled
+                disabled={activeRole === "TRANSPORTISTA"}
                 name="transportistaId"
                 value={formData.transportistaId?.razonSocial || ""}
                 options={transportistaOptions}
@@ -72,7 +86,7 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user }) => {
                 options={generadorOptions}
                 optionLabel="razonSocial"
                 placeholder="Buscar generador..."
-                disabled={!formData.transportistaId}
+                disabled={activeRole === "GENERADOR" || !formData.transportistaId}
             />
             <Input
                 label="Dirección de planta"

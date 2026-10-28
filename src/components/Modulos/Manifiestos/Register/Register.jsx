@@ -7,8 +7,6 @@ import axios from "../../../api/axios";
 import { useAuth } from "../../../context/AuthContext";
 import { ProgressBar } from "primereact/progressbar";
 import Paso4_Transporte from "./Transporte";
-import Paso5_Destino from "./Destino";
-import dayjs from "dayjs";
 import ButtonOk from "../../../ui/Buttons/Buttons";
 import { useToast } from "../../../notificaciones/ToastContext";
 
@@ -16,12 +14,12 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
 
     const [deshabilitar, setDeshabilitar] = useState(false);
     const [pasoActual, setPasoActual] = useState(1);
-    const { user } = useAuth();
+    const { user, activeRole } = useAuth();
     const { showInfo, showSuccess, showError, showWarning } = useToast();
     const [formData, setFormData] = useState({
         // Autogenerado
         año: new Date().getFullYear(),
-        mes: dayjs().locale("es").format("MMMM"),
+        mes: ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"][new Date().getMonth()],
         //PASO1 Datos Generales
         transportistaId: '',
         generadorId: '',
@@ -95,7 +93,6 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
         { id: 2, nombre: "Residuos peligroso", componente: Paso2_Residuo },
         { id: 3, nombre: "Características de peligrosidad", componente: Paso3_Peligrosidad },
         { id: 4, nombre: "Transporte", componente: Paso4_Transporte },
-        { id: 5, nombre: "Destino final", componente: Paso5_Destino },
     ];
 
     const dataEnvioActual = formEdit ? formEdit : formData;
@@ -104,7 +101,7 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
     const resetForm = () => {
         setFormData({
             año: new Date().getFullYear(),
-            mes: new Date().getMonth() + 1,
+            mes: ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"][new Date().getMonth()],
             transportistaId: '',
             generadorId: '',
             planta: {},
@@ -149,38 +146,32 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
         setDeshabilitar(true);
 
         try {
-            if (!formData.generadorId || !formData.planta) {
+            const datos = dataEnvioActual;
+            if (!datos.generadorId || !datos.planta) {
                 showWarning("Complete los datos del generador y la planta", "Advertencia");
                 setPasoActual(1);
                 return;
             }
-            if (!formData.residuo.descripcion || !formData.residuo.cantidadTotal || !formData.residuo.estadoFisico) {
-                showInfo(`Complete los datos del residuo: ${!formData.residuo.descripcion ? 'Descripción, ' : ''}${!formData.residuo.cantidadTotal ? 'Cantidad total, ' : ''}${!formData.residuo.estadoFisico ? 'Estado físico' : ''}`);
+            if (!datos.residuo.descripcion || !datos.residuo.cantidadTotal || !datos.residuo.estadoFisico) {
+                showInfo(`Complete los datos del residuo: ${!datos.residuo.descripcion ? 'Descripción, ' : ''}${!datos.residuo.cantidadTotal ? 'Cantidad total, ' : ''}${!datos.residuo.estadoFisico ? 'Estado físico' : ''}`);
                 setPasoActual(2);
                 return;
             }
-            if (!formData.transportistaId || !formData.transporte.fechaRecepcion) {
+            if (!datos.transportistaId || !datos.transporte.fechaRecepcion) {
                 showWarning("Complete los datos de transporte");
                 setPasoActual(4);
                 return;
             }
-            if (!formData.destinoId) {
-                showWarning("Seleccione el destino final");
-                setPasoActual(5);
-                return;
-            }
-
-            // La devolución se completa desde Gestower al aprobar/liberar el documento.
-            const { otrasObligaciones, referendoRecepcion, ...datosBase } = formData;
+            // Tower completa destino final, recepción y devolución al aprobar.
+            const { otrasObligaciones, referendoRecepcion, destinoFinal, destinoId, otrosManejos, ...datosBase } = datos;
             const datosEnvio = {
                 ...datosBase,
-                generadorId: formData.generadorId?._id || formData.generadorId,
-                transportistaId: formData.transportistaId?._id || formData.transportistaId,
-                destinoId: formData.destinoId?._id || formData.destinoId,
+                generadorId: datos.generadorId?._id || datos.generadorId,
+                transportistaId: datos.transportistaId?._id || datos.transportistaId,
                 referendoEntrega: {
                     referendo: false,
-                    generadorResponsableManejo: formData.referendoEntrega?.generadorResponsableManejo || "",
-                    responsableEors: formData.referendoEntrega?.responsableEors || "",
+                    generadorResponsableManejo: datos.referendoEntrega?.generadorResponsableManejo || "",
+                    responsableEors: datos.referendoEntrega?.responsableEors || "",
                 },
                 creadoPor: user._id
             };
@@ -220,6 +211,7 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
                         >
                             <Componente
                                 user={user}
+                                activeRole={activeRole}
                                 formData={dataEnvioActual}
                                 setFormData={setDataActual}
                             />

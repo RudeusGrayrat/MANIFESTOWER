@@ -7,14 +7,14 @@ import { useAuth } from "../../../context/AuthContext";
 
 const SendManifiesto = ({ setShowSend, selected, reload }) => {
     const { showSuccess, showError } = useToast();
-    const { user } = useAuth();
+    const { activeRole } = useAuth();
     const [submitting, setSubmitting] = useState(false);
     const reenviar = selected?.estado === "OBSERVADO";
 
     const handleConfirm = async () => {
         setSubmitting(true);
         try {
-            const response = await axios.post(`/manifesTower/enviarManifiesto/${selected._id}`, { usuarioId: user?._id });
+            const response = await axios.post(`/manifesTower/enviarManifiesto/${selected._id}`);
             showSuccess(response.data?.message || "Manifiesto enviado correctamente.");
             setShowSend(false);
             reload();
@@ -34,7 +34,9 @@ const SendManifiesto = ({ setShowSend, selected, reload }) => {
             <div className="text-sm text-slate-600 space-y-3">
                 <p>Se enviará el manifiesto <strong>{selected?.numeroManifiesto}</strong> del generador <strong>{selected?.generadorId?.razonSocial || "seleccionado"}</strong>.</p>
                 {reenviar && selected?.observacion && <p><strong>Última observación:</strong> {selected.observacion}</p>}
-                <p>Se registrará la firma del responsable del transportista. El generador deberá revisarlo antes de enviarlo al destino.</p>
+                {activeRole === "GENERADOR"
+                    ? <p>Se enviará a Tower como información declarada por el generador. No se insertará ni simulará una firma del transportista.</p>
+                    : <p>Se registrará la firma del responsable del transportista y el manifiesto será enviado a Tower para su revisión.</p>}
             </div>
         </Dialog>
     );
