@@ -4,9 +4,11 @@ import { useToast } from "../../../notificaciones/ToastContext";
 import axios from "../../../api/axios";
 import Details from "../../../ui/Permissions/Detail";
 import PDetail from "../../../ui/cards/PDetail";
+import { useAuth } from "../../../context/AuthContext";
 
 const DetailTransportista = ({ setShowDetail, selected }) => {
     const { showError } = useToast();
+    const { activeRole } = useAuth();
 
     if (!selected) {
         showError("No se ha seleccionado ningún transportista para mostrar los detalles.");
@@ -127,7 +129,7 @@ const DetailTransportista = ({ setShowDetail, selected }) => {
                     </div>
                 </div>
 
-                <div className="flex w-full min-w-0 flex-col gap-4 bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-100 md:col-span-2 lg:col-span-3">
+                {activeRole !== "GENERADOR" && <div className="flex w-full min-w-0 flex-col gap-4 bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-100 md:col-span-2 lg:col-span-3">
                     <h3 className="text-xl md:text-2xl font-bold text-[#026DCC] tracking-tight mb-2">
                         GENERADORES ASOCIADOS
                     </h3>
@@ -150,7 +152,7 @@ const DetailTransportista = ({ setShowDetail, selected }) => {
                             No hay generadores asociados.
                         </p>
                     )}
-                </div>
+                </div>}
 
             </div>
         </Details>

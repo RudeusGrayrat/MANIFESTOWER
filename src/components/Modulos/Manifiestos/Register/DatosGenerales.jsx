@@ -54,6 +54,34 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user, activeRole }) => {
         cargarTransportista();
     }, [formData.generadorId, activeRole, user?.generadorId, user?.transportistaId, setFormData]);
 
+    // En el flujo del Generador, la vinculación trae un resumen del
+    // transportista. Antes de pasar a Transporte se reemplaza por su perfil
+    // completo, que contiene conductores y responsables EORS.
+    useEffect(() => {
+        const idTransportista = formData.transportistaId?._id || formData.transportistaId;
+        const perfilCompleto = formData.transportistaId
+            && typeof formData.transportistaId === "object"
+            && Array.isArray(formData.transportistaId.conductores)
+            && Array.isArray(formData.transportistaId.responsables);
+
+        if (activeRole !== "GENERADOR" || !idTransportista || perfilCompleto) return;
+
+        let activo = true;
+        axios.get(`/certificaciones/getTransportistaById/${idTransportista}`)
+            .then((response) => {
+                if (!activo) return;
+                setFormData((prev) => {
+                    const idActual = prev.transportistaId?._id || prev.transportistaId;
+                    return String(idActual) === String(idTransportista)
+                        ? { ...prev, transportistaId: response.data }
+                        : prev;
+                });
+            })
+            .catch((error) => console.error("No se pudo cargar el perfil completo del transportista:", error));
+
+        return () => { activo = false; };
+    }, [activeRole, formData.transportistaId, setFormData]);
+
     useEffect(() => {
         if (!formData.generadorId) {
             setPlantaOptions([]);
