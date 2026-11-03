@@ -7,7 +7,8 @@ const PERMISSIONS_MATRIX = {
         ALL: ["VER", "CREAR", "EDITAR", "ELIMINAR", "REPORTAR", "APROBAR", "DESAPROBAR", "ENVIAR"]
     },
     GENERADOR: {
-        MANIFIESTOS: ["VER"],
+        // El generador es quien normalmente inicia el manifiesto.
+        MANIFIESTOS: ["VER", "CREAR", "EDITAR", "ENVIAR"],
         TRANSPORTISTAS: ["VER", "CREAR"]
     },
     TRANSPORTISTA: {
