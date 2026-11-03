@@ -15,7 +15,7 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user, activeRole }) => {
                 try {
                     const [perfil, enlaces] = await Promise.all([
                         axios.get("/manifesTower/mi-generador"),
-                        axios.get("/manifesTower/getSolicitudesVinculacion", { params: { generadorId: user?.generadorId, tipo: "RECIBIDAS" } }),
+                        axios.get("/manifesTower/getSolicitudesVinculacion"),
                     ]);
                     const generador = perfil.data;
                     const transportistas = (enlaces.data?.data || []).filter((item) => item.status === "ACEPTADA" && !item.fechaDesvinculacion).map((item) => item.transportistaId).filter(Boolean);
@@ -68,11 +68,14 @@ const Paso1_DatosGenerales = ({ formData, setFormData, user, activeRole }) => {
         <div className="flex flex-wrap gap-2 max-md:px-8">
             <Input
                 label="EO-RS Transportista *"
-                disabled={activeRole === "TRANSPORTISTA"}
+                type="select"
                 name="transportistaId"
-                value={formData.transportistaId?.razonSocial || ""}
+                value={formData.transportistaId}
+                setForm={setFormData}
                 options={transportistaOptions}
+                optionLabel="razonSocial"
                 placeholder="Cargando transportista..."
+                disabled={activeRole === "TRANSPORTISTA"}
             />
             <Input
                 label="Generador"

@@ -327,8 +327,8 @@ const Perfil = () => {
 
     // ========== CAMBIO DE CONTRASEÑA ==========
     const handleChangePassword = async () => {
-        if (!formData.currentPassword || !formData.newPassword || formData.newPassword.length < 12 || new TextEncoder().encode(formData.newPassword).length > 72) {
-            showInfo("Ingresa tu contraseña actual y una nueva de al menos 12 caracteres y máximo 72 bytes.");
+        if (!formData.currentPassword || !formData.newPassword || formData.newPassword.length < 8 || new TextEncoder().encode(formData.newPassword).length > 72) {
+            showInfo("Ingresa tu contraseña actual y una nueva de al menos 8 caracteres y máximo 72 bytes.");
             return;
         }
         setLoading(true);
@@ -768,7 +768,9 @@ const Perfil = () => {
                                 value={formData.newPassword || ""}
                                 onChange={handleInputChange}
                                 type={showPassword ? "text" : "password"}
-                                placeholder="Mínimo 12 caracteres"
+                                minLength={8}
+                                maxLength={72}
+                                placeholder="Mínimo 8 caracteres"
                                 autoComplete="new-password"
                                 className="w-full outline-none bg-transparent text-sm text-gray-700"
                             />

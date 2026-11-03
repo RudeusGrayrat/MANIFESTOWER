@@ -5,7 +5,7 @@ import Input from "../../ui/inputs/Input";
 const InvitacionGenerador = () => {
     const [token] = useState(() => window.location.hash.slice(1));
     const [solicitud, setSolicitud] = useState(null);
-    const [form, setForm] = useState({ correoElectronico: "", telefono: "", representanteLegal: "", dniRepresentante: "", password: "", confirmarPassword: "", aceptaVinculacion: false });
+    const [form, setForm] = useState({ correoElectronico: "", telefono: "", representanteLegal: "", dniRepresentante: "", aceptaVinculacion: false });
     const [responsable, setResponsable] = useState({ nombreResponsable: "", dniResponsable: "", cargoResponsable: "", firmaResponsable: "" });
     const [planta, setPlanta] = useState({ denominacion: "", tipoPlanta: "", direccion: "", actividadEconomica: "", ubigeoId: "" });
     const [ubigeoOptions, setUbigeoOptions] = useState([]);
@@ -39,7 +39,6 @@ const InvitacionGenerador = () => {
     };
     const submit = async (event) => {
         event.preventDefault(); setError("");
-        if (form.password !== form.confirmarPassword) return setError("Las contraseñas no coinciden.");
         if (!responsable.firmaResponsable) return setError("Debes adjuntar la imagen de firma del responsable.");
         if (!planta.ubigeoId?._id && !(typeof planta.ubigeoId === "string" && planta.ubigeoId)) return setError("Selecciona un ubigeo para la planta.");
         setEnviando(true);
@@ -47,7 +46,6 @@ const InvitacionGenerador = () => {
             const { data } = await axios.post("/manifesTower/invitacion-generador/completar", { token, ...form, responsable, planta: { ...planta, ubigeoId: planta.ubigeoId?._id || planta.ubigeoId } });
             setCodigoVerificacion(data.codigoVerificacion);
             setAvisoNotificacion(!!data.notificacionPendiente);
-            setForm((prev) => ({ ...prev, password: "", confirmarPassword: "" }));
             setCompletado(true);
         } catch (error) { setError(error.response?.data?.message || "No se pudo completar la solicitud."); }
         finally { setEnviando(false); }
@@ -57,7 +55,7 @@ const InvitacionGenerador = () => {
     </label>;
     if (loading) return <p className="p-6">Comprobando invitación…</p>;
     if (completado) return <div className="p-6 space-y-3"><h2 className="text-xl font-bold text-green-700">Datos enviados</h2><p>Tower verificará independientemente tu empresa antes de activar la cuenta y la vinculación. Aún no puedes iniciar sesión.</p>
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4"><p className="font-semibold">Tu código de comprobación:</p><p className="font-mono text-xl tracking-wider select-all">{codigoVerificacion}</p><p className="text-sm mt-2">Guárdalo ahora. Comunícalo únicamente al personal de Tower por un canal que hayas verificado, cuando te contacten para confirmar tu identidad. Si lo pierdes, puedes generar otro con tu RUC y la contraseña que acabas de crear.</p></div>
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4"><p className="font-semibold">Tu código de comprobación:</p><p className="font-mono text-xl tracking-wider select-all">{codigoVerificacion}</p><p className="text-sm mt-2">Guárdalo ahora. Tu contraseña inicial será tu RUC; cámbiala desde tu perfil al ingresar. Si pierdes el código, puedes solicitar otro con tu RUC y tu contraseña.</p></div>
         <a href="/recuperar-codigo-generador" className="block text-blue-700 underline">Recuperar código de verificación</a>
         {avisoNotificacion && <p className="text-amber-700">Los datos se guardaron, pero no se pudo notificar a Tower. Contacta a su equipo por un canal verificado.</p>}
         <a href="/login" className="text-blue-700 underline">Volver al inicio</a></div>;
@@ -80,10 +78,7 @@ const InvitacionGenerador = () => {
                 <label className="text-sm font-medium">Imagen de firma (PNG/JPEG, máximo 1 MB)<input required type="file" accept="image/png,image/jpeg" onChange={cargarFirma} className="block w-full mt-1" /></label>
                 <p className="sm:col-span-2 text-xs text-slate-500">Esta imagen se usará en los documentos cuando corresponda. No es una firma digital criptográfica.</p>
             </section>
-            <section className="grid gap-3 sm:grid-cols-2"><h3 className="sm:col-span-2 font-bold">Cuenta propia</h3>
-                {campo("Contraseña", "password", form, setForm, "password", { minLength: 12, maxLength: 72, autoComplete: "new-password" })}
-                {campo("Repetir contraseña", "confirmarPassword", form, setForm, "password", { minLength: 12, maxLength: 72, autoComplete: "new-password" })}
-            </section>
+            <p className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">Cuando Tower active tu cuenta, ingresarás por primera vez con tu RUC como contraseña. Luego podrás cambiarla desde tu perfil.</p>
             <label className="flex gap-2 text-sm"><input required type="checkbox" checked={form.aceptaVinculacion} onChange={(e) => setForm((prev) => ({ ...prev, aceptaVinculacion: e.target.checked }))} /><span>Acepto vincular mi empresa con {solicitud.transportista?.razonSocial} cuando Tower verifique esta solicitud. Esto no autoriza el uso automático de mi firma ni el envío de manifiestos sin mi revisión.</span></label>
             {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
             <button disabled={enviando} className="w-full rounded-lg bg-blue-700 p-3 text-white disabled:opacity-50">{enviando ? "Enviando…" : "Enviar a verificación"}</button>
