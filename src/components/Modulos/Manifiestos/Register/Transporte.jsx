@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import Input from "../../../ui/inputs/Input";
 import InputNormal from "../../../ui/inputs/Normal";
 
+const fechaActualLima = () => {
+    const partes = new Intl.DateTimeFormat("en-US", { timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+    const valor = (tipo) => partes.find((parte) => parte.type === tipo)?.value;
+    return `${valor("year")}-${valor("month")}-${valor("day")}`;
+};
+
 const Paso4_Transporte = ({ formData, setFormData }) => {
-    const fechaMinima = new Date().toLocaleDateString("en-CA");
+    const fechaMinima = fechaActualLima();
     const [formReferendo, setFormReferendo] = useState(formData.referendoEntrega || {
         generadorResponsableManejo: "",
         responsableEors: "",

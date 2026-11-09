@@ -11,6 +11,11 @@ import { useAuth } from "../../context/AuthContext";
 import EditManifiesto from "./Actions/Edit";
 import SendManifiesto from "./Actions/SendManifiesto";
 
+const fechaCalendario = (valor) => {
+    const [anio, mes, dia] = String(valor || "").slice(0, 10).split("-");
+    return anio && mes && dia ? `${dia}/${mes}/${anio}` : "—";
+};
+
 const Manifiestos = () => {
     const { showError } = useToast();
     const { user, activeRole } = useAuth();
@@ -52,7 +57,7 @@ const Manifiestos = () => {
                     mobileFields={[
                         { label: "Generador", value: (row) => row.generadorId?.razonSocial || "N/A" },
                         { label: "Residuo", field: "residuo.descripcion" },
-                        { label: "Recepción", value: (row) => row.transporte?.fechaRecepcion ? new Date(row.transporte.fechaRecepcion).toLocaleDateString() : "—" },
+                        { label: "Recepción", value: (row) => fechaCalendario(row.transporte?.fechaRecepcion) },
                         { label: "Estado", field: "estado" },
                     ]}
                 >
@@ -66,7 +71,7 @@ const Manifiestos = () => {
                     <Column
                         field="transporte.fechaRecepcion"
                         header="Fecha Recepción"
-                        body={(row) => row.transporte?.fechaRecepcion ? new Date(row.transporte.fechaRecepcion).toLocaleDateString() : "-"}
+                        body={(row) => fechaCalendario(row.transporte?.fechaRecepcion)}
                     />
                     <Column
                         field="createdAt"

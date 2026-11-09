@@ -9,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 import AddGenerador from "./Register/AddGenerador";
 import SolicitudesVinculacion from "../../notificaciones/Solicitudes";
 import ConfirmDesvinculacionModal from "../../notificaciones/Desvinculacion";
+import RegistroDirectoGenerador from "./Register/RegistroDirectoGenerador";
 
 const Generadores = () => {
     const { showError, showSuccess } = useToast();
@@ -78,6 +79,7 @@ const Generadores = () => {
     };
 
     const GeneradoresListWrapper = (props) => {
+        const EditarGenerador = ({ selected, setShowEdit, reload }) => <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/40 p-4"><RegistroDirectoGenerador generador={selected} onBack={() => setShowEdit(false)} onSaved={() => reload()} /></div>;
         return (
             <ListPrincipal
                 {...props}
@@ -85,6 +87,9 @@ const Generadores = () => {
                 fetchData={fetchGeneradoresData}
                 permissionDelete={true} // 🌟 Habilitamos el botón de eliminación en las acciones
                 DeleteItem={DesvincularModalWrapper} // 🌟 Pasamos nuestro puente del modal
+                permissionEdit={true}
+                canEditRow={() => true}
+                EditItem={EditarGenerador}
                 DetailItem={DetailGenerador || (() => <div>Detalle no disponible</div>)}
                 mobileTitle={(row) => row.razonSocial || "Generador"}
                 mobileFields={[
