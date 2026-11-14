@@ -11,6 +11,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
     const [loading, setLoading] = useState(true);
     const [pdfBlob, setPdfBlob] = useState(null);
     const [pdfError, setPdfError] = useState(false);
+    const [tipoCopia, setTipoCopia] = useState("GENERADOR");
 
     // 🌟 2. Inicializamos el consumidor del Contexto de Toasts
     // Nota: Si en tu contexto lo exportas como un objeto { showToast } o directo como función, mapealo aquí.
@@ -29,7 +30,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
 
             try {
                 // Hacemos la petición al backend para que genere el PDF con LibreOffice
-                const response = await axios.get(`/certificaciones/getpdfManifiesto/${selected._id}`, {
+                const response = await axios.get(`/certificaciones/getpdfManifiesto/${selected._id}?copia=${tipoCopia}`, {
                     responseType: 'blob' // CRÍTICO: Recibir el PDF como binario
                 });
 
@@ -47,7 +48,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
         };
 
         fetchPdf();
-    }, [selected]);
+    }, [selected, tipoCopia]);
 
     const handleDownload = () => {
         if (pdfBlob) {
@@ -73,6 +74,16 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
 
     return (
         <Details setShowDetail={setShowDetail} title={`Manifiesto ${selected?.numeroManifiesto || ''}`}>
+            <div className="mx-6 mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+                <label className="font-semibold text-slate-700">Copia del manifiesto
+                    <select value={tipoCopia} onChange={(event) => setTipoCopia(event.target.value)} className="ml-3 rounded border border-slate-300 bg-white px-2 py-1">
+                        <option value="AUTORIDAD">Verde — Autoridad competente (original)</option>
+                        <option value="GENERADOR">Blanca — Generador</option>
+                        <option value="TRANSPORTISTA">Amarillo claro — EPS-RS transportista</option>
+                        <option value="DESTINO_FINAL">Celeste claro — Tratamiento / disposición final</option>
+                    </select>
+                </label>
+            </div>
             <div className="mx-6 mt-4 text-sm text-slate-700">
                 <p><strong>Estado:</strong> {selected?.estado || "—"}</p>
                 {selected?.observacion && <p className="mt-2 whitespace-pre-wrap"><strong>Observación:</strong> {selected.observacion}</p>}

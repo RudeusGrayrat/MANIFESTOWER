@@ -40,32 +40,8 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
         }
     }, [formData.transportistaId]);
 
-    // 2. Resetear referendo si se desmarca el checkbox
-    useEffect(() => {
-        if (formData.referendoEntrega?.referendo === false) {
-            setFormReferendo({
-                generadorResponsableManejo: "",
-                responsableEors: "",
-                fechaRecepcion: "",
-            });
-            setFormData(prev => ({
-                ...prev,
-                referendoEntrega: {
-                    generadorResponsableManejo: "",
-                    firmaGenerador: "",
-                    responsableEors: "",
-                    firmaResponsableEors: "",
-                    dniResponsableEors: "",
-                    cargoResponsableEors: "",
-                    fechaRecepcion: "",
-                    horaRecepcion: "",
-                    referendo: false
-                }
-            }));
-        }
-    }, [formData.referendoEntrega?.referendo]);
-
-    // 3. Opciones Responsable Generador + Vinculación de Objeto Inicial
+    // 2. El refrendo es obligatorio: si no había una elección previa, se usa
+    // el primer responsable configurado. El usuario puede elegir otro.
     useEffect(() => {
         if (formData.generadorId && Object.keys(formData.generadorId).length > 0) {
             const responsablesGenerador = formData.generadorId.responsablesTecnicos || [];
@@ -77,6 +53,8 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                 if (encontrado) {
                     setFormReferendo(prev => ({ ...prev, generadorResponsableManejo: encontrado }));
                 }
+            } else if (!formReferendo.generadorResponsableManejo && responsablesGenerador.length) {
+                setFormReferendo(prev => ({ ...prev, generadorResponsableManejo: responsablesGenerador[0] }));
             }
         }
     }, [formData.generadorId]);
@@ -93,6 +71,8 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                 if (encontrado) {
                     setFormReferendo(prev => ({ ...prev, responsableEors: encontrado }));
                 }
+            } else if (!formReferendo.responsableEors && responsablesEORS.length) {
+                setFormReferendo(prev => ({ ...prev, responsableEors: responsablesEORS[0] }));
             }
         }
     }, [formData.transportistaId]);
@@ -105,7 +85,7 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
         setFormData(prev => {
             const nuevoReferendo = {
                 ...prev.referendoEntrega,
-                referendo: prev.referendoEntrega?.referendo || false,
+                referendo: true,
             };
 
             // Procesar Generador de forma segura
@@ -213,26 +193,11 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
             </div>
 
             <div className="flex flex-col gap-4 mt-4">
-                <div className="flex items-center mt-4 m-2">
-                    <input
-                        type="checkbox"
-                        checked={formData.referendoEntrega?.referendo || false}
-                        onChange={(e) =>
-                            setFormData(prev => ({
-                                ...prev,
-                                referendoEntrega: {
-                                    ...prev.referendoEntrega,
-                                    referendo: e.target.checked
-                                }
-                            }))
-                        }
-                        className="h-5 w-5 text-[#285598] focus:ring-indigo-500 border-gray-300 rounded"
-                    />
-                    <span className="ml-2 text-md text-gray-600">Referendo</span>
+                <div className="m-2">
+                    <h3 className="text-md font-semibold text-slate-800">Referendo de entrega</h3>
+                    <p className="text-sm text-slate-500">Obligatorio. Las firmas se congelan al enviar el manifiesto.</p>
                 </div>
-
-                {formData.referendoEntrega?.referendo && (
-                    <div className="flex flex-wrap">
+                <div className="flex flex-wrap">
                         <Input
                             label="Generador - Responsable del manejo"
                             type="select"
@@ -290,8 +255,7 @@ const Paso4_Transporte = ({ formData, setFormData }) => {
                             onChange={(e) => handleTransporteChange('horaRecepcion', e.target.value)}
                             ancho="!min-w-32"
                         />
-                    </div>
-                )}
+                </div>
             </div>
         </div>
     );

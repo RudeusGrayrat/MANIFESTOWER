@@ -51,7 +51,7 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
             nombreConductor: '',
             fechaRecepcion: '', cantidadRecibida: '', observaciones: '', tipoVehiculo: '', placaVehiculo: ''
         },
-        referendoEntrega: { referendo: false, generadorResponsableManejo: '', firmaGenerador: '', responsableEors: '', firmaResponsableEors: '', dniResponsableEors: '', cargoResponsableEors: '', fechaHora: '' },
+        referendoEntrega: { referendo: true, generadorResponsableManejo: '', firmaGenerador: '', responsableEors: '', firmaResponsableEors: '', dniResponsableEors: '', cargoResponsableEors: '', fechaHora: '' },
         //3.2 EoRs del Destino final
         destinoId: '',
         destinoFinal: { tipoManejo: "", cantidadEntregada: '', observaciones: '' },
@@ -122,7 +122,7 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
                 nombreConductor: "", fechaRecepcion: '', cantidadRecibida: '', observaciones: '',
                 tipoVehiculo: '', placaVehiculo: '', horaRecepcion: ''
             },
-            referendoEntrega: { referendo: false, generadorResponsableManejo: '', firmaGenerador: '', responsableEors: '', firmaResponsableEors: '', dniResponsableEors: '', cargoResponsableEors: '', fechaHora: '' },
+            referendoEntrega: { referendo: true, generadorResponsableManejo: '', firmaGenerador: '', responsableEors: '', firmaResponsableEors: '', dniResponsableEors: '', cargoResponsableEors: '', fechaHora: '' },
             destinoId: '',
             destinoFinal: { tipoManejo: "", cantidadEntregada: '', observaciones: '' },
             referendoRecepcion: {
@@ -169,7 +169,7 @@ const RegisterManifiestos = ({ formEdit, setFormEdit, editUpdate, editCancel }) 
                 generadorId: datos.generadorId?._id || datos.generadorId,
                 transportistaId: datos.transportistaId?._id || datos.transportistaId,
                 referendoEntrega: {
-                    referendo: false,
+                    referendo: true,
                     generadorResponsableManejo: datos.referendoEntrega?.generadorResponsableManejo || "",
                     responsableEors: datos.referendoEntrega?.responsableEors || "",
                 },
