@@ -29,6 +29,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
     const fileName = `${selected?.numeroManifiesto || 'Reporte'}_${selected?.transporte?.fechaRecepcion?.replace(/\//g, "-") || ''}`;
 
     useEffect(() => {
+        const controller = new AbortController();
         const fetchPdf = async () => {
             if (!selected) return;
 
@@ -39,13 +40,16 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
             try {
                 // Hacemos la petición al backend para que genere el PDF con LibreOffice
                 const response = await axios.get(`/certificaciones/getpdfManifiesto/${selected._id}?copia=${tipoCopia}`, {
-                    responseType: 'blob' // CRÍTICO: Recibir el PDF como binario
+                    responseType: "blob",
+                    signal: controller.signal,
                 });
 
                 // Guardamos el archivo en el estado
+                if (controller.signal.aborted) return;
                 setPdfBlob(response.data);
                 setLoading(false);
             } catch (error) {
+                if (controller.signal.aborted) return;
                 console.error("Error al obtener el PDF:", error);
                 // 🌟 3. Reemplazo del viejo sendMessage por tu nuevo Toast del contexto.
                 // Ajusta los parámetros al formato exacto de tu función (objeto o parámetros posicionales):
@@ -56,6 +60,7 @@ const DetailManifiesto = ({ setShowDetail, selected }) => {
         };
 
         fetchPdf();
+        return () => controller.abort();
     }, [selected, tipoCopia]);
 
     const handleDownload = () => {
